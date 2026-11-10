@@ -24,6 +24,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+        B33C00000000000000000001 /* LocalStoreProducts.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = LocalStoreProducts.storekit; sourceTree = "<group>"; };
         B22C00000000000000000002 /* OathkeeperBillingPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OathkeeperBillingPlugin.swift; sourceTree = "<group>"; };
         B11C00000000000000000003 /* OathkeeperIconPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OathkeeperIconPlugin.swift; sourceTree = "<group>"; };
         B11C00000000000000000004 /* OathkeeperViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OathkeeperViewController.swift; sourceTree = "<group>"; };
@@ -58,6 +59,7 @@
 			isa = PBXGroup;
 			children = (
 				958DCC722DB07C7200EA8C5F /* debug.xcconfig */,
+                B33C00000000000000000001 /* LocalStoreProducts.storekit */,
 				504EC3061FED79650016851F /* App */,
 				504EC3051FED79650016851F /* Products */,
 			);

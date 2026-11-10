@@ -1,0 +1,312 @@
+{
+  "identifier": "0A7E1F11",
+  "nonRenewingSubscriptions": [],
+  "products": [
+    {
+      "displayPrice": "1.00",
+      "familyShareable": false,
+      "internalID": "A0D10000",
+      "localizations": [
+        {
+          "description": "Optional Oathkeeper dice design (one-time purchase).",
+          "displayName": "Dragonfire",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "oathkeeper.dice.dragonfire",
+      "referenceName": "Dragonfire",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "1.00",
+      "familyShareable": false,
+      "internalID": "A0D10001",
+      "localizations": [
+        {
+          "description": "Optional Oathkeeper dice design (one-time purchase).",
+          "displayName": "Frostborne",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "oathkeeper.dice.frostborne",
+      "referenceName": "Frostborne",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "1.00",
+      "familyShareable": false,
+      "internalID": "A0D10002",
+      "localizations": [
+        {
+          "description": "Optional Oathkeeper dice design (one-time purchase).",
+          "displayName": "Elvenleaf",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "oathkeeper.dice.elvenleaf",
+      "referenceName": "Elvenleaf",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "1.00",
+      "familyShareable": false,
+      "internalID": "A0D10003",
+      "localizations": [
+        {
+          "description": "Optional Oathkeeper dice design (one-time purchase).",
+          "displayName": "Celestial",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "oathkeeper.dice.celestial",
+      "referenceName": "Celestial",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "1.00",
+      "familyShareable": false,
+      "internalID": "A0D10004",
+      "localizations": [
+        {
+          "description": "Optional Oathkeeper dice design (one-time purchase).",
+          "displayName": "Abyssal",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "oathkeeper.dice.abyssal",
+      "referenceName": "Abyssal",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "1.00",
+      "familyShareable": false,
+      "internalID": "A0D10005",
+      "localizations": [
+        {
+          "description": "Optional Oathkeeper dice design (one-time purchase).",
+          "displayName": "Gold-Forged",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "oathkeeper.dice.gold-forged",
+      "referenceName": "Gold-Forged",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "1.00",
+      "familyShareable": false,
+      "internalID": "A0D10006",
+      "localizations": [
+        {
+          "description": "Optional Oathkeeper dice design (one-time purchase).",
+          "displayName": "Necrotic",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "oathkeeper.dice.necrotic",
+      "referenceName": "Necrotic",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "1.00",
+      "familyShareable": false,
+      "internalID": "A0D10007",
+      "localizations": [
+        {
+          "description": "Optional Oathkeeper dice design (one-time purchase).",
+          "displayName": "Astral",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "oathkeeper.dice.astral",
+      "referenceName": "Astral",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "1.00",
+      "familyShareable": false,
+      "internalID": "A0D10008",
+      "localizations": [
+        {
+          "description": "Optional Oathkeeper dice design (one-time purchase).",
+          "displayName": "Oceanic",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "oathkeeper.dice.oceanic",
+      "referenceName": "Oceanic",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "1.00",
+      "familyShareable": false,
+      "internalID": "A0D10009",
+      "localizations": [
+        {
+          "description": "Optional Oathkeeper dice design (one-time purchase).",
+          "displayName": "Sunfire",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "oathkeeper.dice.sunfire",
+      "referenceName": "Sunfire",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "0.50",
+      "familyShareable": false,
+      "internalID": "A0D1000A",
+      "localizations": [
+        {
+          "description": "Optional Oathkeeper fantasy background (one-time purchase).",
+          "displayName": "Moonlit Citadel",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "oathkeeper.background.moonlit-citadel",
+      "referenceName": "Moonlit Citadel",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "0.50",
+      "familyShareable": false,
+      "internalID": "A0D1000B",
+      "localizations": [
+        {
+          "description": "Optional Oathkeeper fantasy background (one-time purchase).",
+          "displayName": "Ancient Ruins",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "oathkeeper.background.ancient-ruins",
+      "referenceName": "Ancient Ruins",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "0.50",
+      "familyShareable": false,
+      "internalID": "A0D1000C",
+      "localizations": [
+        {
+          "description": "Optional Oathkeeper fantasy background (one-time purchase).",
+          "displayName": "Enchanted Forest",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "oathkeeper.background.enchanted-forest",
+      "referenceName": "Enchanted Forest",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "0.50",
+      "familyShareable": false,
+      "internalID": "A0D1000D",
+      "localizations": [
+        {
+          "description": "Optional Oathkeeper fantasy background (one-time purchase).",
+          "displayName": "Dragon’s Crag",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "oathkeeper.background.dragons-crag",
+      "referenceName": "Dragon’s Crag",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "0.50",
+      "familyShareable": false,
+      "internalID": "A0D1000E",
+      "localizations": [
+        {
+          "description": "Optional Oathkeeper fantasy background (one-time purchase).",
+          "displayName": "Shadow Marsh",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "oathkeeper.background.shadow-marsh",
+      "referenceName": "Shadow Marsh",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "0.50",
+      "familyShareable": false,
+      "internalID": "A0D1000F",
+      "localizations": [
+        {
+          "description": "Optional Oathkeeper fantasy background (one-time purchase).",
+          "displayName": "Celestial Plains",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "oathkeeper.background.celestial-plains",
+      "referenceName": "Celestial Plains",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "0.50",
+      "familyShareable": false,
+      "internalID": "A0D10010",
+      "localizations": [
+        {
+          "description": "Optional Oathkeeper fantasy background (one-time purchase).",
+          "displayName": "Crystal Caverns",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "oathkeeper.background.crystal-caverns",
+      "referenceName": "Crystal Caverns",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "0.50",
+      "familyShareable": false,
+      "internalID": "A0D10011",
+      "localizations": [
+        {
+          "description": "Optional Oathkeeper fantasy background (one-time purchase).",
+          "displayName": "Elder Grove",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "oathkeeper.background.elder-grove",
+      "referenceName": "Elder Grove",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "0.50",
+      "familyShareable": false,
+      "internalID": "A0D10012",
+      "localizations": [
+        {
+          "description": "Optional Oathkeeper fantasy background (one-time purchase).",
+          "displayName": "Mystic Lake",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "oathkeeper.background.mystic-lake",
+      "referenceName": "Mystic Lake",
+      "type": "NonConsumable"
+    },
+    {
+      "displayPrice": "0.50",
+      "familyShareable": false,
+      "internalID": "A0D10013",
+      "localizations": [
+        {
+          "description": "Optional Oathkeeper fantasy background (one-time purchase).",
+          "displayName": "Eternal Keep",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "oathkeeper.background.eternal-keep",
+      "referenceName": "Eternal Keep",
+      "type": "NonConsumable"
+    }
+  ],
+  "settings": {},
+  "subscriptionGroups": [],
+  "version": {
+    "major": 2,
+    "minor": 0
+  }
+}

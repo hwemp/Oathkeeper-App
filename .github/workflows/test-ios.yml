@@ -34,6 +34,8 @@ jobs:
       - name: Install and build Capacitor web app
         run: |
           npm ci
+          npm test
+          npm run catalog
           npm run build
           npx cap sync ios
       - name: Compile iOS app for simulator without signing

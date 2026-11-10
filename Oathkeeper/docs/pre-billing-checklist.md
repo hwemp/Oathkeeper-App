@@ -41,3 +41,21 @@ then acknowledges within the required period.
 Links:
 - https://developer.apple.com/documentation/storekit/in-app-purchase
 - https://developer.android.com/google/play/billing/integrate
+
+## iOS purchases can be prototyped without an Apple account
+
+The repository includes `ios/App/LocalStoreProducts.storekit`, containing
+all 20 non-consumable products at **$1.00** / **$0.50**. This file is a local
+Xcode testing fixture, **not real billing**. To test on a Mac, open the
+Oathkeeper Xcode project, choose the App scheme's **Edit Scheme > Run >
+Options**, and select `LocalStoreProducts.storekit` for StoreKit
+Configuration. Xcode substitutes locally generated transactions. Remove this
+configuration from the scheme before real App Store distribution.
+
+The main app intentionally keeps Purchase disabled in production/test APKs.
+No application-store developer account or payment connection is activated by
+this fixture. Product metadata must be entered into App Store Connect and
+Google Play Console when the owner is ready.
+
+Apple reference:
+https://developer.apple.com/documentation/xcode/setting-up-storekit-testing-in-xcode
