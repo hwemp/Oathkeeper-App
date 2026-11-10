@@ -4,6 +4,8 @@ on:
     branches: [main, fix-approved-preview]
     paths:
       - 'Oathkeeper/**'
+      - '!Oathkeeper/docs/**'
+      - '!Oathkeeper/scripts/**'
       - '.github/workflows/build-android.yml'
   workflow_dispatch:
 permissions:

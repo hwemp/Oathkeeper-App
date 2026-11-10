@@ -18,7 +18,10 @@ Continue PR #5 (`fix-approved-preview`): Gothic UI corrections and working Dice 
 - JavaScript and TypeScript checks passed.
 - All 10 unit tests passed.
 - Production web build passed.
-- Local browser launch is blocked by the workspace's socket restrictions; the GitHub Actions browser workflow will perform the expanded layout checks and capture screenshots.
+- GitHub Actions browser checks passed at 320, 360, 393, 430 and 852 pixels (run 42866313186), including first-visit Dice navigation, roll rerenders and return to Overview.
+- Reviewed captured dice screens; tiles and labels fit. Follow-up screenshot adjustment resets scroll before capture so the fixed background appears from the top.
+- APK build is running at https://github.com/hwemp/Oathkeeper-App/actions/runs/42866313128.
+- Documentation and screenshot-only script checkpoints do not rebuild the APK.
 
 ## Resume after interruption
 1. Check the latest Render approved UI preview and Build Android APK runs for this branch.

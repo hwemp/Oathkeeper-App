@@ -74,7 +74,11 @@ const assert=require('node:assert/strict');
     assert(!clipped,`${mode} labels clipped at ${width}px`);
     await mobile.getByRole('button',{name:'Roll dice',exact:true}).click();
     await mobile.waitForFunction(()=>{const nav=document.querySelector('#nav').getBoundingClientRect(),dice=document.querySelector('#nav [data-tab=Dice]').getBoundingClientRect();return dice.right<=nav.right+1});
-    if(width===320||width===430)await mobile.screenshot({path:`preview-output/${mode.startsWith('Official')?'official':'unofficial'}-dice-${width}.png`,fullPage:true});
+    if(width===320||width===430){
+     await mobile.evaluate(()=>window.scrollTo(0,0));
+     await mobile.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+     await mobile.screenshot({path:`preview-output/${mode.startsWith('Official')?'official':'unofficial'}-dice-${width}.png`,fullPage:true});
+    }
    }
    await mobile.getByRole('button',{name:'Overview',exact:true}).click();
    await mobile.getByRole('heading',{name:'Ready for the next encounter'}).waitFor();
