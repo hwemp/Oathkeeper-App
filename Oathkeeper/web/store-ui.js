@@ -1,21 +1,41 @@
 import {SELECTED_DICE} from './store-dice-catalog.js';
 
-const esc = s => String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const esc = value => String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 
-function conceptTile(item){
-  return '<div class="store-concept-art" style="--theme-accent:'+item.accent+';--theme-dark:'+item.bg+'" aria-label="'+esc(item.name)+' temporary color study; selected final artwork not yet in APK" role="img">'
-  +'<div class="store-concept-die"><span aria-hidden="true">'+esc(item.glyph)+'</span></div></div>';
+function diceArtStyle(index) {
+  return '--store-atlas-x:' + (index % 5) * 25 + '%;--store-atlas-y:' + Math.floor(index / 5) * 100 + '%';
 }
 
-export function storePage(){
-  const cards=SELECTED_DICE.map(item=>'<article class="store-dice-card" data-dice-product="'+esc(item.slug)+'">'
-    +conceptTile(item)
-    +'<div class="store-dice-info"><h3>'+esc(item.name)+'</h3><p>Selected concept #'+item.selection+'. Final artwork pending import.</p>'
-    +'<div class="store-dice-actions"><span>Preview only</span><button type="button" disabled aria-disabled="true" aria-label="'+esc(item.name)+' is unavailable for purchase">Not for sale</button></div>'
-    +'</div></article>').join('');
-  return '<section class="store-page" aria-label="Store"><section class="card store-overview"><h2>Store</h2>'
-    +'<p><strong>10 selected dice designs ready for visual review.</strong> This is a concept-only catalog: no prices, payments, or purchases are available.</p>'
-    +'<p>The original free dice stay available. Cosmetic themes do not affect random rolls, probabilities, dice results, or saved characters.</p></section>'
-    +'<div class="store-dice-grid">'+cards+'</div>'
-    +'<p class="store-note">Concept color studies only. The selected reference images are preserved in a separate review package; final production artwork has not been imported.</p></section>';
+export function storePage(selectedSlug = 'elvenleaf', previewOpen = false) {
+  const activeIndex = Math.max(0, SELECTED_DICE.findIndex(x => x.slug === selectedSlug));
+  const active = SELECTED_DICE[activeIndex];
+  const tiles = SELECTED_DICE.map((item, index) => {
+    const selected = index === activeIndex;
+    return '<button type="button" class="store-dice-tile' + (selected ? ' selected' : '') + '"'
+      + ' data-store-dice="' + esc(item.slug) + '" aria-label="Select ' + esc(item.name) + ' dice design"'
+      + ' aria-pressed="' + selected + '" style="' + diceArtStyle(index) + '">'
+      + '<span class="store-dice-tile-art" aria-hidden="true"></span>'
+      + '<span class="sr-only">' + esc(item.name) + '</span></button>';
+  }).join('');
+  const preview = previewOpen ? '<section class="store-preview-pane" aria-live="polite">'
+    + '<div class="store-preview-image" role="img" aria-label="Larger preview of ' + esc(active.name)
+    + ' dice" style="' + diceArtStyle(activeIndex) + '"></div>'
+    + '<div><h3>' + esc(active.name) + '</h3><p>Visual preview only. The default dice roller remains free and unchanged.</p>'
+    + '<button type="button" data-store-preview="close">Close preview</button></div></section>' : '';
+  return '<section class="store-page" aria-label="Oathkeeper in-app store preview">'
+    + '<div class="store-hero" role="img" aria-label="Oathkeeper moonlit fantasy store banner with silver dragons"></div>'
+    + '<div class="store-category-row" role="group" aria-label="Store categories">'
+    + '<span class="store-category-current" aria-current="page">Dice Sets</span>'
+    + '<span class="store-category-upcoming" aria-disabled="true">Backgrounds</span>'
+    + '<span class="store-category-upcoming" aria-disabled="true">App Icons</span>'
+    + '<span class="store-category-upcoming" aria-disabled="true">Bundles</span></div>'
+    + '<h2 class="store-collection-title">Dice Collection <small>(10)</small></h2>'
+    + '<div class="store-dice-grid" role="group" aria-label="Select a dice set to preview">' + tiles + '</div>'
+    + '<div class="store-selection-footer">'
+    + '<p>Tap a dice set to highlight it. <strong>' + esc(active.name)
+    + '</strong> selected for preview. No purchases available.</p>'
+    + '<button type="button" class="store-preview-button" data-store-preview="open">Preview Dice</button>'
+    + '<button type="button" class="store-purchase-disabled" disabled aria-disabled="true">Purchase — disabled</button></div>'
+    + preview
+    + '<p class="store-note">These ten visual designs are optional cosmetics in preparation. No checkout, payment processing or purchasing is enabled; rolling probability and results are unchanged.</p></section>';
 }
