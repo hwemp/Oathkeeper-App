@@ -1,15 +1,28 @@
-# Support, roll statistics and DM checkpoint
+# Support, roll statistics and DM handoff — November 10, 2026
 
-Approved dice APK: https://github.com/hwemp/Oathkeeper-App/releases/tag/android-test-24-1 (version 1.2-dice-approved).
+## Saved deliverables
+- Approved dice APK: https://github.com/hwemp/Oathkeeper-App/releases/tag/android-test-24-1 (1.2-dice-approved).
+- Feature APK: https://github.com/hwemp/Oathkeeper-App/releases/tag/android-test-25-1 (1.3-support-dm-preview, version code 4).
+- Feature APK source: 6bb6f1fd957c13d20bf6b1a8a7fad8ad40e05da2. Later changes affect tests, screenshots, workflow filtering and documentation; the app bundle is unchanged.
+- Feature APK SHA256: 21dae3f21ddb9a18572e7506998b2ce86b2393540612f3e3dd92cb4ad7a3a0a8.
+- Final phone previews: https://github.com/hwemp/Oathkeeper-App/actions/runs/42871505629/artifacts/13790166428.
+- Feature PR: https://github.com/hwemp/Oathkeeper-App/pull/6.
 
-Branch: support-dm-tools, based on the saved dice branch. Main-branch merge was blocked by automatic approval review and has not been retried.
+## Completed
+Themed Support with ecclesyus@gmail.com email drafts, local JavaScript error capture, copied ChatGPT reports and an optional repair-service connection. Server-side OpenAI diagnosis makes no repository writes. Separate owner credentials and an exact proposal digest are required before creating a draft repair PR. Stale, expired, duplicate or unapproved requests cannot proceed. No automatic merge, release or APK installation is implemented.
 
-Completed: themed Support page, ecclesyus@gmail.com email composer, local JavaScript error capture, service connection and exact-proposal approval UI; persistent observed dice statistics; DM Session/Encounter/Campaign/Rules & Books sections, selectable placement, initiative, HP/temp HP, death-save and condition records, 2024 encounter budgets, campaign notebooks, source library, backup validation.
+Observed roll statistics save the latest 500 batches, separated by die and mode. Face statistics exclude modifiers; batch totals include them. Saved data is included in validated full backups.
 
-Checks: 22 unit tests pass, including approval-before-write, stale source, expiration, concurrent approval, constrained paths, health, encounter budgets and roll statistics. Syntax, TypeScript and production build pass. Initial expanded DM/Support browser checks passed in run 42869636978; final approval UI checks passed in run 42870985478, including blocked unchecked approval, explicit owner approval, roll-history persistence and DM health persistence.
+DM provides Session, Encounter, Campaign and Rules & Books, selectable menu/main-tab placement, initiative and tie order, HP/temp HP, death-save counters, conditions/concentration/resource notes, a scene clock, 2024 mixed-level encounter budgets, campaign notebooks and official source links. Original DM research, scope, book references and attribution are in dm-research.md.
 
-Completed backend: authenticated, rate-limited server-side AI diagnosis and digest-bound owner approval before creating a draft repair PR. No merge/release/install code. Research and deployment notes are in dm-research.md and support-service.md.
+## Validation
+All 22 tests pass locally and in CI (run 42871519078). Syntax, TypeScript and production build pass. Browser run 42871505629 passed dice conversions, five viewport widths, saved statistics, DM health and campaign persistence, topic search, Support diagnostics and unchecked/checked approval behavior. Reviewed actual themed phone screenshots.
 
-Feature APK build 25 succeeded: https://github.com/hwemp/Oathkeeper-App/releases/tag/android-test-25-1. Reviewed actual Support, DM, health and roll-statistics screens. Screenshot framing is being refined; app behavior is unchanged. Final test/documentation checkpoint may create another equivalent build.
+Build 25 passed Android signature/package verification. Its checksum was verified and packaged web bundle matched the tested production build byte for byte. Backend code and server credentials are not bundled. Physical Android-device execution is unavailable in this workspace.
 
-Activation still requires a hosted repair service and server-only credentials; see support-service.md. No live OpenAI key or hosted repair service is configured. No claim of live automatic repair or Android-device execution.
+## Activation and approvals
+Live diagnosis needs a hosted HTTPS repair service and server-only OpenAI/GitHub credentials. No live service, paid AI calls or automatic repair was activated. See support-service.md. Export character/DM backups before installing; debug signing keys can differ.
+
+The automatic approval review blocked merging PR #5 into main because “execute the APK” was not considered explicit default-branch merge authorization. No workaround or alternate main write was attempted. PR #6 remains based on the saved dice branch. Ask for explicit merge authorization before changing main.
+
+A later workflow-only/test checkpoint may produce an equivalent APK build; build 25 contains the verified feature implementation.
