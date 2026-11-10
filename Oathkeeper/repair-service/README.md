@@ -1,4 +1,4 @@
-# Oathkeeper AI repair service
+# Oathkeeper Repair Review service
 
 This optional server connects Support to the OpenAI Responses API. A ChatGPT Plus subscription alone does not configure this server. Until a server and credentials are configured, local error capture, support email drafts, and copying a report to ChatGPT work without it.
 
