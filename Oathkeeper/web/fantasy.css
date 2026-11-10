@@ -108,3 +108,115 @@ body .terms-accept:disabled{opacity:.45}
 .dm-dash-metrics{display:flex;flex-wrap:wrap;gap:8px}
 .dm-dash-metrics span{border:1px solid #7b6b86;padding:6px 9px;border-radius:9px}
 .dm-dashboard-grid .card h3{margin-top:0}
+
+/* Draft optional dice cosmetics: previews only; no checkout or active purchase buttons. */
+.store-page{display:grid;gap:16px}
+.store-overview{background:linear-gradient(145deg,#161b32ef,#27162eec);border-color:#bc9b6f}
+.store-overview p{font-size:16px;line-height:1.55}
+.store-dice-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(230px,100%),1fr));gap:14px}
+.store-dice-card{min-width:0;overflow:hidden;border:1px solid #c4a16d;border-radius:13px;background:linear-gradient(160deg,#121629,#22172c);box-shadow:0 8px 25px #0006}
+.store-concept-art{min-height:160px;display:grid;place-items:center;background:radial-gradient(circle at 50% 38%,var(--theme-accent) -110%,transparent 67%),linear-gradient(160deg,var(--theme-dark),#090e1c);border-bottom:1px solid #a58763}
+.store-concept-die{height:126px;width:132px;display:grid;place-items:center;clip-path:polygon(50% 0,93% 25%,85% 78%,50% 100%,15% 78%,7% 25%);background:linear-gradient(128deg,var(--theme-accent),var(--theme-dark) 65%);filter:drop-shadow(0 8px 12px #0009);border:3px solid var(--theme-accent)}
+.store-concept-die span{color:#fff5d6;font-family:Georgia,serif!important;font-size:55px;text-shadow:0 2px 7px #000a}
+.store-dice-info{padding:12px 14px}
+.store-dice-info h3{margin:0 0 7px;font-size:20px}
+.store-dice-info p{color:#dccbb1;font-size:14px;min-height:42px;margin:0 0 12px}
+.store-dice-actions{display:flex;gap:10px;align-items:center;justify-content:space-between}
+.store-dice-actions span{font-size:13px;color:#bdd6cc}
+.store-dice-actions button:disabled{min-height:40px;padding:7px 11px;font-size:14px;opacity:.70;cursor:not-allowed}
+.store-note{font-size:14px;color:#d1c2a8;line-height:1.6}
+
+
+/* Selected Oathkeeper store design: compact 5 x 2 illustrated tiles. */
+.store-page{
+  --store-selected-outline:var(--oathkeeper-theme-highlight,var(--gold,#f1d596));
+  display:grid;gap:12px;min-width:0;
+  border:1px solid #ae844b;border-radius:15px;overflow:hidden;
+  background:linear-gradient(170deg,#071021,#0d1832 40%,#0b101e);
+  box-shadow:inset 0 0 0 2px #281a10,0 6px 28px #0008;
+  padding:clamp(8px,2vw,18px);
+}
+.store-hero{
+  width:100%;height:clamp(90px,12vw,166px);border-radius:8px;
+  background:#061428 url('/art/oathkeeper-store-banner.webp') center center/cover no-repeat;
+  border:1px solid #bf9b58;
+  box-shadow:inset 0 0 9px #000c;
+}
+.store-category-row{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(3px,.75vw,12px);
+  align-items:stretch;
+}
+.store-category-row span{
+  min-width:0;display:flex;align-items:center;justify-content:center;text-align:center;
+  padding:8px 3px;line-height:1.18;
+  background:linear-gradient(180deg,#233247,#080f1f);
+  color:#ecd4a2;border:1px solid #9d7542;border-radius:5px;
+  font-size:clamp(8px,1.8vw,18px);
+}
+.store-category-row .store-category-current{
+  background:linear-gradient(#895b1d,#37240c);
+  border-color:#ffdc85;color:#fff1c3;
+  box-shadow:inset 0 0 11px #ffd55b6b,0 0 8px #f3ad38a3;
+}
+.store-category-row .store-category-upcoming{opacity:.7}
+.store-collection-title{
+  text-align:center;margin:2px 0 1px;
+  font-size:clamp(16px,3.4vw,29px)!important;
+  letter-spacing:.09em;text-transform:uppercase;
+}
+.store-collection-title small{color:#f0d49b;font-size:.75em}
+.store-dice-grid{
+  display:grid;grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:clamp(3px,1vw,13px);width:100%;
+}
+.store-dice-tile{
+  position:relative;display:block;width:100%;min-width:0;height:auto!important;
+  aspect-ratio:248/175;padding:0!important;margin:0;
+  border:2px solid #aa864d!important;border-radius:clamp(4px,1vw,12px)!important;
+  background:#0f1528;box-shadow:0 2px 8px #000b;overflow:hidden;
+  -webkit-tap-highlight-color:transparent;transition:border-color .16s ease,box-shadow .16s ease,transform .16s ease;
+}
+.store-dice-tile-art,.store-preview-image{
+  display:block;width:100%;height:100%;
+  background-image:url('/art/oathkeeper-dice-store-atlas.webp');
+  background-repeat:no-repeat;
+  background-size:500% 200%;
+  background-position:var(--store-atlas-x) var(--store-atlas-y);
+}
+.store-dice-tile.selected{
+  border-color:var(--store-selected-outline)!important;
+  box-shadow:0 0 0 1px var(--store-selected-outline),0 0 12px 2px var(--store-selected-outline);
+}
+.store-dice-tile:focus-visible{outline:3px solid #fff3d6!important;outline-offset:2px}
+.store-dice-tile:active{transform:scale(.985)}
+.store-selection-footer{
+  display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,1fr);
+  align-items:center;gap:clamp(4px,1vw,12px);
+  border-top:2px solid #976c3a;padding-top:12px;
+}
+.store-selection-footer p{font-size:clamp(10px,1.5vw,16px);line-height:1.3;margin:0;color:#f4dda5}
+.store-selection-footer button{min-width:0;padding:8px 2px;min-height:44px;line-height:1.18;font-size:clamp(10px,2vw,18px);font-weight:600}
+.store-selection-footer .store-preview-button{
+  background:linear-gradient(#c68a2e,#63400d);
+  border:1px solid #ffeab0;color:#ffefc4;
+  box-shadow:inset 0 0 11px #f9d16982,0 0 6px #b8852b;
+}
+.store-selection-footer .store-purchase-disabled{
+  background:linear-gradient(#393d48,#191b26);border:1px solid #797a80;
+  color:#bcbcbc;opacity:.8;cursor:not-allowed;
+}
+.store-preview-pane{display:grid;grid-template-columns:minmax(150px,1fr) minmax(0,1fr);gap:15px;
+  background:#172138e8;border:1px solid var(--store-selected-outline);border-radius:12px;padding:13px}
+.store-preview-image{aspect-ratio:248/175;height:auto;border:1px solid #d2a665;border-radius:9px}
+.store-preview-pane h3{margin:0 0 9px}.store-preview-pane p{font-size:15px}
+.store-note{margin:0;font-size:12px;line-height:1.4;color:#ceb687}
+@media(max-width:580px){
+  .store-page{gap:8px;padding:7px}
+  .store-hero{height:92px}
+  .store-dice-tile{border-width:1px!important}
+  .store-dice-tile.selected{box-shadow:0 0 0 1px var(--store-selected-outline),0 0 8px var(--store-selected-outline)}
+  .store-selection-footer{grid-template-columns:1fr 1fr}
+  .store-selection-footer p{grid-column:1/-1}
+  .store-preview-pane{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){.store-dice-tile{transition:none}}

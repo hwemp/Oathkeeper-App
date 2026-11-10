@@ -1,0 +1,136 @@
+// Oathkeeper optional dice store draft - NOT available for purchase.
+// Proposed IDs are not registered in Google Play or App Store Connect.
+export const DICE_STORE_PREVIEW_ONLY = true;
+export const DICE_STORE_PURCHASES_ENABLED = false;
+export const SELECTED_DICE = Object.freeze([
+  {
+    "selection": 1,
+    "slug": "dragonfire",
+    "name": "Dragonfire",
+    "accent": "#ec5c25",
+    "bg": "#311018",
+    "proposedProductId": "oathkeeper.dice.dragonfire",
+    "previewFilename": "oathkeeper-dice-store-atlas.webp",
+    "type": "non_consumable_cosmetic",
+    "price": null,
+    "status": "preview_only",
+    "atlasIndex": 0
+  },
+  {
+    "selection": 2,
+    "slug": "frostborne",
+    "name": "Frostborne",
+    "accent": "#76cffa",
+    "bg": "#10294c",
+    "proposedProductId": "oathkeeper.dice.frostborne",
+    "previewFilename": "oathkeeper-dice-store-atlas.webp",
+    "type": "non_consumable_cosmetic",
+    "price": null,
+    "status": "preview_only",
+    "atlasIndex": 1
+  },
+  {
+    "selection": 4,
+    "slug": "elvenleaf",
+    "name": "Elvenleaf",
+    "accent": "#9bdb6c",
+    "bg": "#153b25",
+    "proposedProductId": "oathkeeper.dice.elvenleaf",
+    "previewFilename": "oathkeeper-dice-store-atlas.webp",
+    "type": "non_consumable_cosmetic",
+    "price": null,
+    "status": "preview_only",
+    "atlasIndex": 2
+  },
+  {
+    "selection": 5,
+    "slug": "celestial",
+    "name": "Celestial",
+    "accent": "#f2d99c",
+    "bg": "#41406b",
+    "proposedProductId": "oathkeeper.dice.celestial",
+    "previewFilename": "oathkeeper-dice-store-atlas.webp",
+    "type": "non_consumable_cosmetic",
+    "price": null,
+    "status": "preview_only",
+    "atlasIndex": 3
+  },
+  {
+    "selection": 7,
+    "slug": "abyssal",
+    "name": "Abyssal",
+    "accent": "#24bed5",
+    "bg": "#061d36",
+    "proposedProductId": "oathkeeper.dice.abyssal",
+    "previewFilename": "oathkeeper-dice-store-atlas.webp",
+    "type": "non_consumable_cosmetic",
+    "price": null,
+    "status": "preview_only",
+    "atlasIndex": 4
+  },
+  {
+    "selection": 8,
+    "slug": "gold-forged",
+    "name": "Gold-Forged",
+    "accent": "#dba94b",
+    "bg": "#4d2f10",
+    "proposedProductId": "oathkeeper.dice.gold-forged",
+    "previewFilename": "oathkeeper-dice-store-atlas.webp",
+    "type": "non_consumable_cosmetic",
+    "price": null,
+    "status": "preview_only",
+    "atlasIndex": 5
+  },
+  {
+    "selection": 11,
+    "slug": "necrotic",
+    "name": "Necrotic",
+    "accent": "#91ce56",
+    "bg": "#1a2c1e",
+    "proposedProductId": "oathkeeper.dice.necrotic",
+    "previewFilename": "oathkeeper-dice-store-atlas.webp",
+    "type": "non_consumable_cosmetic",
+    "price": null,
+    "status": "preview_only",
+    "atlasIndex": 6
+  },
+  {
+    "selection": 13,
+    "slug": "astral",
+    "name": "Astral",
+    "accent": "#a89af9",
+    "bg": "#28204e",
+    "proposedProductId": "oathkeeper.dice.astral",
+    "previewFilename": "oathkeeper-dice-store-atlas.webp",
+    "type": "non_consumable_cosmetic",
+    "price": null,
+    "status": "preview_only",
+    "atlasIndex": 7
+  },
+  {
+    "selection": 15,
+    "slug": "oceanic",
+    "name": "Oceanic",
+    "accent": "#4ad3d4",
+    "bg": "#0b3f56",
+    "proposedProductId": "oathkeeper.dice.oceanic",
+    "previewFilename": "oathkeeper-dice-store-atlas.webp",
+    "type": "non_consumable_cosmetic",
+    "price": null,
+    "status": "preview_only",
+    "atlasIndex": 8
+  },
+  {
+    "selection": 17,
+    "slug": "sunfire",
+    "name": "Sunfire",
+    "accent": "#ffc365",
+    "bg": "#76300d",
+    "proposedProductId": "oathkeeper.dice.sunfire",
+    "previewFilename": "oathkeeper-dice-store-atlas.webp",
+    "type": "non_consumable_cosmetic",
+    "price": null,
+    "status": "preview_only",
+    "atlasIndex": 9
+  }
+].map(item=>Object.freeze(item)));
