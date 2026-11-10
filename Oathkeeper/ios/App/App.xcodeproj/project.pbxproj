@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+        B22C00000000000000000001 /* OathkeeperBillingPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = B22C00000000000000000002 /* OathkeeperBillingPlugin.swift */; };
         B11C00000000000000000001 /* OathkeeperIconPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = B11C00000000000000000003 /* OathkeeperIconPlugin.swift */; };
         B11C00000000000000000002 /* OathkeeperViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B11C00000000000000000004 /* OathkeeperViewController.swift */; };
 
@@ -23,6 +24,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+        B22C00000000000000000002 /* OathkeeperBillingPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OathkeeperBillingPlugin.swift; sourceTree = "<group>"; };
         B11C00000000000000000003 /* OathkeeperIconPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OathkeeperIconPlugin.swift; sourceTree = "<group>"; };
         B11C00000000000000000004 /* OathkeeperViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OathkeeperViewController.swift; sourceTree = "<group>"; };
 
@@ -78,6 +80,7 @@
 				504EC3071FED79650016851F /* AppDelegate.swift */,
                 B11C00000000000000000003 /* OathkeeperIconPlugin.swift */,
                 B11C00000000000000000004 /* OathkeeperViewController.swift */,
+                B22C00000000000000000002 /* OathkeeperBillingPlugin.swift */,
 				504EC30B1FED79650016851F /* Main.storyboard */,
 				504EC30E1FED79650016851F /* Assets.xcassets */,
 				504EC3101FED79650016851F /* LaunchScreen.storyboard */,
@@ -173,6 +176,7 @@
 				504EC3081FED79650016851F /* AppDelegate.swift in Sources */,
                 B11C00000000000000000001 /* OathkeeperIconPlugin.swift in Sources */,
                 B11C00000000000000000002 /* OathkeeperViewController.swift in Sources */,
+                B22C00000000000000000001 /* OathkeeperBillingPlugin.swift in Sources */,
 				9582B6832FE993A70072D4E8 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

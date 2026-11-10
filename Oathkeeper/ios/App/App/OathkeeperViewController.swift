@@ -5,5 +5,6 @@ class OathkeeperViewController: CAPBridgeViewController {
     override open func capacitorDidLoad() {
         super.capacitorDidLoad()
         bridge?.registerPluginInstance(OathkeeperIconPlugin())
+        bridge?.registerPluginInstance(OathkeeperBillingPlugin())
     }
 }
