@@ -108,3 +108,20 @@ body .terms-accept:disabled{opacity:.45}
 .dm-dash-metrics{display:flex;flex-wrap:wrap;gap:8px}
 .dm-dash-metrics span{border:1px solid #7b6b86;padding:6px 9px;border-radius:9px}
 .dm-dashboard-grid .card h3{margin-top:0}
+
+/* Draft optional dice cosmetics: previews only; no checkout or active purchase buttons. */
+.store-page{display:grid;gap:16px}
+.store-overview{background:linear-gradient(145deg,#161b32ef,#27162eec);border-color:#bc9b6f}
+.store-overview p{font-size:16px;line-height:1.55}
+.store-dice-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(230px,100%),1fr));gap:14px}
+.store-dice-card{min-width:0;overflow:hidden;border:1px solid #c4a16d;border-radius:13px;background:linear-gradient(160deg,#121629,#22172c);box-shadow:0 8px 25px #0006}
+.store-concept-art{min-height:160px;display:grid;place-items:center;background:radial-gradient(circle at 50% 38%,var(--theme-accent) -110%,transparent 67%),linear-gradient(160deg,var(--theme-dark),#090e1c);border-bottom:1px solid #a58763}
+.store-concept-die{height:126px;width:132px;display:grid;place-items:center;clip-path:polygon(50% 0,93% 25%,85% 78%,50% 100%,15% 78%,7% 25%);background:linear-gradient(128deg,var(--theme-accent),var(--theme-dark) 65%);filter:drop-shadow(0 8px 12px #0009);border:3px solid var(--theme-accent)}
+.store-concept-die span{color:#fff5d6;font-family:Georgia,serif!important;font-size:55px;text-shadow:0 2px 7px #000a}
+.store-dice-info{padding:12px 14px}
+.store-dice-info h3{margin:0 0 7px;font-size:20px}
+.store-dice-info p{color:#dccbb1;font-size:14px;min-height:42px;margin:0 0 12px}
+.store-dice-actions{display:flex;gap:10px;align-items:center;justify-content:space-between}
+.store-dice-actions span{font-size:13px;color:#bdd6cc}
+.store-dice-actions button:disabled{min-height:40px;padding:7px 11px;font-size:14px;opacity:.70;cursor:not-allowed}
+.store-note{font-size:14px;color:#d1c2a8;line-height:1.6}
