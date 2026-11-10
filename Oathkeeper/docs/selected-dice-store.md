@@ -1,24 +1,45 @@
-# Selected dice cosmetics — draft store review
+# Oathkeeper selected dice store — implemented visual preview
 
-Status: preview only; this branch has not been merged into main and no store has been published.
+The user approved the **latest number-badge-free fantasy dice store mockup** on 2026-11-10.
 
-The user's ten approved names and concept selection numbers:
+## Included artwork
 
-- 1: Dragonfire
-- 2: Frostborne
-- 4: Elvenleaf
-- 5: Celestial
-- 7: Abyssal
-- 8: Gold-Forged
-- 11: Necrotic
-- 13: Astral
-- 15: Oceanic
-- 17: Sunfire
+The chosen designs are included using a locally bundled optimized image atlas
+(`web/public/art/oathkeeper-dice-store-atlas.webp`) and matching header
+(`web/public/art/oathkeeper-store-banner.webp`), both derived from the
+approved image. Artwork is not fetched from a third-party site at runtime.
 
-No backgrounds or phone launcher icons were selected.
+Ten cosmetic previews, presented in **exactly five columns and two rows**:
 
-UI contains distinctive temporary visual color studies for each product, with purchase buttons disabled. Exact selection artwork is contained in the accompanying offline review ZIP, and has not been copied to the repository. Prepare high-resolution individual art before store release.
+1. Dragonfire
+2. Frostborne
+4. Elvenleaf
+5. Celestial
+7. Abyssal
+8. Gold-Forged
+11. Necrotic
+13. Astral
+15. Oceanic
+17. Sunfire
 
-Proposed IDs in the JS manifest are not registered or purchasable; no real currency amounts, checkout, IAP entitlement or payment processor is configured. Keep default dice free and RNG logic unchanged.
+These are the original selection identifiers. **No selection-number badges,
+radio circles, or symbolic placeholder dice illustrations appear in the app.**
+Names are embedded in the art; accessible names are provided in button labels.
 
-Before release: verify art rights; export each selected design as an independent high-resolution asset; register non-consumable cosmetic products in store consoles; add platform-approved in-app billing, purchase verification, restore and refund handling, accessibility, age-appropriate purchase controls, and sandbox tests. Obtain user approval before merge or publication.
+## Interaction
+- Tapping a dice image highlights only that image's border. Default base
+  highlight is gold (`--gold`); future app themes can set
+  `--oathkeeper-theme-highlight`.
+- The selected option is saved locally as `storePreviewDice`.
+- A separate Preview Dice button opens a larger, accessible view.
+- The 5×2 layout remains 5 columns even on narrow devices; a larger preview is
+  provided for legibility.
+- The original free dice and secure RNG are unchanged.
+
+## Payments and release
+- All purchases, prices, billing and checkout remain **disabled**.
+- Catalog product IDs are proposals, not registered in any payment console.
+- Backgrounds, app icons and bundles remain unselected/unavailable.
+- Additional work required before sales: production ownership/licensing review,
+  platform billing, verifiable entitlements, restore/refund processes,
+  age-appropriate safeguards, test purchase flows, and explicit user approval.
