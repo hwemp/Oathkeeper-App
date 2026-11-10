@@ -146,7 +146,7 @@ body .terms-accept:disabled{opacity:.45}
   display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(3px,.75vw,12px);
   align-items:stretch;
 }
-.store-category-row span, .store-category-row button{
+.store-category-row > span, .store-category-row > button{
   min-width:0;display:flex;align-items:center;justify-content:center;text-align:center;
   padding:8px 3px;line-height:1.18;
   background:linear-gradient(180deg,#233247,#080f1f);
