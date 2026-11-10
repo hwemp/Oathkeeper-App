@@ -88,7 +88,7 @@
           "locale": "en_US"
         }
       ],
-      "productID": "oathkeeper.dice.gold-forged",
+      "productID": "oathkeeper.dice.gold_forged",
       "referenceName": "Gold-Forged",
       "type": "NonConsumable"
     },
@@ -163,7 +163,7 @@
           "locale": "en_US"
         }
       ],
-      "productID": "oathkeeper.background.moonlit-citadel",
+      "productID": "oathkeeper.background.moonlit_citadel",
       "referenceName": "Moonlit Citadel",
       "type": "NonConsumable"
     },
@@ -178,7 +178,7 @@
           "locale": "en_US"
         }
       ],
-      "productID": "oathkeeper.background.ancient-ruins",
+      "productID": "oathkeeper.background.ancient_ruins",
       "referenceName": "Ancient Ruins",
       "type": "NonConsumable"
     },
@@ -193,7 +193,7 @@
           "locale": "en_US"
         }
       ],
-      "productID": "oathkeeper.background.enchanted-forest",
+      "productID": "oathkeeper.background.enchanted_forest",
       "referenceName": "Enchanted Forest",
       "type": "NonConsumable"
     },
@@ -208,7 +208,7 @@
           "locale": "en_US"
         }
       ],
-      "productID": "oathkeeper.background.dragons-crag",
+      "productID": "oathkeeper.background.dragons_crag",
       "referenceName": "Dragon’s Crag",
       "type": "NonConsumable"
     },
@@ -223,7 +223,7 @@
           "locale": "en_US"
         }
       ],
-      "productID": "oathkeeper.background.shadow-marsh",
+      "productID": "oathkeeper.background.shadow_marsh",
       "referenceName": "Shadow Marsh",
       "type": "NonConsumable"
     },
@@ -238,7 +238,7 @@
           "locale": "en_US"
         }
       ],
-      "productID": "oathkeeper.background.celestial-plains",
+      "productID": "oathkeeper.background.celestial_plains",
       "referenceName": "Celestial Plains",
       "type": "NonConsumable"
     },
@@ -253,7 +253,7 @@
           "locale": "en_US"
         }
       ],
-      "productID": "oathkeeper.background.crystal-caverns",
+      "productID": "oathkeeper.background.crystal_caverns",
       "referenceName": "Crystal Caverns",
       "type": "NonConsumable"
     },
@@ -268,7 +268,7 @@
           "locale": "en_US"
         }
       ],
-      "productID": "oathkeeper.background.elder-grove",
+      "productID": "oathkeeper.background.elder_grove",
       "referenceName": "Elder Grove",
       "type": "NonConsumable"
     },
@@ -283,7 +283,7 @@
           "locale": "en_US"
         }
       ],
-      "productID": "oathkeeper.background.mystic-lake",
+      "productID": "oathkeeper.background.mystic_lake",
       "referenceName": "Mystic Lake",
       "type": "NonConsumable"
     },
@@ -298,7 +298,7 @@
           "locale": "en_US"
         }
       ],
-      "productID": "oathkeeper.background.eternal-keep",
+      "productID": "oathkeeper.background.eternal_keep",
       "referenceName": "Eternal Keep",
       "type": "NonConsumable"
     }

@@ -4,18 +4,18 @@ oathkeeper.dice.frostborne,"Frostborne",non_consumable,1.00,dice,frostborne
 oathkeeper.dice.elvenleaf,"Elvenleaf",non_consumable,1.00,dice,elvenleaf
 oathkeeper.dice.celestial,"Celestial",non_consumable,1.00,dice,celestial
 oathkeeper.dice.abyssal,"Abyssal",non_consumable,1.00,dice,abyssal
-oathkeeper.dice.gold-forged,"Gold-Forged",non_consumable,1.00,dice,gold-forged
+oathkeeper.dice.gold_forged,"Gold-Forged",non_consumable,1.00,dice,gold-forged
 oathkeeper.dice.necrotic,"Necrotic",non_consumable,1.00,dice,necrotic
 oathkeeper.dice.astral,"Astral",non_consumable,1.00,dice,astral
 oathkeeper.dice.oceanic,"Oceanic",non_consumable,1.00,dice,oceanic
 oathkeeper.dice.sunfire,"Sunfire",non_consumable,1.00,dice,sunfire
-oathkeeper.background.moonlit-citadel,"Moonlit Citadel",non_consumable,0.50,backgrounds,moonlit-citadel
-oathkeeper.background.ancient-ruins,"Ancient Ruins",non_consumable,0.50,backgrounds,ancient-ruins
-oathkeeper.background.enchanted-forest,"Enchanted Forest",non_consumable,0.50,backgrounds,enchanted-forest
-oathkeeper.background.dragons-crag,"Dragon’s Crag",non_consumable,0.50,backgrounds,dragons-crag
-oathkeeper.background.shadow-marsh,"Shadow Marsh",non_consumable,0.50,backgrounds,shadow-marsh
-oathkeeper.background.celestial-plains,"Celestial Plains",non_consumable,0.50,backgrounds,celestial-plains
-oathkeeper.background.crystal-caverns,"Crystal Caverns",non_consumable,0.50,backgrounds,crystal-caverns
-oathkeeper.background.elder-grove,"Elder Grove",non_consumable,0.50,backgrounds,elder-grove
-oathkeeper.background.mystic-lake,"Mystic Lake",non_consumable,0.50,backgrounds,mystic-lake
-oathkeeper.background.eternal-keep,"Eternal Keep",non_consumable,0.50,backgrounds,eternal-keep
+oathkeeper.background.moonlit_citadel,"Moonlit Citadel",non_consumable,0.50,backgrounds,moonlit-citadel
+oathkeeper.background.ancient_ruins,"Ancient Ruins",non_consumable,0.50,backgrounds,ancient-ruins
+oathkeeper.background.enchanted_forest,"Enchanted Forest",non_consumable,0.50,backgrounds,enchanted-forest
+oathkeeper.background.dragons_crag,"Dragon’s Crag",non_consumable,0.50,backgrounds,dragons-crag
+oathkeeper.background.shadow_marsh,"Shadow Marsh",non_consumable,0.50,backgrounds,shadow-marsh
+oathkeeper.background.celestial_plains,"Celestial Plains",non_consumable,0.50,backgrounds,celestial-plains
+oathkeeper.background.crystal_caverns,"Crystal Caverns",non_consumable,0.50,backgrounds,crystal-caverns
+oathkeeper.background.elder_grove,"Elder Grove",non_consumable,0.50,backgrounds,elder-grove
+oathkeeper.background.mystic_lake,"Mystic Lake",non_consumable,0.50,backgrounds,mystic-lake
+oathkeeper.background.eternal_keep,"Eternal Keep",non_consumable,0.50,backgrounds,eternal-keep
