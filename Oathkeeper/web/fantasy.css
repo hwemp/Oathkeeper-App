@@ -409,3 +409,123 @@ body[data-store-paid-background]::before{
   clip-path:none;
 }
 .hp-value .hp-separator::after{content:none;display:none}
+
+
+/* Inventory: compact gold-and-amethyst quantity steppers, accessible on phones. */
+.coin-purse-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(min(160px,100%),1fr));
+  gap:10px;
+  margin:14px 0 17px;
+}
+.coin-stepper{
+  display:grid;
+  grid-template-columns:42px minmax(0,1fr) 42px;
+  align-items:center;
+  min-width:0;
+  overflow:hidden;
+  border:1px solid #b18c58;
+  border-radius:12px;
+  background:linear-gradient(155deg,#10182be8,#281d31f0);
+  box-shadow:inset 0 1px 0 #edca8140,0 2px 7px #0005;
+}
+.coin-stepper button{
+  display:grid;
+  place-items:center;
+  min-width:0;
+  min-height:44px;
+  padding:0;
+  margin:0;
+  border:0;
+  border-radius:0;
+  background:linear-gradient(160deg,#593c2c,#211a2a);
+  color:#f8dfa0;
+  font:700 27px/1 Chronicle,Georgia,serif;
+  touch-action:manipulation;
+}
+.coin-stepper button:first-child{border-right:1px solid #987750}
+.coin-stepper button:last-child{border-left:1px solid #987750}
+.coin-stepper button:active:not(:disabled){background:linear-gradient(#764a37,#392143)}
+.coin-stepper button:disabled{opacity:.35;cursor:not-allowed}
+.coin-stepper button:focus-visible{outline:2px solid #fff2bb;outline-offset:-3px}
+.coin-amount{
+  display:block;
+  overflow-wrap:anywhere;
+  min-width:0;
+  text-align:center;
+  padding:5px 1px;
+  color:#f2d397;
+  font:700 clamp(14px,2vw,18px)/1.2 Chronicle,Georgia,serif;
+  font-variant-numeric:tabular-nums;
+}
+.coin-purse-grid .coin-stepper:last-child:nth-child(odd){
+  grid-column:1/-1;
+  justify-self:center;
+  width:min(100%,195px);
+}
+@media(max-width:350px){
+  .coin-purse-grid{grid-template-columns:1fr}
+  .coin-purse-grid .coin-stepper:last-child:nth-child(odd){width:100%}
+}
+
+/* Dice: local per-page animation preference instead of Settings. */
+.dice-animation-setting{
+  margin:4px 10px 12px;
+  border:1px solid #806d91;
+  border-radius:12px;
+  background:linear-gradient(135deg,#11162aec,#292038ed);
+  box-shadow:inset 0 1px 0 #f4d8ac22;
+}
+.dice-animation-control{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  justify-content:space-between;
+  position:relative;
+  padding:9px 12px;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+.dice-animation-control input{
+  position:absolute;
+  width:1px;
+  height:1px;
+  opacity:0;
+}
+.dice-animation-copy{display:flex;flex-direction:column;gap:3px;min-width:0}
+.dice-animation-copy strong{font-size:clamp(16px,3.6vw,20px);line-height:1.15;color:#f6db9a}
+.dice-animation-copy small{font:12px/1.35 Georgia,serif;color:#cbb9d3}
+.dice-animation-switch{
+  display:block;
+  position:relative;
+  flex:0 0 51px;
+  height:28px;
+  border:1px solid #a58b6e;
+  border-radius:20px;
+  background:#171a29;
+  box-shadow:inset 0 2px 4px #0008;
+  transition:background .18s ease;
+}
+.dice-animation-switch::after{
+  content:'';
+  display:block;
+  position:absolute;
+  top:3px;left:3px;
+  width:20px;height:20px;
+  border-radius:50%;
+  border:1px solid #f9e4ab;
+  background:radial-gradient(circle at 35% 25%,#fff5da,#e4bb69 60%,#9b622b);
+  box-shadow:0 1px 3px #0008;
+  transition:transform .18s ease;
+}
+.dice-animation-control input:checked ~ .dice-animation-switch{
+  background:linear-gradient(115deg,#52256e,#a35acd);
+  border-color:#ead09c;
+}
+.dice-animation-control input:checked ~ .dice-animation-switch::after{transform:translateX(23px)}
+.dice-animation-control input:focus-visible ~ .dice-animation-switch{
+  outline:2px solid #fff0c0;outline-offset:3px;
+}
+@media(prefers-reduced-motion:reduce){
+  .dice-animation-switch,.dice-animation-switch::after{transition:none}
+}
