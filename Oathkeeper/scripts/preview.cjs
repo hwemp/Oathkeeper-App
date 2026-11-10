@@ -26,6 +26,7 @@ const assert=require('node:assert/strict');
   await page.screenshot({path:'preview-output/inventory.png'});
   await page.getByRole('button',{name:'Dice',exact:true}).click();
   await page.getByRole('heading',{name:'Dice',exact:true}).waitFor({state:'attached'});
+  await page.waitForFunction(()=>{const nav=document.querySelector('#nav').getBoundingClientRect(),dice=document.querySelector('#nav [data-tab=Dice]').getBoundingClientRect();return dice.right<=nav.right+1});
   assert(await page.getByRole('button',{name:'D3 simulated with D6',exact:true}).isVisible());
   assert.equal(await page.getByRole('button',{name:'D50',exact:true}).count(),0);
   const backgrounds=await page.locator('.die-art').evaluateAll(nodes=>nodes.map(n=>getComputedStyle(n).backgroundImage));
