@@ -345,3 +345,67 @@ body[data-store-paid-background]::before{
 .dice-applied-skin p{min-width:0;line-height:1.45}
 .dice-page.has-dice-skin .dice-card{border-color:var(--store-selected-outline)}
 @media(max-width:500px){.dice-applied-art{width:115px;flex-basis:115px}}
+
+
+/* Reference-matched amethyst plaques: complete flared metallic frame, angular
+   highlights and center-cut purple gems on every character navigation tab.
+   Keep all four standard tabs on the same asset and proportions. */
+#nav button{
+  min-height:74px;
+  padding:21px 3px 20px;
+  background:transparent;
+  color:#f7db9e;
+  text-shadow:0 1px 2px #160d10,0 0 2px #140e14;
+}
+#nav button::before{
+  inset:0;
+  background-image:url('/art/gothic-tab.svg');
+  background-repeat:no-repeat;
+  background-position:center;
+  background-size:100% 100%;
+  filter:brightness(.96) drop-shadow(0 1px 2px #0008);
+}
+#nav button.active::before{
+  filter:brightness(1.13) drop-shadow(0 0 3px #d8a34a88);
+}
+#nav button:focus-visible{outline:2px solid #fff0b7;outline-offset:2px}
+@media(max-width:420px){
+  body #nav button{font-size:clamp(15px,4.65vw,18px);min-height:70px;padding:20px 2px 19px}
+}
+
+/* A literal slash in the same fantasy font and gold tone as the values:
+   remove the former skewed gold bar so 15/15 matches ordinary fractions. */
+.hp-value{
+  display:inline-flex;
+  align-items:baseline;
+  gap:.08em;
+  white-space:nowrap;
+  font-variant-numeric:lining-nums tabular-nums;
+}
+.hp-value > span:not(.sr-only),.hp-value > small{
+  font-family:Chronicle,Georgia,serif;
+  font-size:1em;
+  font-weight:700;
+  line-height:1;
+}
+.hp-value .hp-separator{
+  position:static;
+  display:inline;
+  align-self:baseline;
+  width:auto;
+  height:auto;
+  margin:0;
+  font-family:inherit;
+  font-size:1em;
+  font-weight:inherit;
+  line-height:inherit;
+  color:#eecb86;
+  -webkit-text-fill-color:#eecb86;
+  text-shadow:0 1px 0 #35200e;
+  transform:none;
+  filter:none;
+  background:none;
+  border:0;
+  clip-path:none;
+}
+.hp-value .hp-separator::after{content:none;display:none}
