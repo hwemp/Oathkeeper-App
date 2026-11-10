@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Oathkeeper</string>
+    <string name="title_activity_main">Oathkeeper</string>
+    <string name="package_name">com.harrisonwaters.oathkeeper</string>
+    <string name="custom_url_scheme">com.harrisonwaters.oathkeeper</string>
+</resources>
