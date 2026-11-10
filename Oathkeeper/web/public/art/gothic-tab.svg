@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 88" fill="none">
+<defs><linearGradient id="metal" x2="0" y2="1"><stop stop-color="#fff2b5"/><stop offset=".22" stop-color="#91612d"/><stop offset=".45" stop-color="#e7bf72"/><stop offset=".58" stop-color="#6c431b"/><stop offset=".85" stop-color="#c89349"/><stop offset="1" stop-color="#ffe9a0"/></linearGradient><linearGradient id="face" x2="0" y2="1"><stop stop-color="#48301c"/><stop offset=".5" stop-color="#1f170f"/><stop offset="1" stop-color="#382518"/></linearGradient><radialGradient id="gem" cx=".35" cy=".25" r=".8"><stop stop-color="#f1d1ff"/><stop offset=".25" stop-color="#b96bf2"/><stop offset=".55" stop-color="#7023a6"/><stop offset="1" stop-color="#200a3a"/></radialGradient></defs>
+<path d="M19 15H72L80 11H100L108 15H161Q163 25 176 28V60Q163 63 161 73H108L100 77H80L72 73H19Q17 63 4 60V28Q17 25 19 15Z" fill="url(#metal)" stroke="#442b13" stroke-width="2"/>
+<path d="M22 20H73L81 16H99L107 20H158Q162 30 171 32V56Q162 59 158 68H107L99 72H81L73 68H22Q18 59 9 56V32Q18 30 22 20Z" fill="url(#face)" stroke="#f3d192"/>
+<path d="M24 24H67M113 24H156M24 64H67M113 64H156" stroke="#987040" stroke-width=".8"/>
+<g stroke="url(#metal)" stroke-width="1.6"><path d="M70 16q-15-12-15 0q4 8 13 3l-6-7m48 4q15-12 15 0q-4 8-13 3l6-7M70 72q-15 12-15 0q4-8 13-3l-6 7m48-4q15 12 15 0q-4-8-13-3l6 7"/><path d="m76 15 14-11 14 11-14 12zm0 58 14-12 14 12-14 11z" fill="#593a1b"/></g>
+<ellipse cx="90" cy="15" rx="7" ry="10" fill="url(#gem)" stroke="#f7d695" stroke-width="2"/><ellipse cx="90" cy="73" rx="7" ry="10" fill="url(#gem)" stroke="#f7d695" stroke-width="2"/>
+<g fill="#c19a5a" stroke="#49301b"><circle cx="19" cy="35" r="1.8"/><circle cx="19" cy="53" r="1.8"/><circle cx="161" cy="35" r="1.8"/><circle cx="161" cy="53" r="1.8"/></g>
+</svg>
