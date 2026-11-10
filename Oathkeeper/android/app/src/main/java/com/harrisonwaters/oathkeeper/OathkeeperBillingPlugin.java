@@ -23,19 +23,19 @@ public class OathkeeperBillingPlugin extends Plugin {
     private static final List<String> PRODUCT_IDS = Collections.unmodifiableList(Arrays.asList(
         "oathkeeper.dice.dragonfire", "oathkeeper.dice.frostborne",
         "oathkeeper.dice.elvenleaf", "oathkeeper.dice.celestial",
-        "oathkeeper.dice.abyssal", "oathkeeper.dice.gold-forged",
+        "oathkeeper.dice.abyssal", "oathkeeper.dice.gold_forged",
         "oathkeeper.dice.necrotic", "oathkeeper.dice.astral",
         "oathkeeper.dice.oceanic", "oathkeeper.dice.sunfire",
-        "oathkeeper.background.moonlit-citadel",
-        "oathkeeper.background.ancient-ruins",
-        "oathkeeper.background.enchanted-forest",
-        "oathkeeper.background.dragons-crag",
-        "oathkeeper.background.shadow-marsh",
-        "oathkeeper.background.celestial-plains",
-        "oathkeeper.background.crystal-caverns",
-        "oathkeeper.background.elder-grove",
-        "oathkeeper.background.mystic-lake",
-        "oathkeeper.background.eternal-keep"
+        "oathkeeper.background.moonlit_citadel",
+        "oathkeeper.background.ancient_ruins",
+        "oathkeeper.background.enchanted_forest",
+        "oathkeeper.background.dragons_crag",
+        "oathkeeper.background.shadow_marsh",
+        "oathkeeper.background.celestial_plains",
+        "oathkeeper.background.crystal_caverns",
+        "oathkeeper.background.elder_grove",
+        "oathkeeper.background.mystic_lake",
+        "oathkeeper.background.eternal_keep"
     ));
     private BillingClient client;
 

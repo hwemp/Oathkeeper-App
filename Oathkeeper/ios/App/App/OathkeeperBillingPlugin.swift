@@ -18,19 +18,19 @@ public class OathkeeperBillingPlugin: CAPPlugin, CAPBridgedPlugin {
     private let allowed: Set<String> = [
         "oathkeeper.dice.dragonfire", "oathkeeper.dice.frostborne",
         "oathkeeper.dice.elvenleaf", "oathkeeper.dice.celestial",
-        "oathkeeper.dice.abyssal", "oathkeeper.dice.gold-forged",
+        "oathkeeper.dice.abyssal", "oathkeeper.dice.gold_forged",
         "oathkeeper.dice.necrotic", "oathkeeper.dice.astral",
         "oathkeeper.dice.oceanic", "oathkeeper.dice.sunfire",
-        "oathkeeper.background.moonlit-citadel",
-        "oathkeeper.background.ancient-ruins",
-        "oathkeeper.background.enchanted-forest",
-        "oathkeeper.background.dragons-crag",
-        "oathkeeper.background.shadow-marsh",
-        "oathkeeper.background.celestial-plains",
-        "oathkeeper.background.crystal-caverns",
-        "oathkeeper.background.elder-grove",
-        "oathkeeper.background.mystic-lake",
-        "oathkeeper.background.eternal-keep"
+        "oathkeeper.background.moonlit_citadel",
+        "oathkeeper.background.ancient_ruins",
+        "oathkeeper.background.enchanted_forest",
+        "oathkeeper.background.dragons_crag",
+        "oathkeeper.background.shadow_marsh",
+        "oathkeeper.background.celestial_plains",
+        "oathkeeper.background.crystal_caverns",
+        "oathkeeper.background.elder_grove",
+        "oathkeeper.background.mystic_lake",
+        "oathkeeper.background.eternal_keep"
     ]
 
     private func verifiedIDs() async -> [String] {
@@ -84,42 +84,9 @@ public class OathkeeperBillingPlugin: CAPPlugin, CAPBridgedPlugin {
     }
 
     @objc func purchase(_ call: CAPPluginCall) {
-        guard let id = call.getString("productId"), allowed.contains(id) else {
-            call.reject("Unknown item.")
-            return
-        }
-        Task {
-            do {
-                guard let product = try await StoreKit.Product.products(for: [id]).first else {
-                    call.reject("This product is not available in App Store Connect.")
-                    return
-                }
-                let result = try await product.purchase()
-                switch result {
-                case .success(let verification):
-                    guard case .verified(let transaction) = verification,
-                          allowed.contains(transaction.productID),
-                          transaction.revocationDate == nil else {
-                        call.reject("Could not verify purchase.")
-                        return
-                    }
-                    await transaction.finish()
-                    call.resolve([
-                        "verified": true,
-                        "ready": true,
-                        "productIds": await verifiedIDs()
-                    ])
-                case .pending:
-                    call.resolve(["verified": true, "ready": true, "pending": true,
-                                  "productIds": await verifiedIDs()])
-                case .userCancelled:
-                    call.reject("Purchase cancelled.")
-                @unknown default:
-                    call.reject("Purchase status could not be confirmed.")
-                }
-            } catch {
-                call.reject("Purchase failed: \(error.localizedDescription)")
-            }
-        }
+        // Intentional hard gate in native code as well as the web UI.
+        // Do not offer a transaction before billing configuration,
+        // fulfillment, refund and cross-device restoration are tested.
+        call.reject("Checkout is not enabled yet.")
     }
 }
