@@ -9,7 +9,7 @@ Updated November 10, 2026. This file brings the app requirements and progress fr
 - Integrated the existing main-branch navigation/theme/notification changes, PR #5 dice work, and the Support/statistics/DM source from the other session's `support-dm-tools` checkout.
 - Selected one repair backend (`Oathkeeper/repair-service`) for the combined package; the other session's draft backend remains untouched in its checkout. The combined package has no duplicate backend to configure.
 - Both earlier checkouts and remote branches remain intact. No character database, personal journal or DM save file was copied into this source package.
-- **This branch has not been uploaded.** Automatic approval review rejected the GitHub push because it requires explicit current authorization for the combined payload and destination. No workaround or main-branch write was performed.
+- **Approved and uploaded November 10, 2026.** User explicitly approved the combined payload and destination. Published source commit: `36745a204e27209de4297a0130dce70f9d2eb22d` on `consolidated-work`; consolidated PR: https://github.com/hwemp/Oathkeeper-App/pull/7. Main and existing work branches remain untouched.
 
 ## One task ledger
 
@@ -33,8 +33,8 @@ Updated November 10, 2026. This file brings the app requirements and progress fr
 | DM Campaign desk | Implemented | Persistent notebooks for recaps, NPCs, quests, maps/locations, rewards, resources, downtime, calendar, house rules and expectations |
 | DM tab placement | Implemented, configurable | Dropdown is the default recommendation; DM → Session → DM location enables a main tab after Dice |
 | Preserve profile, equipment, journal and existing custom powers | Preserved | Full-app tests verify new features do not overwrite character data; no inventory quantity was invented |
-| Merge all sessions' app work into one source and record | Combined locally | This ledger is the single resume point; older PRs stay open until the combined changes are approved/published |
-| New combined APK | Build workflow and Android source prepared as version `1.3-consolidated` / code 4 | Not built: upload blocked, no Android SDK in this environment |
+| Merge all sessions' app work into one source and record | Published on isolated `consolidated-work` branch in PR #7 | This ledger is the single resume point; older PRs stay open until the combined changes are approved/published |
+| New combined APK | Build workflow and Android source prepared as version `1.3-consolidated` / code 4 | Build 27 is running: https://github.com/hwemp/Oathkeeper-App/actions/runs/42872422408; no local Android SDK |
 | Execute APK on Android | Not verified | No physical Android device or emulator is attached |
 | Store publication | Not completed | Release signing, store account/forms/assets, privacy/support URLs, live service setup and device testing remain publisher requirements |
 
@@ -58,9 +58,9 @@ Updated November 10, 2026. This file brings the app requirements and progress fr
 
 ## Resume from this record
 
-1. Obtain explicit permission to upload this combined source to a new `consolidated-work` branch in `hwemp/Oathkeeper-App`. Do not retry an upload without resolving the automatic approval rejection.
-2. Push the prepared branch and open one consolidated PR; preserve the existing PRs until the combined review is complete.
-3. The new branch triggers Android build/signature/package verification/release and rendered phone previews. Review their output and provide the new exact APK link; do not substitute build 24 as the combined build.
+1. Upload permission received and publication completed. Keep prior chat tasks and checkouts intact; do not overwrite ongoing design, signup/age verification, Store or other follow-up work. ChatGPT threads cannot be merged or messaged directly from this environment. This record is the shared handoff.
+2. PR #7 is open; preserve existing PRs #5 and #6 and all other work branches.
+3. Review Android build 27 and rendered preview https://github.com/hwemp/Oathkeeper-App/actions/runs/42872422560. Provide the exact resulting APK link; do not substitute older builds.
 4. Review previews and install/run the new APK on Android, preserving a character backup first. Merge only within the user's approved scope.
 5. To activate optional live repair, use `repair-service/README.md` and configure HTTPS hosting plus server-side credentials. To activate community, use `in-app-community.md` and the existing `hwemp/oathkeeper` backend. No new spending is authorized.
 6. Keep this record current with the final commit, workflow, release and verified device results. Never mark a configured interface as a live service without verifying the connection.
