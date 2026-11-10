@@ -126,6 +126,27 @@ const assert=require('node:assert/strict');
   await page.evaluate(()=>window.scrollTo(0,0));
   await page.screenshot({path:'preview-output/support.png'});
   assert(!(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)),'Support screen fits phone');
+  let approvals=0,reports=0;
+  await page.route('https://repair.example/**',async route=>{
+   const req=route.request();
+   if(req.method()==='OPTIONS')return route.fulfill({status:204,headers:{'access-control-allow-origin':'*','access-control-allow-methods':'POST','access-control-allow-headers':'authorization,content-type'}});
+   if(req.url().endsWith('/reports')){reports++;assert.equal(req.headers().authorization,'Bearer client-browser-test');return route.fulfill({headers:{'access-control-allow-origin':'*'},json:{id:'test-id',digest:'test-digest',baseSha:'test-sha',proposal:{summary:'Test repair proposal',risk:'Test only',tests:'Run checks',files:[{path:'Oathkeeper/web/dice.js',content:'// test proposal only'}]}}})}
+   approvals++;assert.equal(req.headers().authorization,'Bearer owner-browser-test');return route.fulfill({headers:{'access-control-allow-origin':'*'},json:{pullRequestURL:'https://github.com/hwemp/Oathkeeper-App/pull/999'}})
+  });
+  await page.locator('#supportService').fill('https://repair.example');
+  await page.locator('#supportServiceToken').fill('client-browser-test');
+  await page.getByRole('button',{name:'Save service connection',exact:true}).click();
+  await page.getByRole('button',{name:'Request AI diagnosis',exact:true}).click();
+  await page.getByRole('heading',{name:'Proposed repair',exact:true}).waitFor();
+  assert.equal(reports,1);assert.equal(approvals,0);
+  await page.getByRole('button',{name:'Approve and create repair PR',exact:true}).click();
+  assert.equal(approvals,0,'No unchecked approval request');
+  await page.locator('#supportOwnerToken').fill('owner-browser-test');
+  await page.locator('#approveRepair').check();
+  await page.getByRole('button',{name:'Approve and create repair PR',exact:true}).click();
+  await page.getByText('Approved repair PR: https://github.com/hwemp/Oathkeeper-App/pull/999',{exact:true}).waitFor();
+  assert.equal(approvals,1);
+
   console.log('PASS: font, safe areas, no overflow, tabs, dice selection, D3, D100, D50, quantity/modifier, mode reset, bell');
  }finally{if(browser)await browser.close();server.kill()}
 })().catch(e=>{console.error(e);process.exitCode=1});

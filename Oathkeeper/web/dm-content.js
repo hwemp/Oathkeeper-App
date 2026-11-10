@@ -43,3 +43,5 @@ export const TOPICS=[
 ];
 export const NOTEBOOKS=['Session recap & next hooks','NPCs & factions','Quests, clues & consequences','Locations & map links','Treasure, currency & advancement','Spells, resources & stat-block links','Downtime & Bastions','Calendar & travel','House rules & allowed books','Player expectations & boundaries'];
 export const CONDITIONS=['Blinded','Charmed','Deafened','Exhaustion','Frightened','Grappled','Incapacitated','Invisible','Paralyzed','Petrified','Poisoned','Prone','Restrained','Stunned','Unconscious'];
+
+export const SRD_ATTRIBUTION='This work includes material from the System Reference Document 5.2.1 (“SRD 5.2.1”) by Wizards of the Coast LLC, available at https://www.dndbeyond.com/srd. The SRD 5.2.1 is licensed under the Creative Commons Attribution 4.0 International License, available at https://creativecommons.org/licenses/by/4.0/legalcode.';
