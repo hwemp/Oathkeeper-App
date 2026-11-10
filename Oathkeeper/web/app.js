@@ -21,10 +21,14 @@ const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&
 const base={dm:createDM(),rollHistory:[],diceAnimation:false,notifyEmail:false,notifyText:false,notifyPopup:true,notifyInApp:true,name:'Ecclesyus Ha Kawa',class:'Paladin',level:1,str:18,dex:14,con:20,int:12,wis:20,cha:18,luck:14,hp:15,hpBase:10,temp:0,holy:6,holyMax:6,armor:16,shield:true,aura:false,faith:false,speed:30,body:200,pre:true,lucky:true,oil:5,tapers:5,cp:0,sp:0,ep:0,gp:15,pp:0,notes:'Oath of the Faithful Servant • Lawful Good\nAcolyte — Faithful Servant. Messianic Jewish; follows Yeshua.\n\nTraits: gentle with the frightened, patient with questions, steadfast against cruelty.\nIdeal: repentance expressed through love, truth and service.\nBond: the memory of his wife and children, and the families he now protects.\nFlaw: grief drives him to take others’ burdens upon himself.\n\nHoly oil: blessing uses 1 dose; 1d4 on one non-attack check within 1 hour, once per recipient per long rest. Healing uses 1 dose for 1d4+1 HP, once per recipient per short or long rest. Dedication uses 2 doses, 1 Holy Point and 1 taper. Track recipient eligibility here.\n\nLanguages: Hebrew, Common Tongue, Aramaic, English.',items:[['Chainmail',1,55],['Shield with holy symbol',1,6],['Longsword',1,3],['Backpack',1,5],['Bedroll',1,7],['Mess kit',1,1],['Tinderbox',1,1],['Torches',10,1],['Rations',10,2],['Full waterskin',1,5],['Hemp rope (50 ft)',1,10],['Prayer book',1,5],['Tallit',1,1],['Clothes, boots, belt',1,3],['Belt pouch',1,1],['Purple traveling cloak',1,3],['Helmet',1,4],['Holy water, full flask',3,1],['Empty flask',0,.2]],log:[]};
 let c=structuredClone(base);try{let v=JSON.parse(localStorage.getItem('oathkeeper-v1'));if(v)c={...c,...v}}catch{}let tab=location.hash==='#notifications'?'Notifications':'Overview',pending={},last=null;
 let storeCategory='dice';
-let billingState={available:false,ownedIds:[],products:[],reason:'Checkout is not connected yet.'};
+let billingState={available:false,restoreAvailable:false,ownedIds:[],products:[],reason:'Checkout is not connected yet.'};
 const cosmetics=()=>effectiveCosmetics(c,billingState.ownedIds);
+let billingRefreshVersion=0;
 async function refreshBillingState(){
-  billingState=await loadStoreBilling();
+  const version=++billingRefreshVersion;
+  const fresh=await loadStoreBilling();
+  if(version!==billingRefreshVersion)return;
+  billingState=fresh;
   if(tab==='Store'||tab==='Dice')render();
 }
 function syncVerifiedBackground(){
@@ -72,7 +76,7 @@ if(tab==='Journal')html=`<div class="grid"><section class="card wide"><h2>Charac
 if(tab==='My profile')html=`<section class="card"><h2>My profile</h2><p>Your character profile on this device.</p>${field('Character name','name','text')}${field('Class','class','text')}${field('Level','level')}<p>Your online username and sign-in controls are available under Account.</p><div class="row"><button data-tab="Account">Account</button><button data-tab="Import & backup">Import &amp; Backup</button></div></section>`;
 if(tab==='Account')html='<div id="communityRoot"></div>';
 if(tab==='Help')html=`<section class="card"><h2>Help</h2><p>Read your journal under Journal. To change it, open the ☰ menu above and choose Edit journal, then Save journal. Cancel leaves your saved journal unchanged.</p><p>Export a backup before switching devices or replacing the app. Community accounts, posts and messages open inside this app. Your local character is never uploaded automatically.</p><button data-tab="Import & backup">Back up your character</button><button data-tab="Settings">Privacy & settings</button></section>`;
-if(tab==='Store')html=storePage(c.storePreviewDice||'elvenleaf',{category:storeCategory,backgroundSlug:c.storePreviewBackground||'moonlit-citadel',iconSlug:c.storePreviewIcon||'icon-01',iconStatus:iconState,ownedIds:billingState.ownedIds,products:billingState.products,billingReady:billingState.available,activeDice:cosmetics().dice?.slug,activeBackground:cosmetics().background?.slug});
+if(tab==='Store')html=storePage(c.storePreviewDice||'elvenleaf',{category:storeCategory,backgroundSlug:c.storePreviewBackground||'moonlit-citadel',iconSlug:c.storePreviewIcon||'icon-01',iconStatus:iconState,ownedIds:billingState.ownedIds,products:billingState.products,billingReady:billingState.available,restoreAvailable:billingState.restoreAvailable,activeDice:cosmetics().dice?.slug,activeBackground:cosmetics().background?.slug});
 if(tab==='About')html=`<section class="card"><h2>About Oathkeeper</h2><p>Oathkeeper · Character companion</p><p>Keep your oath. Track every adventure.</p><p>An independent tabletop character companion for your character, powers, equipment, journal and community.</p><p>Arcane Chronicle logo · Moonlit Citadel background.</p><p>${esc(PROFILE_NOTICE)}</p><p>${esc(DICE_NOTICE)}</p><p>The ten approved alternative app icons are free and can be changed on supported installed devices. Dice sets cost $1.00 and backgrounds cost $0.50 each (USD); checkout is not yet enabled.</p><h3>Contact &amp; safety</h3><p><a href="mailto:${SUPPORT_EMAIL}">${SUPPORT_EMAIL}</a> · <button data-tab="Support">Support</button></p><p>For information, reports, bugs or safety issues, use Support to compose an email or request assistance with a report. A support response alone does not approve a contact request.</p><p>${esc(SAFETY_NOTICE)}</p><p>${esc(SAFETY_GUIDANCE)}</p><button data-tab="Settings">Back to Settings</button></section>`;
 if(tab==='Notifications')html=`<section class="card"><h2>Notifications</h2>${notificationTest?'<p role="status">Test notification: in-app alerts are enabled.</p>':'<p>No new notifications.</p>'}<button data-tab="Notification settings">Notification settings</button></section>`;
 if(tab==='Notification settings')html=`<section class="card"><h2>Notification settings</h2><p>Choose how you want to receive alerts.</p>${check('Email — coming soon','notifyEmail')}${check('Text messages (SMS) — coming soon','notifyText')}${check('Pop-up alerts while using the app','notifyPopup')}${check('In-app notifications','notifyInApp')}<p class="sub">Email and text preferences are saved for future use. Delivery is not connected yet. Pop-ups appear while the app is open; background push notifications are not available yet.</p><h3>Notification types</h3><p>Planned community alerts: new messages, friend requests, group invitations, post replies and mentions. These will be available when community notifications are connected.</p><button data-action="test-notification">Test notification</button><button data-tab="Settings">Back to Settings</button></section>`;
@@ -107,11 +111,13 @@ if(t.dataset.storeRestoreCosmetic){
   save();render();toast('Original design restored.');return;
 }
 if(t.dataset.storeRestorePurchases){
-  if(!billingState.available){toast('Purchase restoration is not configured yet.');return;}
+  if(!billingState.restoreAvailable){toast('Verified purchase restoration is not available on this installation yet.');return;}
   try{
     const owned=await restoreStorePurchases();
+    // Discard any in-flight older entitlement refresh before applying this result.
+    ++billingRefreshVersion;
     billingState={...billingState,ownedIds:owned};
-    render();toast('Verified purchases restored.');
+    render();toast(owned.length?'Verified purchases restored.':'No existing purchases were found.');
   }catch(error){toast('Restore purchases: '+(error?.message||'not available'))}
   return;
 }
@@ -120,6 +126,7 @@ if(t.dataset.storeBuyId){
   if(!product||!billingState.available){toast('Checkout is not yet available.');return;}
   try{
     const owned=await buyStoreProduct(product.id);
+    ++billingRefreshVersion;
     billingState={...billingState,ownedIds:owned};
     render();toast(owned.includes(product.id)?'Purchase verified. Apply your new cosmetic.':'Purchase pending or not verified.');
   }catch(error){toast('Purchase: '+(error?.message||'unavailable'))}

@@ -143,8 +143,8 @@ test('free icon pricing stays separate from paid dice and backgrounds',()=>{
  assert.doesNotMatch(icons,/store-purchase-disabled/);
  assert.match(icons,/data-store-apply-icon=/);
  assert.match(icons,/data-store-restore-icon=/);
- assert.match(storePage(),/Price: <strong>\$1\.00<\/strong> USD/);
- assert.match(storePage('elvenleaf',{category:'backgrounds'}),/Price: <strong>\$0\.50<\/strong> USD/);
+ assert.match(storePage(),/Price: <strong>\$1\.00<\/strong> USD \(planned price\)/);
+ assert.match(storePage('elvenleaf',{category:'backgrounds'}),/Price: <strong>\$0\.50<\/strong> USD \(planned price\)/);
  assert.match(storePage(),/Purchase<\/button>/);
  assert.match(storePage('elvenleaf',{category:'backgrounds'}),/Purchase<\/button>/);
  assert.doesNotMatch(icons,/>Purchase<\/button>/);
@@ -163,4 +163,17 @@ test('paid cosmetics never apply before verified ownership, and restore works',(
   assert(applied.includes('data-store-restore-cosmetic="'+category+'"'));
   assert(!applied.includes('data-store-restore-cosmetic="'+category+'" disabled'));
  }
+});
+
+test('verified restoration is available independently of checkout, and localized price has no extra USD',()=>{
+ const id=SELECTED_DICE[0].proposedProductId;
+ const page=storePage('dragonfire',{category:'dice',ownedIds:[id],restoreAvailable:true,products:[{id,displayPrice:'€0,99'}]});
+ assert.match(page,/Price: <strong>€0,99<\/strong> \(storefront price\)/);
+ assert.match(page,/Restoring existing purchases is available/);
+ assert.match(page,/data-store-restore-purchases="true"/);
+ assert.doesNotMatch(page,/data-store-restore-purchases="true" disabled/);
+ assert.match(page,/store-purchase-disabled" disabled/);
+ assert.doesNotMatch(page,/€0,99<\/strong> USD/);
+ const unavailable=storePage('dragonfire',{category:'dice'});
+ assert.match(unavailable,/data-store-restore-purchases="true" disabled/);
 });

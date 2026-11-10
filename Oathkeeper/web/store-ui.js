@@ -20,24 +20,24 @@ function selectionFooter(kind, active, category, options={}) {
   if(STORE_PRICING[category].mode === 'free'){
     return '<div class="store-selection-footer"><p><strong>' + esc(active.name)
       + '</strong> selected. App icons are FREE, with no purchase or payment required. '
-      + 'Alternative icons can be applied after their individual artwork is bundled.</p>'
+      + 'Choose an icon to apply it on a supported installed device.</p>'
       + '<span class="store-free-label" aria-label="Free item">FREE</span></div>';
   }
   const owned=ownedItem(category,active.slug,options.ownedIds||[]);
   const applied=(category==='dice'?options.activeDice:options.activeBackground)===active.slug;
   const product=productFor(category,active.slug);
-  const actualPrice=options.billingReady && options.products?.find(item=>item.id===product.id)?.displayPrice;
+  const actualPrice=options.products?.find(item=>item.id===product.id)?.displayPrice;
   const displayPrice=actualPrice||formatStorePrice(active.priceCents);
   return '<div class="store-selection-footer"><p>Tap a ' + kind
     + ' to preview it instantly. <strong>' + esc(active.name)
     + '</strong> selected. Price: <strong>' + esc(displayPrice)
-    + '</strong> USD. ' + (owned ? 'Purchased and verified.' :
+    + '</strong>' + (actualPrice?' (storefront price). ':' USD (planned price). ') + (owned ? 'Purchased and verified.' :
       'Checkout is not available yet; previewing does not unlock this item.') + '</p>'
     + '<button type="button" class="store-purchase-disabled" disabled aria-disabled="true"'
     + ' title="Paid purchases are not available yet" data-store-buy-id="' + esc(product.id) + '">Purchase</button>'
     + '<div class="store-cosmetic-actions">'
     + '<button type="button" data-store-restore-purchases="true"'
-    + (!options.billingReady?' disabled aria-disabled="true"':'')
+    + (!options.restoreAvailable?' disabled aria-disabled="true"':'')
     + '>Restore Purchases</button>'
     + '<button type="button" data-store-apply-cosmetic="' + esc(category + ':' + active.slug) + '"'
     + (!owned||applied?' disabled aria-disabled="true"':'') + '>'
@@ -45,7 +45,7 @@ function selectionFooter(kind, active, category, options={}) {
     + '<button type="button" data-store-restore-cosmetic="' + esc(category) + '"'
     + (!(category==='dice'?options.activeDice:options.activeBackground)?' disabled aria-disabled="true"':'')
     + '>Restore Default</button></div>'
-    + '<p class="store-billing-status" role="status">Purchase restoration and checkout require your app-store account setup.</p>'
+    + '<p class="store-billing-status" role="status">' + (options.restoreAvailable ? 'Restoring existing purchases is available. New purchases remain disabled.' : 'New purchases are disabled. Restore requires a supported app-store connection.') + '</p>'
     + '</div>';
 }
 
@@ -95,7 +95,7 @@ function backgroundStorePage(selectedSlug = 'moonlit-citadel', options={}) {
     + ' loading="eager" decoding="async"></div>'
     + '<div class="store-background-preview-details"><h3>' + esc(active.name) + '</h3>'
     + '<p>' + esc(active.description) + '</p>'
-    + '<p>Artwork preview only. The background is not applied to your app.</p></div></section>';
+    + '<p>Preview is free. Applying this background requires verified ownership.</p></div></section>';
   return storeShell('backgrounds',
     '<h2 class="store-collection-title">Background Collection <small>(' + SELECTED_BACKGROUNDS.length + ')</small></h2>'
     + '<div class="store-background-grid" role="group" aria-label="Select a fantasy background to preview">' + tiles + '</div>'
