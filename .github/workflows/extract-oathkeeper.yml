@@ -1,0 +1,32 @@
+name: Extract Oathkeeper source
+on:
+  push:
+    paths:
+      - '.github/workflows/extract-oathkeeper.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extract source and commit
+        run: |
+          python - <<'PY'
+          import pathlib, zipfile
+          root = pathlib.Path.cwd()
+          with zipfile.ZipFile('Oathkeeper.zip') as archive:
+              for name in archive.namelist():
+                  if not name.startswith('Oathkeeper/') or not (root / name).resolve().is_relative_to(root):
+                      raise ValueError('Unexpected archive path')
+              archive.extractall(root)
+          PY
+          chmod +x Oathkeeper/android/gradlew
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add Oathkeeper
+          if ! git diff --cached --quiet; then
+            git commit -m "Extract Oathkeeper app source from ZIP"
+            git push
+          fi
