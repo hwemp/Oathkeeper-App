@@ -56,11 +56,11 @@ test('every dice design previews its own atlas cell rather than Dragonfire', asy
  }
  assert.equal(positions.size,SELECTED_DICE.length);
  const css=await readFile(new URL('../web/fantasy.css',import.meta.url),'utf8');
- const previewCss=css.match(/\\.store-preview-image\\{[^}]+\\}/g)?.at(-1)||'';
- assert.match(previewCss,/aspect-ratio:248\\/175/);
+ const previewCss=css.match(/\.store-preview-image\{[^}]+\}/g)?.at(-1)||'';
+ assert.match(previewCss,/aspect-ratio:248\/175/);
  assert.match(previewCss,/background-color:#0b1023/);
  assert.doesNotMatch(previewCss,/background:#0b1023/);
  const app=await readFile(new URL('../web/app.js',import.meta.url),'utf8');
- assert.match(app,/c\\.storePreviewDice=selected;save\\(\\);render\\(\\);return/);
- assert.doesNotMatch(app,/storePreviewOpen=false;save\\(\\);render\\(\\)/);
+ assert.match(app,/c\.storePreviewDice=selected;save\(\);render\(\);return/);
+ assert.doesNotMatch(app,/storePreviewOpen=false;save\(\);render\(\)/);
 });
