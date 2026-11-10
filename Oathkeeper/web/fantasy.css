@@ -45,3 +45,66 @@ input[type=number],.big small,.die-label,.dice-result strong{font-family:Chronic
 #nav{scroll-snap-type:none}.die-art{position:relative}.die-face-overlay{position:absolute;left:22%;top:37%;width:56%;height:31%;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse,#4e1c69,#321140 80%);color:#f1d28a;font:700 23px/1 Chronicle,Georgia,serif;text-shadow:0 1px 2px #13051b;clip-path:polygon(50% 0,100% 35%,50% 100%,0 35%)}
 /* Shared workspaces inherit Chronicle, amethyst cards and metallic gold. */
 .workspace-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 18px}.workspace-tabs button{flex:1 1 135px;min-height:54px}.workspace-tabs .selected,.current-turn{border-color:#f2d995;box-shadow:0 0 9px #d8a74d66}.workspace-body>.card,.support-workspace>.card,.roll-statistics{margin-bottom:18px}.workspace-fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(150px,100%),1fr));gap:10px}.workspace-fields label,.support-workspace label,.dm-workspace label{min-width:0;align-items:stretch;flex-direction:column}.workspace-fields input,.workspace-fields select,.workspace-fields input[type=number],.dm-workspace input[type=number]{width:100%;min-width:0}.dm-workspace textarea,.support-workspace textarea{min-height:110px;font-size:18px}.checkline{flex-direction:row!important;align-items:flex-start!important;gap:12px}.checkline input{flex:0 0 20px}.workspace-note{font:14px/1.6 Georgia,serif;color:#d4bd94}.workspace-body details,.roll-statistics details{margin:14px 0}.workspace-body summary,.roll-statistics summary{cursor:pointer;color:#f1d596}.metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:14px 0}.metric{padding:12px;border:1px solid #7d637d;border-radius:10px;background:#191427}.metric span{font-size:16px;display:block}.metric strong{display:block;font-size:30px;color:#f1d596}.frequency-list{max-height:330px;overflow-y:auto;margin-top:12px}.frequency-list>div{display:grid;grid-template-columns:35px 1fr 95px;gap:8px;font-size:16px;align-items:center}.frequency-list meter{width:100%;accent-color:#d4a74f}.roll-statistics li{font:14px/1.7 Georgia,serif;overflow-wrap:anywhere}.repair-proposal pre{font:13px/1.5 monospace;white-space:pre-wrap;overflow-wrap:anywhere;max-height:350px;overflow:auto}.repair-proposal{border:1px solid #d4a74f;border-radius:10px;padding:14px}.support-workspace a,.dm-workspace a{overflow-wrap:anywhere}.dm-roster{margin-top:18px}.dm-workspace h2{margin-top:10px}.workspace-body p,.support-workspace p{overflow-wrap:anywhere}#dmTopics [hidden]{display:none}
+/* Dimensions and artwork follow the supplied official / unofficial board. */
+header{min-height:clamp(132px,38vw,166px);grid-template-rows:44px minmax(0,1fr);padding-top:4px;padding-bottom:7px;gap:3px}.header-title h1{font-size:clamp(26px,7vw,38px)}
+main{padding-top:5px}#nav{margin-bottom:8px;padding-top:0;padding-bottom:5px}#nav button{min-height:63px;padding-top:16px;padding-bottom:16px}
+.dice-page{max-width:470px;margin:0 auto;font-family:Chronicle,Georgia,serif}.dice-submenu{gap:9px;margin:0 10px 8px}.dice-submenu button{border:1px solid #897297;border-radius:10px;min-height:34px;padding:4px 3px;font-size:18px;background:linear-gradient(#312a40,#15172b)}.dice-submenu .selected{border-color:#f2ce8e;box-shadow:0 0 4px #edb065,inset 0 0 5px #e8ac6b;background:linear-gradient(#56435a,#292138)}
+.dice-card,.card.dice-card{padding:9px 10px 11px;border-color:#b3adc6;border-radius:17px;background:linear-gradient(120deg,#071123f5,#030c1bee);box-shadow:inset 0 0 0 4px #0e1528,0 2px 6px #0005}.dice-tray{padding:1px}.dice-grid{gap:6px}.die-tile{height:94px;padding:2px 3px;border:1px solid #ad91b5;border-radius:11px;background:linear-gradient(120deg,#111222,#211528);justify-content:flex-start}.die-label{font-size:18px;line-height:1.2;font-weight:700}.die-tile.selected{box-shadow:inset 0 0 5px #e6b86d44;border-color:#edd4a4}
+.reference-die{width:auto;max-width:100%;height:70px;aspect-ratio:var(--crop-ratio);background-image:url('/art/dice-reference.png');background-size:var(--crop-size);background-position:var(--crop-position);background-repeat:no-repeat;flex:0 1 auto}.die-art-3{height:70px}.dice-special-grid{display:grid;grid-template-columns:3fr 2fr;gap:7px;margin-top:6px}.dice-special-grid .die-tile{height:110px}.dice-special-grid .percentile-tile{grid-column:auto}.percentile-art{display:flex;gap:5px;width:100%;height:76px;max-height:none;align-items:center}.percentile-art .reference-die{width:50%;height:auto;aspect-ratio:100/80}.dice-special-grid .die-tile>.reference-die{height:72px}.die-tile small{font:italic 10px/1.2 Chronicle,Georgia,serif;white-space:nowrap;margin-top:auto;margin-bottom:2px}.percentile-rule{width:max-content;max-width:100%;margin:7px auto 5px;padding:1px 12px;border:1px solid #a18eb6;border-radius:11px;font:15px/1.2 Chronicle,Georgia,serif;text-align:center}
+.dice-console{border:1px solid #b4adbd;border-radius:11px;margin-top:8px;padding:0 9px 9px}.dice-controls{grid-template-columns:1fr 1fr 1.4fr;gap:9px;margin:4px 0 7px}.dice-controls label{font-size:15px;text-align:center;gap:2px}.dice-controls input[type=number]{font:700 23px/1 Chronicle,Georgia,serif;border-radius:7px;height:31px;padding:1px 4px}.dice-controls button{min-height:34px;padding:2px 4px;font:700 20px/1.1 Chronicle,Georgia,serif;border:1px solid #e9c88b;border-radius:9px;box-shadow:inset 0 0 5px #eac383;background:linear-gradient(#644d6b,#30243b)}.dice-result{position:relative;min-height:43px;justify-content:flex-start;padding:2px 13px;border-radius:10px;font-size:22px}.dice-result strong{position:absolute;left:33%;right:12%;text-align:center;font-size:34px;line-height:1.1}.dice-breakdown,.dice-note,.dice-probabilities p{font-family:Chronicle,Georgia,serif;font-size:15px;line-height:1.35}.dice-probabilities,.dice-statistics-drawer{font-size:16px;margin:10px 5px}.dice-probabilities summary,.dice-statistics-drawer summary{cursor:pointer}.dice-statistics-drawer .card{margin-top:10px}.age-safety-panel{border:1px solid #e5bd75;border-radius:12px;padding:14px;background:#171324}.age-safety-panel p{line-height:1.5}.safety-review{border-top:1px solid #8c7295;padding-top:14px;margin-top:14px}
+@media(max-width:350px){.die-tile{height:82px}.reference-die{height:59px}.die-label{font-size:16px}.dice-special-grid .die-tile{height:98px}.die-tile small{font-size:8px}.percentile-art{height:65px}.dice-special-grid .die-tile>.reference-die{height:64px}.dice-controls{gap:6px}.dice-controls button{font-size:18px}}
+
+
+/* Legible, lighter book-serif typography across the bundled offline app. */
+:root{--readable-fantasy:"Palatino Linotype","Book Antiqua",Georgia,"Noto Serif",serif}
+body,body button,body input,body textarea,body select,body label,body p,body small,body summary,body table,body .eyebrow,body .die-label,body .dice-breakdown,body .dice-note,body .gold-text,body .big,body .big small,body .dice-result strong,body h1,body h2,body h3,body h4{font-family:var(--readable-fantasy)!important;font-weight:400;letter-spacing:.008em}
+body{font-size:18px;line-height:1.5}
+body button,body input,body textarea,body select{font-size:18px;line-height:1.35}
+body h1,body h2,body h3{font-weight:500;line-height:1.2}
+body .eyebrow{font-size:13px;letter-spacing:1.5px}
+body .die-label{font-size:17px}
+body .menu-options button{font-size:18px}
+body input[type=number]{font-size:19px}
+body .workspace-note,body .notice,body .sub,body small{line-height:1.55}
+body button:focus-visible,body select:focus-visible,body input:focus-visible,body textarea:focus-visible{outline:2px solid #f1d596;outline-offset:2px}
+@media(max-width:420px){body{font-size:16px}body button,body input,body select{font-size:16px}body .card{padding:15px}body #nav button{font-size:17px}body .dice-controls button{font-size:16px}}
+
+/* First-launch access gate: visible until accepted, no access to underlying controls. */
+.terms-gate{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;padding:max(14px,env(safe-area-inset-top,14px)) max(12px,env(safe-area-inset-right,12px)) max(14px,env(safe-area-inset-bottom,14px)) max(12px,env(safe-area-inset-left,12px));background:linear-gradient(160deg,#050a16f7,#161125f8);color:#f2dfb9;font-family:var(--readable-fantasy);overscroll-behavior:contain}
+.terms-gate[hidden]{display:none}
+html.terms-pending{overflow:hidden}
+html.terms-pending body>header,html.terms-pending body>main,html.terms-pending body>dialog{pointer-events:none;visibility:hidden}
+.terms-scroll{width:min(100%,670px);max-height:calc(100dvh - 24px);overflow-y:auto;overscroll-behavior:contain;background:linear-gradient(155deg,#111a30,#21152e);border:1px solid #bea061;border-radius:18px;padding:clamp(15px,4vw,26px);box-shadow:0 18px 55px #000d}
+.terms-scroll h2{color:#fae1a5;font-size:clamp(24px,6vw,32px);margin:4px 0 10px}
+.terms-scroll h3{font-size:21px;color:#f5d995;margin:14px 0 7px}
+.terms-scroll p{font-size:16px;line-height:1.55;margin:9px 0}
+.terms-scroll>label:not(.terms-confirm){display:block;margin:12px 0 6px}
+.terms-scroll select{width:100%;max-width:100%;min-height:48px;background:#0d1529;border:1px solid #af976c}
+.terms-prose{max-height:min(42dvh,350px);overflow:auto;overscroll-behavior:contain;padding:10px 12px;background:#0c1427aa;border:1px solid #5a5973;border-radius:10px}
+.terms-prose a{color:#ffe3ac}
+.terms-confirm{display:flex;align-items:flex-start;gap:10px;margin:13px 0 4px;font-size:16px;line-height:1.45}
+.terms-confirm input{margin:4px 0 0;flex:none}
+.terms-actions{display:flex;flex-direction:column;gap:9px;margin-top:8px}
+body .terms-accept,body .terms-reject{width:100%;min-height:50px;font-weight:600;font-family:var(--readable-fantasy)!important;font-size:18px;border-radius:9px;color:white;-webkit-text-fill-color:white;background-image:none}
+body .terms-accept{background:linear-gradient(#148a62,#086245);border:1px solid #7bd9af}
+body .terms-reject{background:linear-gradient(#a82c41,#7a182e);border:1px solid #e8a2ad}
+body .terms-accept:disabled{opacity:.45}
+#termsStatus{min-height:1.5em;font-size:14px;color:#f4d394}
+@media(max-height:610px){.terms-prose{max-height:28dvh}.terms-scroll{max-height:95dvh}}
+
+/* Optional cosmetic roll animation; dice randomness remains unchanged. */
+@keyframes oathDiceTumble{0%{transform:translateY(-10px) rotate(-22deg) scale(.85);opacity:.7}35%{transform:translateY(7px) rotate(17deg) scale(1.05)}70%{transform:translateY(-4px) rotate(-9deg)}100%{transform:translateY(0) rotate(0) scale(1);opacity:1}}
+@keyframes oathDiceResult{0%{opacity:.45;transform:scale(.86)}70%{transform:scale(1.09)}100%{opacity:1;transform:scale(1)}}
+.dice-page.roll-animated .die-tile.selected .die-art{animation:oathDiceTumble .55s ease-out both}
+.dice-page.roll-animated .dice-result strong{animation:oathDiceResult .55s ease-out both}
+@media(prefers-reduced-motion:reduce){.dice-page.roll-animated .die-tile.selected .die-art,.dice-page.roll-animated .dice-result strong{animation:none!important}}
+
+/* Compact DM quick-look dashboard. */
+.dm-dashboard-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr));gap:12px}
+.dm-dashboard-grid .card{min-width:0}
+.dm-dashboard-list{display:grid;gap:9px}
+.dm-dashboard-list article{padding:10px;border:1px solid #7c7192;border-radius:10px;background:#0e172ab0;overflow-wrap:anywhere}
+.dm-dashboard-list strong{color:#f8daa2}
+.dm-dash-metrics{display:flex;flex-wrap:wrap;gap:8px}
+.dm-dash-metrics span{border:1px solid #7b6b86;padding:6px 9px;border-radius:9px}
+.dm-dashboard-grid .card h3{margin-top:0}
