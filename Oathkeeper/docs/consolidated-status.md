@@ -15,7 +15,7 @@ Updated November 10, 2026. This file brings the app requirements and progress fr
 
 | Requested work | Combined source status | Validation / remaining dependency |
 |---|---|---|
-| Arcane Chronicle logo, Moonlit Citadel background, metallic gold/amethyst theme and Chronicle fonts | Preserved from existing source | New phone-size visual review still pending |
+| Arcane Chronicle logo, Moonlit Citadel background, metallic gold/amethyst theme and Chronicle fonts | Preserved from existing source | Rendered screen checks passed at 320, 393 and 430px; native phone review remains pending |
 | Profile → Account; Community → Groups / Posts | Preserved; no duplicate child entries in the dropdown | Existing community tests pass |
 | Edit Journal followed by Edit Equipment; Messages; Friends; Settings; red Login/Logout at bottom | Preserved | Present in combined menu |
 | Journal and equipment editing through menu dialogs | Preserved | Existing character data retained |
@@ -34,7 +34,7 @@ Updated November 10, 2026. This file brings the app requirements and progress fr
 | DM tab placement | Implemented, configurable | Dropdown is the default recommendation; DM → Session → DM location enables a main tab after Dice |
 | Preserve profile, equipment, journal and existing custom powers | Preserved | Full-app tests verify new features do not overwrite character data; no inventory quantity was invented |
 | Merge all sessions' app work into one source and record | Published on isolated `consolidated-work` branch in PR #7 | This ledger is the single resume point; older PRs stay open until the combined changes are approved/published |
-| New combined APK | Build workflow and Android source prepared as version `1.3-consolidated` / code 4 | Build 27 is running: https://github.com/hwemp/Oathkeeper-App/actions/runs/42872422408; no local Android SDK |
+| New combined APK | Build workflow and Android source prepared as version `1.3-consolidated` / code 4 | Build 27 succeeded; signature/package verified. APK: https://github.com/hwemp/Oathkeeper-App/releases/download/android-test-27-1/Oathkeeper-Android-Test.apk |
 | Execute APK on Android | Not verified | No physical Android device or emulator is attached |
 | Store publication | Not completed | Release signing, store account/forms/assets, privacy/support URLs, live service setup and device testing remain publisher requirements |
 
@@ -60,7 +60,15 @@ Updated November 10, 2026. This file brings the app requirements and progress fr
 
 1. Upload permission received and publication completed. Keep prior chat tasks and checkouts intact; do not overwrite ongoing design, signup/age verification, Store or other follow-up work. ChatGPT threads cannot be merged or messaged directly from this environment. This record is the shared handoff.
 2. PR #7 is open; preserve existing PRs #5 and #6 and all other work branches.
-3. Review Android build 27 and rendered preview https://github.com/hwemp/Oathkeeper-App/actions/runs/42872422560. Provide the exact resulting APK link; do not substitute older builds.
+3. Android build 27 succeeded: https://github.com/hwemp/Oathkeeper-App/actions/runs/42872422408. Corrected rendered preview succeeded: https://github.com/hwemp/Oathkeeper-App/actions/runs/42872756290. APK release: https://github.com/hwemp/Oathkeeper-App/releases/tag/android-test-27-1.
 4. Review previews and install/run the new APK on Android, preserving a character backup first. Merge only within the user's approved scope.
 5. To activate optional live repair, use `repair-service/README.md` and configure HTTPS hosting plus server-side credentials. To activate community, use `in-app-community.md` and the existing `hwemp/oathkeeper` backend. No new spending is authorized.
 6. Keep this record current with the final commit, workflow, release and verified device results. Never mark a configured interface as a live service without verifying the connection.
+
+## Approved publication outcome
+
+- Published isolated branch and PR #7; no merge, force push, task cancellation or edits to other sessions/checkouts.
+- APK build 27 passed code checks, Android compilation, signature/package verification and release publication; APK size 5,869,608 bytes. Its source is commit `36745a204e27209de4297a0130dce70f9d2eb22d`.
+- Follow-up commits only update this record and fix the preview script to select Dice from main navigation. App payload is unchanged.
+- Corrected rendered UI checks passed: font/safe areas, dice, statistics, Support, DM sections, DM placement and overflow at phone sizes. Screenshots are in the `actual-app-preview` artifact of run `42872756290`. Screenshots have been generated; no physical-device execution is claimed.
+- User requested changes be brought to the previous chat without disturbing its task. Direct cross-thread messaging is unavailable; use this shared record and PR #7 as the handoff.
