@@ -17,7 +17,7 @@ test('catalog contains exactly the ten selected skins in display order',()=>{
 test('visual catalog shows ten tappable image cards with no option-number badges or selection circles', async()=>{
  const html=storePage();
  assert.equal((html.match(/data-store-dice=/g)||[]).length,10);
- assert.equal((html.match(/class="store-dice-tile/g)||[]).length,10);
+ assert.equal((html.match(/<button type="button" class="store-dice-tile/g)||[]).length,10);
  assert.equal((html.match(/aria-pressed="true"/g)||[]).length,1);
  assert.doesNotMatch(html,/data-dice-product=|type="radio"|type="checkbox"|selection-badge/);
  assert.match(html,/Dice Collection/);
