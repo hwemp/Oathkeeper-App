@@ -95,7 +95,7 @@ const assert=require('node:assert/strict');
    await workspace.goto('http://127.0.0.1:5173');
    await workspace.evaluate(()=>document.fonts.ready);
    const open=async name=>{await workspace.locator('#appMenu summary').click();await workspace.locator('#appMenu [data-tab="'+name+'"]').click()};
-   await open('Dice');await workspace.getByRole('button',{name:'Roll dice',exact:true}).click();
+   await workspace.locator('#nav [data-tab="Dice"]').click();await workspace.getByRole('button',{name:'Roll dice',exact:true}).click();
    await workspace.locator('.roll-statistics').scrollIntoViewIfNeeded();
    await workspace.screenshot({path:`preview-output/statistics-${width}.png`});
    await open('Support');await workspace.getByRole('heading',{name:'Contact support',exact:true}).waitFor();
