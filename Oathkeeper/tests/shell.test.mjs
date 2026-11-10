@@ -101,13 +101,37 @@ test('store category switching and tile taps immediately update the correct prev
   assert.equal(s.q('.store-background-preview-image').getAttribute('src'),'/art/store-backgrounds/mystic-lake.webp');
   assert.equal(s.saved().storePreviewBackground,'mystic-lake');
   s.click('[data-store-category="icons"]');
-  assert.equal(s.q('.store-icon-preview-image').getAttribute('src'),'/art/arcane-chronicle.webp');
-  s.click('[data-store-icon="arcane-chronicle"]');
-  assert.equal(s.saved().storePreviewIcon,'arcane-chronicle');
+  assert.equal(s.q('.store-icon-grid').querySelectorAll('[data-store-icon]').length,10);
+  assert.equal(s.q('.store-icon-preview-image').getAttribute('src'),'/art/store-icons/icon-01.webp');
+  s.click('[data-store-icon="icon-14"]');
+  assert.equal(s.q('.store-icon-preview-image').getAttribute('src'),'/art/store-icons/icon-14.webp');
+  assert.equal(s.saved().storePreviewIcon,'icon-14');
   assert.equal(s.q('[data-store-preview]'),null);
   assert.match(s.q('#view').textContent,/FREE/);
   assert.equal(s.q('.store-purchase-disabled'),null);
+  assert.equal(s.q('[data-store-apply-icon="icon-14"]').disabled,true);
+  assert.equal(s.q('[data-store-restore-icon="default"]').disabled,true);
   s.click('[data-store-category="dice"]');
   assert.equal(s.q('.store-preview-image').getAttribute('data-store-atlas-index'),'1');
  }finally{await s.close()}
+});
+
+test('icon selection persists across store visits without charging the user',async()=>{
+ let sh=await shell();let saved;
+ try{
+  sh.click('[data-tab="Store"]');
+  sh.click('[data-store-category="icons"]');
+  sh.click('[data-store-icon="icon-07"]');
+  assert.equal(sh.saved().storePreviewIcon,'icon-07');
+  assert.equal(sh.q('.store-icon-tile.selected').dataset.storeIcon,'icon-07');
+  assert.match(sh.q('#view').textContent,/All ten alternate app icons/);
+  saved=sh.saved();
+ }finally{await sh.close()}
+ sh=await shell(saved);
+ try{
+  sh.click('[data-tab="Store"]');
+  sh.click('[data-store-category="icons"]');
+  assert.equal(sh.q('.store-icon-tile.selected').dataset.storeIcon,'icon-07');
+  assert.equal(sh.q('.store-icon-preview-image').getAttribute('src'),'/art/store-icons/icon-07.webp');
+ }finally{await sh.close()}
 });

@@ -315,3 +315,13 @@ body .terms-accept:disabled{opacity:.45}
 min-width:110px;padding:8px 16px;border:1px solid var(--store-selected-outline);
 border-radius:8px;background:linear-gradient(#395842,#173026);color:#f9e8b9;
 font-weight:700;letter-spacing:.09em}
+
+/* Free launcher icons — explicit Apply and Restore actions. */
+.store-icon-actions{display:flex;flex-direction:column;align-items:stretch;gap:10px}
+.store-icon-action-buttons{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.store-icon-action-buttons button{min-height:44px;flex:1 1 180px;font:inherit;font-weight:650;
+ border:1px solid var(--store-selected-outline);border-radius:9px;padding:8px 13px}
+.store-apply-button{background:linear-gradient(160deg,#80611b,#3e2d16);color:#fff4d7}
+.store-restore-button{background:linear-gradient(160deg,#293249,#151b31);color:#f9ddaa}
+.store-icon-action-buttons button:disabled{opacity:.58;cursor:not-allowed}
+.store-icon-action-buttons button:focus-visible{outline:3px solid #fff4d0;outline-offset:2px}

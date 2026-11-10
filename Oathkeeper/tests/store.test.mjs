@@ -72,29 +72,32 @@ test('background catalog has ten distinct bundled images with one-tap previews',
   }
 });
 
-test('icon category automatically previews the existing icon without inventing premium variants',async()=>{
-  assert.equal(APP_ICON_STORE_PREVIEW_ONLY,true);
+test('all ten free icons have distinct previews and native resource IDs',async()=>{
+  assert.equal(APP_ICON_STORE_PREVIEW_ONLY,false);
   assert.equal(APP_ICON_STORE_PURCHASES_ENABLED,false);
   assert.equal(APP_ICON_STORE_FREE,true);
-  assert.deepEqual(APPROVED_FREE_ICON_CONCEPTS.map(x=>x.selection),[1,2,4,5,6,7,8,11,12,14]);
-  assert(APPROVED_FREE_ICON_CONCEPTS.every(x=>x.price===0&&!x.assetReady));
   assert.equal(STORE_PRICING.icons.mode,'free');
-  assert.equal(SELECTED_APP_ICONS.length,1);
+  assert.deepEqual(APPROVED_FREE_ICON_CONCEPTS.map(x=>x.selection),[1,2,4,5,6,7,8,11,12,14]);
+  assert.equal(SELECTED_APP_ICONS.length,10);
+  assert.equal(new Set(SELECTED_APP_ICONS.map(x=>x.imagePath)).size,10);
+  assert.equal(new Set(SELECTED_APP_ICONS.map(x=>x.iosIconName)).size,10);
   for(const item of SELECTED_APP_ICONS){
     assert.equal(item.price,0);
-    assert.equal(item.proposedProductId,null);
-    assert.equal(item.status,'preview_only');
-    const image=await readFile(new URL('../web/public'+item.imagePath,import.meta.url));
-    assert(image.length>1000);
-    assert.equal(image.toString('ascii',0,4),'RIFF');
+    assert.equal(item.status,'free');
+    assert.equal(item.assetReady,true);
+    const file=await readFile(new URL('../web/public'+item.imagePath,import.meta.url));
+    assert(file.length>5000);
+    assert.equal(file.toString('ascii',0,4),'RIFF');
+    assert.equal(file.toString('ascii',8,12),'WEBP');
     const html=storePage('elvenleaf',{category:'icons',iconSlug:item.slug});
     assertOneTapSelection(html,'icons');
-    assert.match(html,/class="store-icon-preview-pane" aria-live="polite"/);
+    assert.equal((html.match(/data-store-icon=/g)||[]).length,10);
     assert(html.includes('<img class="store-icon-preview-image" src="'+item.imagePath+'"'));
     assert(html.includes('data-store-icon="'+item.slug+'"'));
+    assert(html.includes('data-store-apply-icon="'+item.slug+'"'));
+    assert.match(html,/Restore Original Icon/);
   }
 });
-
 test('all categories auto-preview the initial selection without a separate preview button',()=>{
   const dice=storePage();
   const backgrounds=storePage('elvenleaf',{category:'backgrounds'});
@@ -136,8 +139,10 @@ test('free icon pricing stays separate from paid dice and backgrounds',()=>{
   assert.equal(STORE_PRICING[c].priceConfigured,true);
  }
  const icons=storePage('elvenleaf',{category:'icons'});
- assert.match(icons,/App icons are FREE/);
+ assert.match(icons,/alternate app icons are <strong>FREE/);
  assert.doesNotMatch(icons,/store-purchase-disabled/);
+ assert.match(icons,/data-store-apply-icon=/);
+ assert.match(icons,/data-store-restore-icon=/);
  assert.match(storePage(),/Price: <strong>\$1\.00<\/strong> USD/);
  assert.match(storePage('elvenleaf',{category:'backgrounds'}),/Price: <strong>\$0\.50<\/strong> USD/);
  assert.match(storePage(),/Purchase<\/button>/);

@@ -1,20 +1,27 @@
 import {Capacitor, registerPlugin} from '@capacitor/core';
+import {SELECTED_APP_ICONS} from './store-icon-catalog.js';
 
-// This bridge is iOS-only. Returning the original-icon state in web/Android
-// keeps the store usable without pretending a launcher icon was changed.
 const nativeIcon = registerPlugin('OathkeeperIcon');
-const isIOS = () => Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'ios';
+const installed = () => Capacitor.isNativePlatform() &&
+  ['ios','android'].includes(Capacitor.getPlatform());
 
-export async function getIOSIconState() {
-  if (!isIOS()) return {supported:false,currentIcon:'default',isOriginal:true};
+export async function getIconState() {
+  if(!installed()) return {supported:false,currentIcon:'default',isOriginal:true};
   return nativeIcon.getState();
 }
 
-export async function restoreOriginalIOSIcon() {
-  if (!isIOS()) throw new Error('Changing app icons is only available inside the installed iOS app.');
+export async function applyFreeIcon(slug) {
+  const item=SELECTED_APP_ICONS.find(icon=>icon.slug===slug);
+  if(!item) throw new Error('This app icon is not an approved free design.');
+  if(!installed()) throw new Error('Install Oathkeeper on Android or iOS to change its launcher icon.');
+  return nativeIcon.setIcon({iconName:item.iosIconName});
+}
+
+export async function restoreOriginalIcon() {
+  if(!installed()) throw new Error('Install Oathkeeper to restore its launcher icon.');
   return nativeIcon.restoreDefault();
 }
 
-// All approved alternate icons are free and require no purchase receipts.
-// Only compiled native icon names may be applied. The apply method is not yet
-// exposed until the approved individual icon assets are bundled.
+// Backward-compatible names for the earlier iOS-only bridge.
+export const getIOSIconState = getIconState;
+export const restoreOriginalIOSIcon = restoreOriginalIcon;

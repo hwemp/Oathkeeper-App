@@ -1,103 +1,17 @@
-// Ten selected alternate app icons are FREE, with no purchase requirement.
-// The individual native icon assets are not yet packaged. Do not show repeats.
-export const APP_ICON_STORE_PREVIEW_ONLY = true;
+// Free alternate launcher icons selected from the 20-icon concept board.
+// Each icon has its own preview file and a native Apple/Android icon resource.
+// The original app launcher icon is never overwritten on disk.
+export const APP_ICON_STORE_PREVIEW_ONLY = false;
 export const APP_ICON_STORE_PURCHASES_ENABLED = false;
 export const APP_ICON_STORE_FREE = true;
-export const APPROVED_FREE_ICON_CONCEPTS = Object.freeze([
-  {
-    "selection": 1,
-    "slug": "icon-01",
-    "name": "Moonlit Citadel",
-    "iosIconName": "AppIcon-01",
-    "price": 0,
-    "assetReady": false,
-    "status": "approved_free_awaiting_icon_asset"
-  },
-  {
-    "selection": 2,
-    "slug": "icon-02",
-    "name": "Ember Dragon",
-    "iosIconName": "AppIcon-02",
-    "price": 0,
-    "assetReady": false,
-    "status": "approved_free_awaiting_icon_asset"
-  },
-  {
-    "selection": 4,
-    "slug": "icon-04",
-    "name": "Lionheart Shield",
-    "iosIconName": "AppIcon-04",
-    "price": 0,
-    "assetReady": false,
-    "status": "approved_free_awaiting_icon_asset"
-  },
-  {
-    "selection": 5,
-    "slug": "icon-05",
-    "name": "Shadow Mage",
-    "iosIconName": "AppIcon-05",
-    "price": 0,
-    "assetReady": false,
-    "status": "approved_free_awaiting_icon_asset"
-  },
-  {
-    "selection": 6,
-    "slug": "icon-06",
-    "name": "Arcane Chalice",
-    "iosIconName": "AppIcon-06",
-    "price": 0,
-    "assetReady": false,
-    "status": "approved_free_awaiting_icon_asset"
-  },
-  {
-    "selection": 7,
-    "slug": "icon-07",
-    "name": "Astral D20",
-    "iosIconName": "AppIcon-07",
-    "price": 0,
-    "assetReady": false,
-    "status": "approved_free_awaiting_icon_asset"
-  },
-  {
-    "selection": 8,
-    "slug": "icon-08",
-    "name": "Twin Battleaxes",
-    "iosIconName": "AppIcon-08",
-    "price": 0,
-    "assetReady": false,
-    "status": "approved_free_awaiting_icon_asset"
-  },
-  {
-    "selection": 11,
-    "slug": "icon-11",
-    "name": "Crystal Spires",
-    "iosIconName": "AppIcon-11",
-    "price": 0,
-    "assetReady": false,
-    "status": "approved_free_awaiting_icon_asset"
-  },
-  {
-    "selection": 12,
-    "slug": "icon-12",
-    "name": "Steel Sentinel",
-    "iosIconName": "AppIcon-12",
-    "price": 0,
-    "assetReady": false,
-    "status": "approved_free_awaiting_icon_asset"
-  },
-  {
-    "selection": 14,
-    "slug": "icon-14",
-    "name": "Sapphire Worldtree",
-    "iosIconName": "AppIcon-14",
-    "price": 0,
-    "assetReady": false,
-    "status": "approved_free_awaiting_icon_asset"
-  }
-].map(item=>Object.freeze(item)));
-export const SELECTED_APP_ICONS = Object.freeze([Object.freeze({
- slug:'arcane-chronicle',name:'Arcane Chronicle',
- description:'Existing Oathkeeper artwork. The installed launcher icon remains unchanged.',
- imagePath:'/art/arcane-chronicle.webp',proposedProductId:null,
- price:0,paymentType:'free',status:'preview_only',isDefaultArt:true
-})]);
+const items = [[1,"Moonlit Citadel","moonlit-citadel"],[2,"Ember Dragon","ember-dragon"],[4,"Lionheart Shield","lionheart-shield"],[5,"Shadow Mage","shadow-mage"],[6,"Arcane Chalice","arcane-chalice"],[7,"Astral D20","astral-d20"],[8,"Twin Battleaxes","twin-battleaxes"],[11,"Crystal Spires","crystal-spires"],[12,"Steel Sentinel","steel-sentinel"],[14,"Sapphire Worldtree","sapphire-worldtree"]];
+export const APPROVED_FREE_ICON_CONCEPTS = Object.freeze(items.map(([selection,name,slug])=>
+ Object.freeze({
+  selection,slug:'icon-'+String(selection).padStart(2,'0'),name,
+  iosIconName:'AppIcon-'+String(selection).padStart(2,'0'),
+  imagePath:'/art/store-icons/icon-'+String(selection).padStart(2,'0')+'.webp',
+  description:name+' fantasy launcher icon. Free to use.',
+  price:0,assetReady:true,status:'free',paymentType:'free'
+ })
+));
+export const SELECTED_APP_ICONS = APPROVED_FREE_ICON_CONCEPTS;

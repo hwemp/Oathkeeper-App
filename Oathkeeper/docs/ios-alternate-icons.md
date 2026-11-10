@@ -1,46 +1,51 @@
-# iOS alternate app icons — native bridge prepared (not yet activated)
+# Oathkeeper's ten FREE launcher icons
 
-The iOS Capacitor app now registers `OathkeeperIconPlugin` using
-`OathkeeperViewController`. The Swift bridge reads the active iOS app icon
-and can restore the *original* app icon with Apple's
-`UIApplication.shared.setAlternateIconName(nil)`.
+## Selected options
+1 Moonlit Citadel; 2 Ember Dragon; 4 Lionheart Shield; 5 Shadow Mage;
+6 Arcane Chalice; 7 Astral D20; 8 Twin Battleaxes; 11 Crystal Spires;
+12 Steel Sentinel; 14 Sapphire Worldtree.
 
-**Do not present this as a finished alternate-icon feature.** The
-preview/gallery, distinct icon assets and native selection are not connected
-to native icon changes. The user approved icon concepts numbered
-**1, 2, 4, 5, 6, 7, 8, 11, 12, 14**. All ten are **FREE**; no individual iOS-ready images for
-those ten selections are in the repository.
+The existing Android `ic_launcher` and iOS primary `AppIcon` are never
+replaced in source. Fresh installations still use the original icon.
+Users may choose one of ten free icon designs in Store > App Icons,
+tap **Apply Icon**, and tap **Restore Original Icon** at any time.
 
-## Ready
+The alternative icon graphics are newly composed from Oathkeeper's
+existing, separately bundled fantasy scenery and corresponding motifs.
+They follow the approved selection themes, but are not pixel-for-pixel
+copies of the original numbered mockup montage.
 
-- Primary `AppIcon` remains unchanged and is still the default on install.
-- Native bridge is registered in the storyboard's view controller.
-- `getState` reports whether iOS supports alternate icons and which icon is
-  active.
-- `restoreDefault` safely restores `AppIcon` if an alternate was active.
-- iOS-only JavaScript wrapper handles unsupported platforms gracefully.
-- These alternate icons are free; changing the launcher icon is not yet exposed until their individual native assets are bundled.
+## Native integration
+- Android: one default LAUNCHER `activity-alias` and ten disabled alternates;
+  the allowlisted Capacitor plugin enables the requested alias before disabling
+  the others, with `DONT_KILL_APP`.
+- iOS: ten `AppIcon-XX.appiconset` assets and
+  `ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES`, registered in both
+  Debug and Release. The plugin calls Apple's supported
+  `setAlternateIconName` API, including `nil` to restore original.
+- Web preview: ten distinct `/art/store-icons/icon-XX.webp` assets,
+  immediate previews and a gold theme selection outline. Native Apply is
+  unavailable in a browser and never falsely claims to change the icon.
+- No purchase or unlock is required for icons; dice remain $1.00 each,
+  backgrounds $0.50 each, both with checkout disabled.
 
-## To finish with the ten chosen icons
+## Generating assets
+Run `python -m pip install Pillow` then
+`python Oathkeeper/scripts/generate-free-icons.py` from repository root.
 
-1. Export each approved concept as its *own* high-quality native icon artwork;
-   the numbered mockup montage must **not** be used as an iOS icon file.
-2. Create Xcode alternate app icon sets in
-   `ios/App/App/Assets.xcassets`, keeping `AppIcon` as the primary icon.
-   Suggested matching names: `AppIcon-01, AppIcon-02, AppIcon-04, AppIcon-05, AppIcon-06, AppIcon-07, AppIcon-08, AppIcon-11, AppIcon-12, AppIcon-14`.
-   Include the appearance variants required by the target iOS SDK.
-3. In Xcode App target's Asset Catalog Compiler settings, set
-   `ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES` to the ten actual
-   icon-set names. Xcode then generates `CFBundleAlternateIcons`.
-   Do not hand-edit this key in Info.plist.
-4. Register a native icon setter restricted to ten compiled icon-set names. No
-   receipt, purchase, or paid entitlement should be required for these free icons.
-5. Add `Apply Free Icon` and `Restore Original Icon` controls only when
-   the artwork and native icon switch are ready.
-6. Test on a real iPhone/iPad through Xcode and TestFlight, including icon
-   application, cancellation, restoration, relaunch and app updates.
-7. Keep background/dice payment checkout separate from free icon switching.
+The script reads existing background artwork, writes each preview WebP,
+an Android launcher PNG in `mipmap-nodpi`, and an iOS 1024-pixel app-icon PNG.
+The asset workflow also automatically commits generated outputs to main,
+and the Android build workflow generates them before checks/compilation.
 
-Official guidance:
+## Verification
+- JavaScript and integrated store tests validate selection and browser safety.
+- Android manifest and bridge tests check all aliases and allowlists.
+- iOS tests check Xcode configuration, icon-set metadata and native methods.
+- The GitHub APK build compiles Android and verifies its APK signature.
+- iOS still requires a macOS/Xcode build and physical iPhone/iPad or
+  TestFlight verification. Android launcher cache and installed-device
+  behavior likewise require device testing across launchers.
+
+For Apple's configuration guidance:
 https://developer.apple.com/documentation/xcode/configuring-your-app-to-use-alternate-app-icons
-https://developer.apple.com/documentation/uikit/uiapplication/setalternateiconname(_:completionhandler:)

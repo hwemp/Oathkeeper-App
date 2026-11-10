@@ -37,7 +37,7 @@ function storeShell(category, body, note) {
 
 export function storePage(selectedSlug = 'elvenleaf', options = {}) {
   if (options.category === 'backgrounds') return backgroundStorePage(options.backgroundSlug);
-  if (options.category === 'icons') return iconStorePage(options.iconSlug);
+  if (options.category === 'icons') return iconStorePage(options.iconSlug,options.iconStatus);
   const active = SELECTED_DICE.find(item => item.slug === selectedSlug) || SELECTED_DICE[2] || SELECTED_DICE[0];
   const tiles = SELECTED_DICE.map(item => {
     const selected = item.slug === active.slug;
@@ -83,27 +83,43 @@ function backgroundStorePage(selectedSlug = 'moonlit-citadel') {
     'Backgrounds are $0.50 each (USD). Checkout is not yet connected; previewing is free.');
 }
 
-function iconStorePage(selectedSlug = 'arcane-chronicle') {
+function iconStorePage(selectedSlug = 'icon-01', iconStatus = {supported:false,currentIcon:'default'}) {
   const active = SELECTED_APP_ICONS.find(item => item.slug === selectedSlug) || SELECTED_APP_ICONS[0];
+  const supported=iconStatus?.supported===true;
+  const current=iconStatus?.currentIcon || 'default';
+  const applied = current === active.iosIconName;
   const tiles = SELECTED_APP_ICONS.map(item => {
     const selected = item.slug === active.slug;
     return '<button type="button" class="store-icon-tile' + (selected ? ' selected' : '') + '"'
       + ' data-store-icon="' + esc(item.slug) + '" aria-pressed="' + selected + '"'
-      + ' aria-label="Preview ' + esc(item.name) + ' app icon">'
+      + ' aria-label="Preview free ' + esc(item.name) + ' app icon">'
       + '<img class="store-icon-tile-art" src="' + esc(item.imagePath) + '"'
       + ' alt="" loading="lazy" decoding="async">'
-      + '<span class="store-background-name">' + esc(item.name) + '</span></button>';
+      + '<span class="store-background-name">' + esc(item.name)
+      + (item.iosIconName === current ? ' · Applied' : '') + '</span></button>';
   }).join('');
   const preview = '<section class="store-icon-preview-pane" aria-live="polite" aria-label="Selected app icon preview">'
     + '<div class="store-icon-preview-media"><img class="store-icon-preview-image"'
-    + ' src="' + esc(active.imagePath) + '" alt="' + esc(active.name) + ' app icon concept"'
+    + ' src="' + esc(active.imagePath) + '" alt="' + esc(active.name) + ' free app icon"'
     + ' loading="eager" decoding="async"></div>'
     + '<div class="store-background-preview-details"><h3>' + esc(active.name) + '</h3>'
     + '<p>' + esc(active.description) + '</p>'
-    + '<p>Preview only. This does not change your phone’s installed app icon.</p></div></section>';
+    + '<p>' + (applied ? 'This icon is currently applied.' : 'Apply this free design as your home-screen app icon.') + '</p></div></section>';
+  const actions = '<div class="store-selection-footer store-icon-actions">'
+    + '<p>All ten alternate app icons are <strong>FREE</strong>, and the original stays available. '
+    + (supported ? 'Choose Apply Icon to update your home screen.' :
+        'Install Oathkeeper on Android or iOS to apply a launcher icon.') + '</p>'
+    + '<span class="store-free-label" aria-label="Free item">FREE</span>'
+    + '<div class="store-icon-action-buttons">'
+    + '<button type="button" data-store-apply-icon="' + esc(active.slug) + '"'
+    + (!supported || applied ? ' disabled aria-disabled="true"' : '')
+    + ' class="store-apply-button">' + (applied ? 'Icon Applied' : 'Apply Icon · FREE') + '</button>'
+    + '<button type="button" data-store-restore-icon="default"'
+    + (!supported || current === 'default' ? ' disabled aria-disabled="true"' : '')
+    + ' class="store-restore-button">Restore Original Icon</button></div></div>';
   return storeShell('icons',
-    '<h2 class="store-collection-title">App Icons <small>(' + SELECTED_APP_ICONS.length + ')</small></h2>'
-    + '<div class="store-icon-grid" role="group" aria-label="Select an app icon to preview">' + tiles + '</div>'
-    + preview + selectionFooter('app icon', active, 'icons'),
-    'All ' + APPROVED_FREE_ICON_CONCEPTS.length + ' approved alternative icons are FREE: ' + APPROVED_FREE_ICON_CONCEPTS.map(item=>item.selection).join(', ') + '. Individual artwork must be bundled before these options can be previewed or applied. The originally installed icon stays the default.');
+    '<h2 class="store-collection-title">Free App Icons <small>(' + SELECTED_APP_ICONS.length + ')</small></h2>'
+    + '<div class="store-icon-grid" role="group" aria-label="Select a free app icon to preview">' + tiles + '</div>'
+    + preview + actions,
+    'All ten approved alternative icons are free. The existing Oathkeeper launcher icon remains the default until you choose another.');
 }
