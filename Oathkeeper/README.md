@@ -42,3 +42,17 @@ iOS: a Mac with Xcode 26 or later and the iOS 26 SDK. Run `npm run ios`, resolve
 `web/`: editable app source. `dist/`: production web build. `android/`: Android Studio project. `ios/App/App.xcodeproj`: Xcode project. `assets/`: source app icon. `store/`: listing draft, release checklist and store graphics. `scripts/verify.mjs`: automated project integrity checks.
 
 App data is stored locally and does not synchronize with the web version. To move your existing web character: Export backup in the web app and import that JSON file in the native app. Keep separate backups before uninstalling or clearing data.
+
+
+Community test update (1.1)
+The new Community tab opens a configured HTTPS Oathkeeper community in a secure
+browser window, with Back/Close returning to the offline character manager.
+No community server is deployed or preconfigured. Enter a trusted community
+origin in the tab, or set VITE_COMMUNITY_URL when building. This setting must
+never contain credentials. Real shared accounts, friends, messages, and uploads
+require the backend in https://github.com/hwemp/oathkeeper and durable storage.
+The APK does not run a shared backend on the phone. This update does not upload
+local characters automatically. Export a backup to attach it to a post.
+No services were purchased. Native network/file upload/download behavior must
+still be tested on a phone against a configured server. Browser sessions belong
+to the community site; Forget address clears only the chosen address, not login.
