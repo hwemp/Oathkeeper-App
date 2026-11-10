@@ -7,7 +7,7 @@ const assert=require('node:assert/strict');
  let browser;
  try{
   for(let i=0;i<40;i++){try{if((await fetch('http://127.0.0.1:5173')).ok)break}catch{}await new Promise(r=>setTimeout(r,250))}
-  browser=await chromium.launch({headless:true});
+  browser=await chromium.launch({headless:true,...(process.env.CHROMIUM_PATH?{executablePath:process.env.CHROMIUM_PATH}:{})});
   const page=await browser.newPage({viewport:{width:393,height:852},deviceScaleFactor:2});
   await page.addInitScript(()=>document.addEventListener('DOMContentLoaded',()=>{document.documentElement.style.setProperty('--safe-area-inset-top','24px');document.documentElement.style.setProperty('--safe-area-inset-bottom','24px')}));
   await page.goto('http://127.0.0.1:5173');
@@ -60,6 +60,26 @@ const assert=require('node:assert/strict');
   assert(!(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)),'Dice screen no page overflow');
   await page.locator('header > .notification-bell').click();
   await page.getByRole('heading',{name:'Notifications',exact:true}).waitFor();
+  // Test Dice as the very first destination, including narrow Android screens.
+  for(const width of [320,360,393,430,852]){
+   const mobile=await browser.newPage({viewport:{width,height:852},deviceScaleFactor:1});
+   await mobile.goto('http://127.0.0.1:5173');
+   await mobile.evaluate(()=>document.fonts.ready);
+   await mobile.getByRole('button',{name:'Dice',exact:true}).click();
+   await mobile.waitForFunction(()=>{const nav=document.querySelector('#nav').getBoundingClientRect(),dice=document.querySelector('#nav [data-tab=Dice]').getBoundingClientRect();return dice.left>=nav.left-1&&dice.right<=nav.right+1});
+   for(const mode of ['Official dice','Unofficial dice']){
+    await mobile.getByRole('button',{name:mode,exact:true}).click();
+    assert(!(await mobile.evaluate(()=>document.documentElement.scrollWidth>innerWidth)),`${mode} overflow at ${width}px`);
+    const clipped=await mobile.locator('.die-label').evaluateAll(nodes=>nodes.some(n=>n.scrollWidth>n.clientWidth+1));
+    assert(!clipped,`${mode} labels clipped at ${width}px`);
+    await mobile.getByRole('button',{name:'Roll dice',exact:true}).click();
+    await mobile.waitForFunction(()=>{const nav=document.querySelector('#nav').getBoundingClientRect(),dice=document.querySelector('#nav [data-tab=Dice]').getBoundingClientRect();return dice.right<=nav.right+1});
+    if(width===320||width===430)await mobile.screenshot({path:`preview-output/${mode.startsWith('Official')?'official':'unofficial'}-dice-${width}.png`,fullPage:true});
+   }
+   await mobile.getByRole('button',{name:'Overview',exact:true}).click();
+   await mobile.getByRole('heading',{name:'Ready for the next encounter'}).waitFor();
+   await mobile.close();
+  }
   console.log('PASS: font, safe areas, no overflow, tabs, dice selection, D3, D100, D50, quantity/modifier, mode reset, bell');
  }finally{if(browser)await browser.close();server.kill()}
 })().catch(e=>{console.error(e);process.exitCode=1});
