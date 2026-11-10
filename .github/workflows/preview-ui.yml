@@ -1,7 +1,7 @@
 name: Render approved UI preview
 on:
   push:
-    branches: [fix-approved-preview]
+    branches: [fix-approved-preview, support-dm-tools]
 permissions:
   contents: read
 jobs:

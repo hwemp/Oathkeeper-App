@@ -1,0 +1,21 @@
+name: Validate Oathkeeper changes
+on:
+  pull_request:
+    paths: ['Oathkeeper/**', '.github/workflows/validate.yml']
+permissions:
+  contents: read
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Oathkeeper
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: Oathkeeper/package-lock.json
+      - run: npm ci
+      - run: npm run check && npm run typecheck && npm test && npm run build

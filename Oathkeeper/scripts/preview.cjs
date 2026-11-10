@@ -58,6 +58,11 @@ const assert=require('node:assert/strict');
   await page.getByRole('button',{name:'Official dice',exact:true}).click();
   assert(await page.getByRole('button',{name:'D20',exact:true}).getAttribute('aria-pressed')==='true','Unsupported D50 resets when changing to official');
   assert(!(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)),'Dice screen no page overflow');
+  await page.getByRole('button',{name:'Roll dice',exact:true}).click();
+  const batches=await page.locator('.roll-statistics .metric').filter({hasText:'Batches'}).innerText();
+  assert.match(batches,/1/);
+  await page.locator('.roll-statistics').evaluate(n=>n.scrollIntoView({block:'start'}));
+  await page.screenshot({path:'preview-output/roll-statistics.png'});
   await page.locator('header > .notification-bell').click();
   await page.getByRole('heading',{name:'Notifications',exact:true}).waitFor();
   // Test Dice as the very first destination, including narrow Android screens.
@@ -88,6 +93,73 @@ const assert=require('node:assert/strict');
    await mobile.getByRole('heading',{name:'Ready for the next encounter'}).waitFor();
    await mobile.close();
   }
+  await page.locator('#appMenu summary').click();
+  await page.getByRole('button',{name:'DM',exact:true}).click();
+  await page.getByRole('heading',{name:'DM',exact:true}).waitFor();
+  await page.getByLabel('Campaign name',{exact:true}).fill('Test campaign');
+  await page.getByRole('button',{name:'Encounter',exact:true}).click();
+  await page.getByText('Add player, ally or monster',{exact:true}).click();
+  await page.locator('#dmAdd [name=name]').fill('Test hero');
+  await page.locator('#dmAdd [name=maxhp]').fill('20');
+  await page.locator('#dmAdd [name=initiative]').fill('15');
+  await page.getByRole('button',{name:'Add combatant',exact:true}).click();
+  await page.getByRole('button',{name:'Start initiative',exact:true}).click();
+  await page.getByLabel('Temporary HP',{exact:true}).fill('5');
+  await page.getByLabel('Temporary HP',{exact:true}).press('Tab');
+  await page.getByLabel('Final damage / healing',{exact:true}).fill('8');
+  await page.getByRole('button',{name:'Apply damage',exact:true}).click();
+  assert.equal(await page.getByLabel('Current HP',{exact:true}).inputValue(),'17');
+  await page.getByRole('button',{name:'Session',exact:true}).click();
+  await page.getByLabel('Place DM tools').selectOption('tab');
+  await page.waitForFunction(()=>{const n=document.querySelector('#nav').getBoundingClientRect(),d=document.querySelector('#nav [data-tab=DM]').getBoundingClientRect();return d.right<=n.right+1});
+  await page.evaluate(()=>window.scrollTo(0,0));
+  await page.screenshot({path:'preview-output/dm-session.png'});
+  await page.getByRole('button',{name:'Rules & Books',exact:true}).click();
+  await page.getByLabel('Search DM topics').fill('concentration');
+  assert.equal(await page.locator('#dmTopics details:visible').count(),1);
+  await page.reload();
+  await page.getByRole('button',{name:'DM',exact:true}).first().click();
+  await page.getByRole('button',{name:'Session',exact:true}).click();
+  assert.equal(await page.getByLabel('Campaign name',{exact:true}).inputValue(),'Test campaign');
+  await page.getByRole('button',{name:'Encounter',exact:true}).click();
+  assert.equal(await page.getByLabel('Current HP',{exact:true}).inputValue(),'17');
+  await page.locator('.combatant').evaluate(n=>n.scrollIntoView({block:'start'}));
+  await page.screenshot({path:'preview-output/dm-combatant.png'});
+  await page.getByRole('button',{name:'Dice',exact:true}).click();
+  assert.match(await page.locator('.roll-statistics .metric').filter({hasText:'Batches'}).innerText(),/1/);
+
+  await page.locator('#appMenu summary').click();
+  await page.getByRole('button',{name:'Support',exact:true}).click();
+  await page.getByRole('heading',{name:'Support',exact:true}).waitFor();
+  assert.equal(await page.getByRole('link',{name:'ecclesyus@gmail.com',exact:true}).getAttribute('href'),'mailto:ecclesyus@gmail.com');
+  await page.getByRole('button',{name:'Request AI diagnosis',exact:true}).click();
+  await page.getByText('The repair service is not connected. Email or copy this report for ChatGPT.',{exact:true}).waitFor();
+  await page.evaluate(()=>window.dispatchEvent(new ErrorEvent('error',{message:'Test diagnostic only'})));
+  assert.match(await page.locator('#supportDiagnostics').inputValue(),/Test diagnostic only/);
+  await page.evaluate(()=>window.scrollTo(0,0));
+  await page.screenshot({path:'preview-output/support.png'});
+  assert(!(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)),'Support screen fits phone');
+  let approvals=0,reports=0;
+  await page.route('https://repair.example/**',async route=>{
+   const req=route.request();
+   if(req.method()==='OPTIONS')return route.fulfill({status:204,headers:{'access-control-allow-origin':'*','access-control-allow-methods':'POST','access-control-allow-headers':'authorization,content-type'}});
+   if(req.url().endsWith('/reports')){reports++;assert.equal(req.headers().authorization,'Bearer client-browser-test');return route.fulfill({headers:{'access-control-allow-origin':'*'},json:{id:'test-id',digest:'test-digest',baseSha:'test-sha',proposal:{summary:'Test repair proposal',risk:'Test only',tests:'Run checks',files:[{path:'Oathkeeper/web/dice.js',content:'// test proposal only'}]}}})}
+   approvals++;assert.equal(req.headers().authorization,'Bearer owner-browser-test');return route.fulfill({headers:{'access-control-allow-origin':'*'},json:{pullRequestURL:'https://github.com/hwemp/Oathkeeper-App/pull/999'}})
+  });
+  await page.locator('#supportService').fill('https://repair.example');
+  await page.locator('#supportServiceToken').fill('client-browser-test');
+  await page.getByRole('button',{name:'Save service connection',exact:true}).click();
+  await page.getByRole('button',{name:'Request AI diagnosis',exact:true}).click();
+  await page.getByRole('heading',{name:'Proposed repair',exact:true}).waitFor();
+  assert.equal(reports,1);assert.equal(approvals,0);
+  await page.getByRole('button',{name:'Approve and create repair PR',exact:true}).click();
+  assert.equal(approvals,0,'No unchecked approval request');
+  await page.locator('#supportOwnerToken').fill('owner-browser-test');
+  await page.locator('#approveRepair').check();
+  await page.getByRole('button',{name:'Approve and create repair PR',exact:true}).click();
+  await page.getByText('Approved repair PR: https://github.com/hwemp/Oathkeeper-App/pull/999',{exact:true}).waitFor();
+  assert.equal(approvals,1);
+
   console.log('PASS: font, safe areas, no overflow, tabs, dice selection, D3, D100, D50, quantity/modifier, mode reset, bell');
  }finally{if(browser)await browser.close();server.kill()}
 })().catch(e=>{console.error(e);process.exitCode=1});

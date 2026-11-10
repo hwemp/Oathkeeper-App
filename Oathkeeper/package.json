@@ -1,6 +1,6 @@
 {
   "name": "oathkeeper-mobile",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -8,7 +8,7 @@
     "sync": "npm run build && cap sync",
     "android": "cap open android",
     "ios": "cap open ios",
-    "check": "node --check web/app.js && node --check web/native.js && node --check web/community.js",
+    "check": "node --check web/app.js && node --check web/native.js && node --check web/community.js && node --check web/dm-ui.js && node --check web/support.js && node --check support-server/server.mjs && node --check support-server/service.mjs && node --check support-server/providers.mjs",
     "typecheck": "tsc -p tsconfig.community.json",
     "test": "node --test tests/*.test.mjs"
   },
