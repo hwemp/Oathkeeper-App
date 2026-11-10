@@ -59,6 +59,10 @@ export function catalogAudit() {
   if (STORE_PRODUCTS.length!==20 || byId.size!==20 || byKindAndSlug.size!==20)
     throw new Error('The 20 unique purchase products are not configured correctly.');
   for (const item of STORE_PRODUCTS) {
+    // Google Play one-time product IDs must contain only lowercase
+    // ASCII letters, digits, underscores and periods, max 40 chars.
+    if(!/^[a-z0-9][a-z0-9._]{0,39}$/.test(item.id))
+      throw new Error('Invalid Google Play product ID: '+item.id);
     const expected=STORE_PRICING[item.kind];
     if (!expected || expected.mode!=='paid' || item.priceCents!==expected.priceCents ||
         item.currency!=='USD' || item.type!=='non_consumable')
