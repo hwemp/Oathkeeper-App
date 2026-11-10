@@ -309,3 +309,9 @@ body .terms-accept:disabled{opacity:.45}
   .store-icon-preview-pane{grid-template-columns:minmax(0,1fr)}
   .store-icon-tile{border-width:1px!important}
 }
+
+/* Alternate app icons are free, never offered as a paid store purchase. */
+.store-free-label{display:inline-flex;align-items:center;justify-content:center;min-height:44px;
+min-width:110px;padding:8px 16px;border:1px solid var(--store-selected-outline);
+border-radius:8px;background:linear-gradient(#395842,#173026);color:#f9e8b9;
+font-weight:700;letter-spacing:.09em}

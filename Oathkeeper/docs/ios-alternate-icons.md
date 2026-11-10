@@ -5,10 +5,10 @@ The iOS Capacitor app now registers `OathkeeperIconPlugin` using
 and can restore the *original* app icon with Apple's
 `UIApplication.shared.setAlternateIconName(nil)`.
 
-**Do not present this as a finished paid alternate-icon feature.** The
-preview/gallery, icon entitlement system and store checkout are not connected
+**Do not present this as a finished alternate-icon feature.** The
+preview/gallery, distinct icon assets and native selection are not connected
 to native icon changes. The user approved icon concepts numbered
-**1, 2, 4, 5, 6, 7, 8, 11, 12, 14**; no individual iOS-ready images for
+**1, 2, 4, 5, 6, 7, 8, 11, 12, 14**. All ten are **FREE**; no individual iOS-ready images for
 those ten selections are in the repository.
 
 ## Ready
@@ -19,7 +19,7 @@ those ten selections are in the repository.
   active.
 - `restoreDefault` safely restores `AppIcon` if an alternate was active.
 - iOS-only JavaScript wrapper handles unsupported platforms gracefully.
-- No purchases, unverified unlocks or arbitrary icon switching are enabled.
+- These alternate icons are free; changing the launcher icon is not yet exposed until their individual native assets are bundled.
 
 ## To finish with the ten chosen icons
 
@@ -33,14 +33,13 @@ those ten selections are in the repository.
    `ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES` to the ten actual
    icon-set names. Xcode then generates `CFBundleAlternateIcons`.
    Do not hand-edit this key in Info.plist.
-4. Integrate Apple In-App Purchase and verification of user-owned icons
-   (including restore purchases). Only allow an alternate icon to be applied
-   after that entitlement is verified by a trusted native/server flow.
-5. Add `Apply Icon` to the store only for owned icons; add `Restore
-   Original Icon` as a free option. User selection must be explicit, and
-   iOS displays the platform's change alert.
-6. Build and test on a real iPhone/iPad in Xcode and with TestFlight,
-   including install, restore, relaunch, failed purchases, and app updates.
+4. Register a native icon setter restricted to ten compiled icon-set names. No
+   receipt, purchase, or paid entitlement should be required for these free icons.
+5. Add `Apply Free Icon` and `Restore Original Icon` controls only when
+   the artwork and native icon switch are ready.
+6. Test on a real iPhone/iPad through Xcode and TestFlight, including icon
+   application, cancellation, restoration, relaunch and app updates.
+7. Keep background/dice payment checkout separate from free icon switching.
 
 Official guidance:
 https://developer.apple.com/documentation/xcode/configuring-your-app-to-use-alternate-app-icons

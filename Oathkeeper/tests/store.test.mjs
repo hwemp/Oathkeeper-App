@@ -3,15 +3,21 @@ import assert from 'node:assert/strict';
 import {readFile,stat} from 'node:fs/promises';
 import {SELECTED_DICE,DICE_STORE_PREVIEW_ONLY,DICE_STORE_PURCHASES_ENABLED} from '../web/store-dice-catalog.js';
 import {SELECTED_BACKGROUNDS,BACKGROUND_STORE_PREVIEW_ONLY,BACKGROUND_STORE_PURCHASES_ENABLED} from '../web/store-background-catalog.js';
-import {SELECTED_APP_ICONS,APP_ICON_STORE_PREVIEW_ONLY,APP_ICON_STORE_PURCHASES_ENABLED} from '../web/store-icon-catalog.js';
+import {SELECTED_APP_ICONS,APP_ICON_STORE_PREVIEW_ONLY,APP_ICON_STORE_PURCHASES_ENABLED,APP_ICON_STORE_FREE,APPROVED_FREE_ICON_CONCEPTS} from '../web/store-icon-catalog.js';
+import {STORE_PRICING} from '../web/store-pricing.js';
 import {storePage} from '../web/store-ui.js';
 
 function assertOneTapSelection(html, category) {
   assert.equal((html.match(/aria-pressed="true"/g) || []).length,1);
   assert.doesNotMatch(html,/data-store-preview=|store-preview-button|Close preview|Preview Background<\/button>|Preview Dice<\/button>/);
-  assert.equal((html.match(/class="store-purchase-disabled"/g)||[]).length,1);
-  assert.match(html,/<button type="button" class="store-purchase-disabled" disabled aria-disabled="true"/);
-  assert.match(html,/>Purchase<\/button>/);
+  if(category === 'icons'){
+    assert.doesNotMatch(html,/store-purchase-disabled|>Purchase<\/button>/);
+    assert.match(html,/class="store-free-label"/);
+  }else{
+    assert.equal((html.match(/class="store-purchase-disabled"/g)||[]).length,1);
+    assert.match(html,/<button type="button" class="store-purchase-disabled" disabled aria-disabled="true"/);
+    assert.match(html,/>Purchase<\/button>/);
+  }
   assert.doesNotMatch(html,/data-purchase=|data-checkout=|payment-provider|cashapp|paypal|venmo/i);
   assert.match(html,new RegExp('data-store-category="' + category + '" class="store-category-current" aria-current="page"'));
 }
@@ -68,9 +74,13 @@ test('background catalog has ten distinct bundled images with one-tap previews',
 test('icon category automatically previews the existing icon without inventing premium variants',async()=>{
   assert.equal(APP_ICON_STORE_PREVIEW_ONLY,true);
   assert.equal(APP_ICON_STORE_PURCHASES_ENABLED,false);
+  assert.equal(APP_ICON_STORE_FREE,true);
+  assert.deepEqual(APPROVED_FREE_ICON_CONCEPTS.map(x=>x.selection),[1,2,4,5,6,7,8,11,12,14]);
+  assert(APPROVED_FREE_ICON_CONCEPTS.every(x=>x.price===0&&!x.assetReady));
+  assert.equal(STORE_PRICING.icons.mode,'free');
   assert.equal(SELECTED_APP_ICONS.length,1);
   for(const item of SELECTED_APP_ICONS){
-    assert.equal(item.price,null);
+    assert.equal(item.price,0);
     assert.equal(item.proposedProductId,null);
     assert.equal(item.status,'preview_only');
     const image=await readFile(new URL('../web/public'+item.imagePath,import.meta.url));
@@ -110,4 +120,18 @@ test('preview sizing remains centered and selections do not alter dice or purcha
   assert.match(app,/c\.storePreviewDice=selected;save\(\);render\(\);return/);
   assert.match(app,/c\.storePreviewIcon=selected;save\(\);render\(\);return/);
   assert.doesNotMatch(app,/storePreviewOpen|data\.storePreview/);
+});
+
+test('free icon pricing stays separate from paid dice and backgrounds',()=>{
+ assert.equal(STORE_PRICING.icons.mode,'free');
+ for(const c of ['dice','backgrounds']){
+  assert.equal(STORE_PRICING[c].mode,'paid');
+  assert.equal(STORE_PRICING[c].checkoutEnabled,false);
+  assert.equal(STORE_PRICING[c].priceConfigured,false);
+ }
+ const icons=storePage('elvenleaf',{category:'icons'});
+ assert.match(icons,/App icons are FREE/);
+ assert.doesNotMatch(icons,/store-purchase-disabled/);
+ for(const html of [storePage(),storePage('elvenleaf',{category:'backgrounds'})])
+  assert.match(html,/This is a paid cosmetic/);
 });

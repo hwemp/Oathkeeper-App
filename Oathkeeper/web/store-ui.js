@@ -1,6 +1,7 @@
 import {SELECTED_DICE} from './store-dice-catalog.js';
 import {SELECTED_BACKGROUNDS} from './store-background-catalog.js';
-import {SELECTED_APP_ICONS} from './store-icon-catalog.js';
+import {SELECTED_APP_ICONS,APPROVED_FREE_ICON_CONCEPTS} from './store-icon-catalog.js';
+import {STORE_PRICING} from './store-pricing.js';
 
 const esc = value => String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 const diceArtStyle = index => '--store-atlas-x:' + (index % 5) * 25 + '%;--store-atlas-y:' + Math.floor(index / 5) * 100 + '%';
@@ -14,12 +15,18 @@ function categoryRow(current) {
     + '<span class="store-category-upcoming" aria-disabled="true">Bundles</span></div>';
 }
 
-function selectionFooter(kind, active) {
+function selectionFooter(kind, active, category) {
+  if(STORE_PRICING[category].mode === 'free'){
+    return '<div class="store-selection-footer"><p><strong>' + esc(active.name)
+      + '</strong> selected. App icons are FREE, with no purchase or payment required. '
+      + 'Alternative icons can be applied after their individual artwork is bundled.</p>'
+      + '<span class="store-free-label" aria-label="Free item">FREE</span></div>';
+  }
   return '<div class="store-selection-footer"><p>Tap a ' + kind
     + ' to preview it instantly. <strong>' + esc(active.name)
-    + '</strong> selected. Purchases are not available yet.</p>'
+    + '</strong> selected. This is a paid cosmetic; checkout is not available yet.</p>'
     + '<button type="button" class="store-purchase-disabled" disabled aria-disabled="true"'
-    + ' title="Purchases are not available yet">Purchase</button></div>';
+    + ' title="Paid purchases are not available yet">Purchase</button></div>';
 }
 
 function storeShell(category, body, note) {
@@ -47,8 +54,8 @@ export function storePage(selectedSlug = 'elvenleaf', options = {}) {
   return storeShell('dice',
     '<h2 class="store-collection-title">Dice Collection <small>(' + SELECTED_DICE.length + ')</small></h2>'
     + '<div class="store-dice-grid" role="group" aria-label="Select a dice set to preview">' + tiles + '</div>'
-    + preview + selectionFooter('dice set', active),
-    'These dice designs are optional cosmetic concepts. Checkout and purchasing are not yet enabled.');
+    + preview + selectionFooter('dice set', active, 'dice'),
+    'Dice designs are paid cosmetics. Prices and checkout have not been configured; previewing is free.');
 }
 
 function backgroundStorePage(selectedSlug = 'moonlit-citadel') {
@@ -72,8 +79,8 @@ function backgroundStorePage(selectedSlug = 'moonlit-citadel') {
   return storeShell('backgrounds',
     '<h2 class="store-collection-title">Background Collection <small>(' + SELECTED_BACKGROUNDS.length + ')</small></h2>'
     + '<div class="store-background-grid" role="group" aria-label="Select a fantasy background to preview">' + tiles + '</div>'
-    + preview + selectionFooter('background', active),
-    'These background designs are preview-only concept art. No checkout, unlocks or wallpaper application are enabled.');
+    + preview + selectionFooter('background', active, 'backgrounds'),
+    'Backgrounds are paid cosmetics. Prices and checkout have not been configured; previewing is free.');
 }
 
 function iconStorePage(selectedSlug = 'arcane-chronicle') {
@@ -97,6 +104,6 @@ function iconStorePage(selectedSlug = 'arcane-chronicle') {
   return storeShell('icons',
     '<h2 class="store-collection-title">App Icons <small>(' + SELECTED_APP_ICONS.length + ')</small></h2>'
     + '<div class="store-icon-grid" role="group" aria-label="Select an app icon to preview">' + tiles + '</div>'
-    + preview + selectionFooter('app icon', active),
-    'Only the existing Oathkeeper icon is available to preview. Additional icon designs await approval; purchasing and applying icons are disabled.');
+    + preview + selectionFooter('app icon', active, 'icons'),
+    'All ' + APPROVED_FREE_ICON_CONCEPTS.length + ' approved alternative icons are FREE: ' + APPROVED_FREE_ICON_CONCEPTS.map(item=>item.selection).join(', ') + '. Individual artwork must be bundled before these options can be previewed or applied. The originally installed icon stays the default.');
 }

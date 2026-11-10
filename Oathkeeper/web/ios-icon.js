@@ -15,6 +15,6 @@ export async function restoreOriginalIOSIcon() {
   return nativeIcon.restoreDefault();
 }
 
-// Future premium icon application MUST verify App Store purchase ownership
-// natively or through a trusted backend before calling the iOS icon API.
-// No unverified JS property or localStorage flag may unlock a paid icon.
+// All approved alternate icons are free and require no purchase receipts.
+// Only compiled native icon names may be applied. The apply method is not yet
+// exposed until the approved individual icon assets are bundled.

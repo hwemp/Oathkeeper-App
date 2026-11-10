@@ -105,7 +105,8 @@ test('store category switching and tile taps immediately update the correct prev
   s.click('[data-store-icon="arcane-chronicle"]');
   assert.equal(s.saved().storePreviewIcon,'arcane-chronicle');
   assert.equal(s.q('[data-store-preview]'),null);
-  assert.equal(s.q('.store-purchase-disabled').disabled,true);
+  assert.match(s.q('#view').textContent,/FREE/);
+  assert.equal(s.q('.store-purchase-disabled'),null);
   s.click('[data-store-category="dice"]');
   assert.equal(s.q('.store-preview-image').getAttribute('data-store-atlas-index'),'1');
  }finally{await s.close()}

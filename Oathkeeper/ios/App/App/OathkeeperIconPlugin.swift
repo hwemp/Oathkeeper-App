@@ -3,8 +3,8 @@ import Capacitor
 
 // Native iOS bridge for alternate app icons.
 // The original AppIcon remains the primary app icon and is never modified.
-// Paid icon application is intentionally not exposed until signed icon assets,
-// App Store entitlements, and server-side ownership checks are implemented.
+// Alternative icons are free. Applying them will be exposed once the ten
+// individually packaged native alternate-icon assets are compiled.
 @objc(OathkeeperIconPlugin)
 public class OathkeeperIconPlugin: CAPPlugin, CAPBridgedPlugin {
     public let identifier = "OathkeeperIconPlugin"
