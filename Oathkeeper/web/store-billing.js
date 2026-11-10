@@ -24,9 +24,9 @@ export async function loadStoreBilling() {
       catalog?.ready===true && entitlements?.ready===true;
     return {
       available:checkoutAllowed,
-      // Restoring a previously owned non-consumable is separate from making
-      // a new purchase. StoreKit 2 can verify existing entitlements offline
-      // from our hosted billing backend, which Android still requires.
+      // Restoring an already owned non-consumable is separate from new
+      // checkout. iOS StoreKit 2 verifies signed Apple transactions; Android
+      // continues to fail closed until secure Play purchase verification exists.
       restoreAvailable:Capacitor.getPlatform()==='ios' &&
         entitlementResult.status==='fulfilled' && entitlements?.verified===true,
       reason:checkoutAllowed?'':'Checkout is not connected yet.',
