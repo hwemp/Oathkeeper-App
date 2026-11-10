@@ -23,7 +23,7 @@ iOS: a Mac with Xcode 26 or later and the iOS 26 SDK. Run `npm run ios`, resolve
 ## Release blockers still owned by the publisher
 
 1. Register/verify your Google Play and/or Apple Developer account, accept store agreements yourself, and select a unique app identifier/name.
-2. Host `dist/privacy.html` at a publicly accessible HTTPS URL and supply a working support email/URL. The existing private ChatGPT Site is not a suitable public privacy/support URL. Update the privacy contact section to your support contact, rebuild and sync.
+2. Host `dist/privacy.html` at a publicly accessible HTTPS URL and supply a working support email/URL. A private project page is not a suitable public privacy/support URL. Update the privacy contact section to your support contact, rebuild and sync.
 3. Capture genuine screenshots from the native app on the required device sizes. Store graphics in `store/` are icons/feature artwork, not screenshots.
 4. Test the native release builds on devices. Native compilation was **not run** in the preparation environment: Android SDK and Xcode were unavailable. Preferences, file picker, JSON sharing, safe areas, keyboard, PDF parsing/worker on supported iOS versions, background/restore and Android back handling need device QA.
 5. Complete age/content ratings, app-access, privacy and Data safety forms for the final shipped build and SDKs. Draft notes are in `store/submission.md`.

@@ -1,4 +1,4 @@
-node_modules/
+/node_modules
 dist/
 .openai/
 *.keystore
@@ -10,3 +10,7 @@ android/.gradle/
 android/**/build/
 ios/**/xcuserdata/
 .DS_Store
+repair-data/
+.env
+
+/preview-output/

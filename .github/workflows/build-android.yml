@@ -1,7 +1,7 @@
 name: Build Android APK
 on:
   push:
-    branches: [main, fix-approved-preview]
+    branches: [main, fix-approved-preview, consolidated-work, reference-safety-update, security-account-and-support-2026-11-10]
     paths:
       - 'Oathkeeper/**'
       - '!Oathkeeper/docs/**'
@@ -71,5 +71,5 @@ jobs:
         run: |
           TAG="android-test-${{ github.run_number }}-${{ github.run_attempt }}"
           TITLE="Oathkeeper Android test build ${{ github.run_number }}"
-          if [ "${{ github.ref_name }}" != "main" ]; then TITLE="Oathkeeper Dice preview build ${{ github.run_number }}"; fi
+          if [ "${{ github.ref_name }}" != "main" ]; then TITLE="Oathkeeper consolidated preview build ${{ github.run_number }}"; fi
           gh release create "$TAG" output/* --target "${{ github.sha }}" --title "$TITLE" --prerelease --latest=false --notes "Source branch: ${{ github.ref_name }}. Source commit: ${{ github.sha }}. Install Oathkeeper-Android-Test.apk on Android 7 or newer. This is a debug-signed testing build, not a Google Play release. Back up your character data before installing or replacing the app. A new runner may use a different debug signing key, requiring an uninstall before installing another test build."

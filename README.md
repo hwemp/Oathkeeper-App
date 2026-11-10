@@ -13,7 +13,7 @@ Command-line unsigned Android bundle: after installing the SDK, cd android && ./
 iOS: a Mac with Xcode 26 or later and the iOS 26 SDK. Run npm run ios, resolve Swift packages, select your Apple Developer team in Signing & Capabilities, and verify com.harrisonwaters.oathkeeper is available in your account (change identifiers consistently if needed). Run on an iPhone/iPad, then Product → Archive → Distribute App → App Store Connect. Use TestFlight before production submission. Do not upload this ZIP to App Store Connect.
 Release blockers still owned by the publisher
 Register/verify your Google Play and/or Apple Developer account, accept store agreements yourself, and select a unique app identifier/name.
-Host dist/privacy.html at a publicly accessible HTTPS URL and supply a working support email/URL. The existing private ChatGPT Site is not a suitable public privacy/support URL. Update the privacy contact section to your support contact, rebuild and sync.
+Host dist/privacy.html at a publicly accessible HTTPS URL and supply a working support email/URL. A private project page is not a suitable public privacy/support URL. Update the privacy contact section to your support contact, rebuild and sync.
 Capture genuine screenshots from the native app on the required device sizes. Store graphics in store/ are icons/feature artwork, not screenshots.
 Test the native release builds on devices. Native compilation was not run in the preparation environment: Android SDK and Xcode were unavailable. Preferences, file picker, JSON sharing, safe areas, keyboard, PDF parsing/worker on supported iOS versions, background/restore and Android back handling need device QA.
 Complete age/content ratings, app-access, privacy and Data safety forms for the final shipped build and SDKs. Draft notes are in store/submission.md.
@@ -47,3 +47,7 @@ cookie persistence, logout and large-file memory behavior still require device
 tests against the configured backend. Durable upload storage must be enabled on
 the backend before files can be shared. Existing per-file limits still apply.
 Run npm run check, npm run typecheck, npm test and npm run build in Oathkeeper.
+
+## Combined November 10 work
+
+The consolidated task ledger and resume point is [Oathkeeper/docs/consolidated-status.md](Oathkeeper/docs/consolidated-status.md). It includes Support, observed dice statistics, the DM desk and an owner-approved Repair Review service alongside the earlier navigation and fantasy dice work. See the ledger for tested behavior, unconfigured online dependencies and the publication/Android-test status.
