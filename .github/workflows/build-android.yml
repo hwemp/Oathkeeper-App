@@ -1,0 +1,67 @@
+name: Build Android APK
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'Oathkeeper/**'
+      - '.github/workflows/build-android.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: android-build
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: Oathkeeper
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: Oathkeeper/package-lock.json
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: android-actions/setup-android@v3
+      - name: Install dependencies
+        run: npm ci
+      - name: Check JavaScript
+        run: npm run check
+      - name: Build web assets and sync Android
+        run: |
+          npm run build
+          npx cap sync android
+      - name: Build installable test APK
+        run: |
+          chmod +x android/gradlew
+          cd android
+          ./gradlew assembleDebug --no-daemon --stacktrace
+      - name: Verify APK signature and package
+        run: |
+          APK=android/app/build/outputs/apk/debug/app-debug.apk
+          BUILD_TOOLS=$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -n 1)
+          "$BUILD_TOOLS/apksigner" verify --verbose "$APK"
+          "$BUILD_TOOLS/aapt" dump badging "$APK" | head -n 6
+          mkdir -p output
+          cp "$APK" output/Oathkeeper-Android-Test.apk
+          cd output
+          sha256sum Oathkeeper-Android-Test.apk > SHA256SUMS.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Oathkeeper-Android-Test
+          path: Oathkeeper/output/*
+          if-no-files-found: error
+          retention-days: 30
+      - name: Publish downloadable test build
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="android-test-${{ github.run_number }}-${{ github.run_attempt }}"
+          gh release create "$TAG" output/* --target "${{ github.sha }}" --title "Oathkeeper Android test build ${{ github.run_number }}" --prerelease --notes "Install Oathkeeper-Android-Test.apk on Android 7 or newer. This is a debug-signed testing build, not a Google Play release. Back up your character data before installing or replacing the app. A new runner may use a different debug signing key, requiring an uninstall before installing another test build."
