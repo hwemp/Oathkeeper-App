@@ -75,8 +75,8 @@ test('store selections highlight gold cards and persist without affecting dice r
   assert.equal(s.q('[data-store-dice="oceanic"]').getAttribute('aria-pressed'),'true');
   saved=s.saved();
   assert.equal(saved.storePreviewDice,'oceanic');
-  s.click('[data-store-preview="open"]');
   assert(s.q('.store-preview-pane'));
+  assert.equal(s.q('[data-store-preview]'),null);
   s.click('[data-tab="Dice"]');
   s.q('#diceForm').dispatchEvent(new s.w.Event('submit',{bubbles:true,cancelable:true}));
   assert.equal(s.saved().rollHistory.length,1);
@@ -84,4 +84,29 @@ test('store selections highlight gold cards and persist without affecting dice r
  s=await shell(saved);
  try{s.click('[data-tab="Store"]');assert.equal(s.q('.store-dice-tile.selected').dataset.storeDice,'oceanic')}
  finally{await s.close()}
+});
+
+test('store category switching and tile taps immediately update the correct preview without starting checkout',async()=>{
+ const s=await shell();
+ try{
+  s.click('[data-tab="Store"]');
+  assert(s.q('.store-preview-image'));
+  assert.equal(s.q('[data-store-preview]'),null);
+  s.click('[data-store-dice="frostborne"]');
+  assert.equal(s.q('.store-preview-image').getAttribute('data-store-atlas-index'),'1');
+  assert.equal(s.q('.store-dice-tile.selected').dataset.storeDice,'frostborne');
+  s.click('[data-store-category="backgrounds"]');
+  assert(s.q('.store-background-preview-image'));
+  s.click('[data-store-background="mystic-lake"]');
+  assert.equal(s.q('.store-background-preview-image').getAttribute('src'),'/art/store-backgrounds/mystic-lake.webp');
+  assert.equal(s.saved().storePreviewBackground,'mystic-lake');
+  s.click('[data-store-category="icons"]');
+  assert.equal(s.q('.store-icon-preview-image').getAttribute('src'),'/icon.svg');
+  s.click('[data-store-icon="oathkeeper-shield"]');
+  assert.equal(s.saved().storePreviewIcon,'oathkeeper-shield');
+  assert.equal(s.q('[data-store-preview]'),null);
+  assert.equal(s.q('.store-purchase-disabled').disabled,true);
+  s.click('[data-store-category="dice"]');
+  assert.equal(s.q('.store-preview-image').getAttribute('data-store-atlas-index'),'1');
+ }finally{await s.close()}
 });

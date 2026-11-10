@@ -190,7 +190,7 @@ body .terms-accept:disabled{opacity:.45}
 .store-dice-tile:focus-visible{outline:3px solid #fff3d6!important;outline-offset:2px}
 .store-dice-tile:active{transform:scale(.985)}
 .store-selection-footer{
-  display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,1fr);
+  display:grid;grid-template-columns:minmax(0,1.8fr) minmax(140px,0.5fr);
   align-items:center;gap:clamp(4px,1vw,12px);
   border-top:2px solid #976c3a;padding-top:12px;
 }
@@ -287,4 +287,25 @@ body .terms-accept:disabled{opacity:.45}
   .store-background-tile.selected{box-shadow:0 0 0 1px var(--store-selected-outline),0 0 8px var(--store-selected-outline)}
   .store-background-preview-pane{grid-template-columns:minmax(0,1fr)}
   .store-background-name{font-size:clamp(9px,2.4vw,12px)}
+}
+
+/* Store item previews are always visible; the purchase action remains gated. */
+.store-icon-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:clamp(3px,1vw,13px);width:100%}
+.store-icon-tile{
+  display:flex;flex-direction:column;align-items:stretch;min-width:0;width:100%;
+  padding:0!important;margin:0;height:auto!important;overflow:hidden;
+  border:2px solid #aa864d!important;border-radius:clamp(4px,1vw,12px)!important;
+  background:#0e172a;color:#f5dba6;cursor:pointer;
+}
+.store-icon-tile.selected{border-color:var(--store-selected-outline)!important;box-shadow:0 0 0 1px var(--store-selected-outline),0 0 12px 2px var(--store-selected-outline)}
+.store-icon-tile:focus-visible{outline:3px solid #fff3d6!important;outline-offset:2px}
+.store-icon-tile-art{display:block;width:100%;aspect-ratio:1;object-fit:contain;object-position:center;background:#211d2b}
+.store-icon-preview-pane{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:15px;align-items:center;min-width:0;padding:13px;background:#172138e8;border:1px solid var(--store-selected-outline);border-radius:12px}
+.store-icon-preview-media{display:grid;place-items:center;min-width:0;width:100%;max-width:260px;justify-self:center;padding:12px;aspect-ratio:1;background:#10182c;border:1px solid #d2a665;border-radius:16px;box-shadow:0 6px 18px #0006}
+.store-icon-preview-image{display:block;width:100%;height:100%;object-fit:contain;object-position:center}
+@media(max-width:580px){
+  .store-selection-footer{grid-template-columns:1fr}
+  .store-selection-footer p{grid-column:1}
+  .store-icon-preview-pane{grid-template-columns:minmax(0,1fr)}
+  .store-icon-tile{border-width:1px!important}
 }
