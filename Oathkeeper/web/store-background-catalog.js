@@ -12,7 +12,9 @@ export const SELECTED_BACKGROUNDS = Object.freeze([
     "imagePath": "/art/store-backgrounds/moonlit-citadel.webp",
     "proposedProductId": "oathkeeper.background.moonlit-citadel",
     "type": "non_consumable_cosmetic",
-    "price": null,
+    "price": 0.5,
+    "priceCents": 50,
+    "currency": "USD",
     "status": "preview_only"
   },
   {
@@ -23,7 +25,9 @@ export const SELECTED_BACKGROUNDS = Object.freeze([
     "imagePath": "/art/store-backgrounds/ancient-ruins.webp",
     "proposedProductId": "oathkeeper.background.ancient-ruins",
     "type": "non_consumable_cosmetic",
-    "price": null,
+    "price": 0.5,
+    "priceCents": 50,
+    "currency": "USD",
     "status": "preview_only"
   },
   {
@@ -34,7 +38,9 @@ export const SELECTED_BACKGROUNDS = Object.freeze([
     "imagePath": "/art/store-backgrounds/enchanted-forest.webp",
     "proposedProductId": "oathkeeper.background.enchanted-forest",
     "type": "non_consumable_cosmetic",
-    "price": null,
+    "price": 0.5,
+    "priceCents": 50,
+    "currency": "USD",
     "status": "preview_only"
   },
   {
@@ -45,7 +51,9 @@ export const SELECTED_BACKGROUNDS = Object.freeze([
     "imagePath": "/art/store-backgrounds/dragons-crag.webp",
     "proposedProductId": "oathkeeper.background.dragons-crag",
     "type": "non_consumable_cosmetic",
-    "price": null,
+    "price": 0.5,
+    "priceCents": 50,
+    "currency": "USD",
     "status": "preview_only"
   },
   {
@@ -56,7 +64,9 @@ export const SELECTED_BACKGROUNDS = Object.freeze([
     "imagePath": "/art/store-backgrounds/shadow-marsh.webp",
     "proposedProductId": "oathkeeper.background.shadow-marsh",
     "type": "non_consumable_cosmetic",
-    "price": null,
+    "price": 0.5,
+    "priceCents": 50,
+    "currency": "USD",
     "status": "preview_only"
   },
   {
@@ -67,7 +77,9 @@ export const SELECTED_BACKGROUNDS = Object.freeze([
     "imagePath": "/art/store-backgrounds/celestial-plains.webp",
     "proposedProductId": "oathkeeper.background.celestial-plains",
     "type": "non_consumable_cosmetic",
-    "price": null,
+    "price": 0.5,
+    "priceCents": 50,
+    "currency": "USD",
     "status": "preview_only"
   },
   {
@@ -78,7 +90,9 @@ export const SELECTED_BACKGROUNDS = Object.freeze([
     "imagePath": "/art/store-backgrounds/crystal-caverns.webp",
     "proposedProductId": "oathkeeper.background.crystal-caverns",
     "type": "non_consumable_cosmetic",
-    "price": null,
+    "price": 0.5,
+    "priceCents": 50,
+    "currency": "USD",
     "status": "preview_only"
   },
   {
@@ -89,7 +103,9 @@ export const SELECTED_BACKGROUNDS = Object.freeze([
     "imagePath": "/art/store-backgrounds/elder-grove.webp",
     "proposedProductId": "oathkeeper.background.elder-grove",
     "type": "non_consumable_cosmetic",
-    "price": null,
+    "price": 0.5,
+    "priceCents": 50,
+    "currency": "USD",
     "status": "preview_only"
   },
   {
@@ -100,7 +116,9 @@ export const SELECTED_BACKGROUNDS = Object.freeze([
     "imagePath": "/art/store-backgrounds/mystic-lake.webp",
     "proposedProductId": "oathkeeper.background.mystic-lake",
     "type": "non_consumable_cosmetic",
-    "price": null,
+    "price": 0.5,
+    "priceCents": 50,
+    "currency": "USD",
     "status": "preview_only"
   },
   {
@@ -111,7 +129,9 @@ export const SELECTED_BACKGROUNDS = Object.freeze([
     "imagePath": "/art/store-backgrounds/eternal-keep.webp",
     "proposedProductId": "oathkeeper.background.eternal-keep",
     "type": "non_consumable_cosmetic",
-    "price": null,
+    "price": 0.5,
+    "priceCents": 50,
+    "currency": "USD",
     "status": "preview_only"
   }
 ].map(item=>Object.freeze(item)));

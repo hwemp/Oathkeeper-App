@@ -1,7 +1,7 @@
 import {SELECTED_DICE} from './store-dice-catalog.js';
 import {SELECTED_BACKGROUNDS} from './store-background-catalog.js';
 import {SELECTED_APP_ICONS,APPROVED_FREE_ICON_CONCEPTS} from './store-icon-catalog.js';
-import {STORE_PRICING} from './store-pricing.js';
+import {STORE_PRICING,formatStorePrice} from './store-pricing.js';
 
 const esc = value => String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 const diceArtStyle = index => '--store-atlas-x:' + (index % 5) * 25 + '%;--store-atlas-y:' + Math.floor(index / 5) * 100 + '%';
@@ -24,7 +24,7 @@ function selectionFooter(kind, active, category) {
   }
   return '<div class="store-selection-footer"><p>Tap a ' + kind
     + ' to preview it instantly. <strong>' + esc(active.name)
-    + '</strong> selected. This is a paid cosmetic; checkout is not available yet.</p>'
+    + '</strong> selected. Price: <strong>' + formatStorePrice(active.priceCents) + '</strong> USD. Checkout is not available yet.</p>'
     + '<button type="button" class="store-purchase-disabled" disabled aria-disabled="true"'
     + ' title="Paid purchases are not available yet">Purchase</button></div>';
 }
@@ -55,7 +55,7 @@ export function storePage(selectedSlug = 'elvenleaf', options = {}) {
     '<h2 class="store-collection-title">Dice Collection <small>(' + SELECTED_DICE.length + ')</small></h2>'
     + '<div class="store-dice-grid" role="group" aria-label="Select a dice set to preview">' + tiles + '</div>'
     + preview + selectionFooter('dice set', active, 'dice'),
-    'Dice designs are paid cosmetics. Prices and checkout have not been configured; previewing is free.');
+    'Dice designs are $1.00 each (USD). Checkout is not yet connected; previewing is free.');
 }
 
 function backgroundStorePage(selectedSlug = 'moonlit-citadel') {
@@ -80,7 +80,7 @@ function backgroundStorePage(selectedSlug = 'moonlit-citadel') {
     '<h2 class="store-collection-title">Background Collection <small>(' + SELECTED_BACKGROUNDS.length + ')</small></h2>'
     + '<div class="store-background-grid" role="group" aria-label="Select a fantasy background to preview">' + tiles + '</div>'
     + preview + selectionFooter('background', active, 'backgrounds'),
-    'Backgrounds are paid cosmetics. Prices and checkout have not been configured; previewing is free.');
+    'Backgrounds are $0.50 each (USD). Checkout is not yet connected; previewing is free.');
 }
 
 function iconStorePage(selectedSlug = 'arcane-chronicle') {

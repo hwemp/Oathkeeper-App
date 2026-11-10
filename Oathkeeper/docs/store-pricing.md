@@ -1,14 +1,21 @@
-# Oathkeeper store pricing (approved 2026-11-10)
+# Oathkeeper Store pricing (approved 2026-11-10)
 
-**Free:** Ten approved alternative app icon concepts: 1, 2, 4, 5, 6, 7, 8, 11, 12, 14.
-A user must never purchase an icon, buy dice or buy a background to unlock it.
-The original launcher icon remains installed by default and can be restored for free.
+| Category | Per-item price (USD) | Items | Checkout |
+| --- | ---: | ---: | --- |
+| Dice sets | **$1.00** | 10 | Disabled until billing is connected |
+| Backgrounds | **$0.50** | 10 | Disabled until billing is connected |
+| Alternate app icons | **FREE** | 10 approved | No purchase required |
 
-**Paid:** Optional dice sets and fantasy backgrounds. The catalog remains
-preview-only while product pricing and store-compliant checkout are not configured.
+Approved free icon concept numbers: **1, 2, 4, 5, 6, 7, 8, 11, 12, 14**. The
+original launcher icon stays installed by default. Alternate icon artwork
+and launcher switching still require native packaging.
 
-The current build previews only the already-bundled Arcane Chronicle artwork.
-The selected ten icon concepts are recorded under `APPROVED_FREE_ICON_CONCEPTS`
-but their distinct artwork is not yet packaged; they are not falsely represented
-with the same old image. iOS switching is not complete until their high-quality
-alternate icon files are compiled and the native selector is connected.
+Prices are stored in integer USD cents in `web/store-pricing.js` and on
+each dice and background catalog entry. The UI shows the selected item's
+price. The Purchase button stays disabled until actual billing is
+configured and verified; product IDs are only proposals.
+
+Before activation, configure the equivalent price points in Google Play
+Console and App Store Connect. Exact price-point availability can differ
+from requested prices (including the requested $0.50). Show and honor
+the actual checkout price returned by the platform once connected.

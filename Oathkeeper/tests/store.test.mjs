@@ -4,7 +4,7 @@ import {readFile,stat} from 'node:fs/promises';
 import {SELECTED_DICE,DICE_STORE_PREVIEW_ONLY,DICE_STORE_PURCHASES_ENABLED} from '../web/store-dice-catalog.js';
 import {SELECTED_BACKGROUNDS,BACKGROUND_STORE_PREVIEW_ONLY,BACKGROUND_STORE_PURCHASES_ENABLED} from '../web/store-background-catalog.js';
 import {SELECTED_APP_ICONS,APP_ICON_STORE_PREVIEW_ONLY,APP_ICON_STORE_PURCHASES_ENABLED,APP_ICON_STORE_FREE,APPROVED_FREE_ICON_CONCEPTS} from '../web/store-icon-catalog.js';
-import {STORE_PRICING} from '../web/store-pricing.js';
+import {STORE_PRICING,formatStorePrice} from '../web/store-pricing.js';
 import {storePage} from '../web/store-ui.js';
 
 function assertOneTapSelection(html, category) {
@@ -28,7 +28,7 @@ test('dice catalog has ten approved items and preview art is packaged', async()=
   assert.deepEqual(SELECTED_DICE.map(x=>x.selection),[1,2,4,5,7,8,11,13,15,17]);
   assert.equal(new Set(SELECTED_DICE.map(x=>x.atlasIndex)).size,10);
   assert.equal(new Set(SELECTED_DICE.map(x=>x.proposedProductId)).size,10);
-  assert(SELECTED_DICE.every(x=>x.price===null&&x.status==='preview_only'));
+  assert(SELECTED_DICE.every(x=>x.price===1&&x.priceCents===100&&x.currency==='USD'&&x.status==='preview_only'));
   const art=await stat(new URL('../web/public/art/oathkeeper-dice-store-atlas.webp',import.meta.url));
   const banner=await stat(new URL('../web/public/art/oathkeeper-store-banner.webp',import.meta.url));
   assert(art.size>30000&&banner.size>10000);
@@ -57,6 +57,7 @@ test('background catalog has ten distinct bundled images with one-tap previews',
   assert.deepEqual(SELECTED_BACKGROUNDS.map(x=>x.selection),[1,2,3,4,8,9,10,17,19,20]);
   assert.equal(new Set(SELECTED_BACKGROUNDS.map(x=>x.slug)).size,10);
   assert.equal(new Set(SELECTED_BACKGROUNDS.map(x=>x.imagePath)).size,10);
+  assert(SELECTED_BACKGROUNDS.every(x=>x.price===0.5&&x.priceCents===50&&x.currency==='USD'&&x.status==='preview_only'));
   for(const item of SELECTED_BACKGROUNDS){
     const image=await readFile(new URL('../web/public'+item.imagePath,import.meta.url));
     assert(image.length>10000);
@@ -124,14 +125,22 @@ test('preview sizing remains centered and selections do not alter dice or purcha
 
 test('free icon pricing stays separate from paid dice and backgrounds',()=>{
  assert.equal(STORE_PRICING.icons.mode,'free');
+ assert.equal(STORE_PRICING.icons.priceCents,0);
+ assert.equal(STORE_PRICING.dice.priceCents,100);
+ assert.equal(STORE_PRICING.backgrounds.priceCents,50);
+ assert.equal(formatStorePrice(STORE_PRICING.dice.priceCents),'$1.00');
+ assert.equal(formatStorePrice(STORE_PRICING.backgrounds.priceCents),'$0.50');
  for(const c of ['dice','backgrounds']){
   assert.equal(STORE_PRICING[c].mode,'paid');
   assert.equal(STORE_PRICING[c].checkoutEnabled,false);
-  assert.equal(STORE_PRICING[c].priceConfigured,false);
+  assert.equal(STORE_PRICING[c].priceConfigured,true);
  }
  const icons=storePage('elvenleaf',{category:'icons'});
  assert.match(icons,/App icons are FREE/);
  assert.doesNotMatch(icons,/store-purchase-disabled/);
- for(const html of [storePage(),storePage('elvenleaf',{category:'backgrounds'})])
-  assert.match(html,/This is a paid cosmetic/);
+ assert.match(storePage(),/Price: <strong>\$1\.00<\/strong> USD/);
+ assert.match(storePage('elvenleaf',{category:'backgrounds'}),/Price: <strong>\$0\.50<\/strong> USD/);
+ assert.match(storePage(),/Purchase<\/button>/);
+ assert.match(storePage('elvenleaf',{category:'backgrounds'}),/Purchase<\/button>/);
+ assert.doesNotMatch(icons,/>Purchase<\/button>/);
 });
