@@ -43,7 +43,7 @@ test('configured community uses credentialed API and signs out inside the app', 
   const t = await setup('https://community.example', async (url, options) => {
     const path = new URL(url).pathname;
     if(path.endsWith('/logout')){signedIn=false;return {ok:true};}
-    if(path.endsWith('/session'))return {user:signedIn?{id:'user-1',username:'harrison',moderator:false}:null,uploadsEnabled:false,storageUsed:0,storageLimit:null};
+    if(path.endsWith('/session'))return {user:signedIn?{id:'user-1',username:'harrison',moderator:false,ageStatus:'verified'}:null,uploadsEnabled:false,storageUsed:0,storageLimit:null};
     if(path.endsWith('/groups'))return {groups:[],invitations:[]};
     return [];
   });
@@ -74,4 +74,16 @@ test('mobile shell mounts community and account locally without website launch o
   assert(!source.includes('communityAddress'));
   const config=JSON.parse(await readFile('capacitor.config.json','utf8'));
   assert.equal(config.plugins.CapacitorHttp.enabled,true);
+});
+
+test('registration collects birthdate, shows moved notices afterwards and locks pending accounts out of contact screens',async()=>{
+ let signedIn=false,registration;
+ const t=await setup('https://community.example',async(url,options)=>{const path=new URL(url).pathname;if(path.endsWith('/register')){registration=JSON.parse(options.body);signedIn=true;return {ok:true}}if(path.endsWith('/session'))return {user:signedIn?{id:'new-user',username:'new_user',moderator:false,ageStatus:'pending',ageBand:'unknown'}:null,uploadsEnabled:false,storageLimit:null,storageUsed:0};return []});
+ try{await t.click('Account');await t.click('Create an account');assert(t.q('input[type=date]').required);assert(!t.q('#communityRoot').textContent.includes('Artwork does not affect'));
+ const set=async(selector,value)=>{await t.app.act(async()=>{const e=t.q(selector);Object.getOwnPropertyDescriptor(t.w.HTMLInputElement.prototype,'value').set.call(e,value);e.dispatchEvent(new t.w.Event('input',{bubbles:true}))})};
+ await set('input[autocomplete=username]','new_user');await set('input[type=password]','a secure test password');await set('input[type=date]','2010-01-01');
+ await t.app.act(async()=>{t.q('.account-form').dispatchEvent(new t.w.Event('submit',{bubbles:true,cancelable:true}));await new Promise(r=>setTimeout(r,0))});
+ assert.equal(registration.birthDate,'2010-01-01');assert.match(t.q('#communityRoot').textContent,/Welcome to Oathkeeper/);assert.match(t.q('#communityRoot').textContent,/Artwork does not affect/);assert.match(t.q('#communityRoot').textContent,/Personal homebrew profile/);assert.match(t.q('#communityRoot').textContent,/Pending moderator review/);assert(!t.requests.some(r=>r.url.endsWith('/groups')));
+ await t.click('Messages');assert.match(t.q('#communityRoot').textContent,/Community contact is locked/);assert(!t.q('.message-list'));assert.match(t.q('#communityRoot').textContent,/Both people must independently contact/);
+ }finally{await t.close()}
 });

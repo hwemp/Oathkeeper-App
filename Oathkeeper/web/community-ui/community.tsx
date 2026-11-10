@@ -1,7 +1,9 @@
+import {AgeSafety} from './age-safety';
+import {DICE_NOTICE,PROFILE_NOTICE,SAFETY_NOTICE,SAFETY_GUIDANCE} from '../notices.js';
 import { Friends, SafetyQueue } from './social';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-type User = { id: string; username: string; moderator: boolean };
+type User = { id: string; username: string; moderator: boolean;safetyModerator?:boolean; ageStatus?:string; ageBand?:string };
 type Session = { user: User | null; uploadsEnabled: boolean; storageLimit: number | null; storageUsed: number };
 type Group = { _id: string; name: string; ownerId: string; members: string[] };
 type Attachment = { _id: string; name: string; size: number; preview: string | null };
@@ -44,12 +46,14 @@ export function Community({ initialSection = 'Posts' }: { initialSection?: strin
   const [register, setRegister] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [birthDate,setBirthDate]=useState('');
+  const [welcome,setWelcome]=useState(false);
   const [groupName, setGroupName] = useState('');
   const refresh = useCallback(async () => {
     const current = await api<Session>('/session');
     setSession(current);
     document.dispatchEvent(new CustomEvent('community-session', { detail: current.user }));
-    if (current.user) {
+    if (current.user?.ageStatus==='verified') {
       const result = await api<{ groups: Group[]; invitations: { _id: string; name: string }[] }>('/groups');
       setGroups(result.groups); setInvitations(result.invitations);
       setScope(value => value && !result.groups.some(group => group._id === value) ? '' : value);
@@ -66,22 +70,26 @@ export function Community({ initialSection = 'Posts' }: { initialSection?: strin
     try { await work(); await refresh(); } catch (error) { setError(errorText(error)); } finally { setBusy(false); }
   }
   const group = groups.find(value => value._id === scope);
+  if(session?.user&&session.user.ageStatus!=='verified'&&section!=='Account')return <><AgeSafety user={session.user} onChange={refresh}/><button data-tab="Account">My account</button></>;
   return <>
     {initialSection==='Community' && <div className="intro"><p className="eyebrow">BEYOND THE CHARACTER SHEET</p><h1>A place for your party.</h1><p>Share adventures, trade maps, and keep the conversation going.</p></div>}
-    <p className="notice">Public posts are visible to everyone. Private group posts, files, and messages are visible only to group members. Character worksheets still need to be downloaded separately.</p>
+    <p className="notice">Community content and contact follow the age-verification and approved-contact rules. Private groups also require membership. Character worksheets are saved separately.</p>
     {error && <p role="alert" className="notice">{error}</p>}
     {!session && !error && <p role="status">Connecting to the community…</p>}
     {session && <>
       <section className="panel" aria-label="Your account" hidden={section!=='Account'}>
         {session.user ? <div className="workspace-heading"><p>Signed in as <strong>{session.user.username}</strong></p><button disabled={busy} onClick={() => void action(async () => { await api('/logout', 'POST'); setScope(''); })}>Sign out</button></div> : <>
-          <h2>{register ? 'Create an account' : 'Welcome back'}</h2><p>Sign in to post, join groups, and send messages. You can read public posts without an account.</p>
-          <form className="account-form" onSubmit={event => { event.preventDefault(); void action(async () => { await api(register ? '/register' : '/login', 'POST', { username, password }); setPassword(''); }); }}>
+          <h2>{register ? 'Create an account' : 'Welcome back'}</h2><p>Sign in to post, join groups, and send messages. Age review is required before community contact or reading member content.</p>
+          <form className="account-form" onSubmit={event => { event.preventDefault(); void action(async () => { await api(register ? '/register' : '/login', 'POST', { username, password,...(register?{birthDate}:{}) }); setPassword('');if(register){setWelcome(true);setBirthDate('')} }); }}>
             <label>Username<input required minLength={3} maxLength={30} pattern="[A-Za-z0-9_]{3,30}" autoComplete="username" value={username} onChange={event => setUsername(event.target.value)} /></label>
             <label>Password (12–128 characters)<input type="password" required minLength={12} maxLength={128} autoComplete={register ? 'new-password' : 'current-password'} value={password} onChange={event => setPassword(event.target.value)} /></label>
+            {register&&<><label>Birthdate<input type="date" aria-label="Birthdate" required max={new Date().toISOString().slice(0,10)} value={birthDate} onChange={event=>setBirthDate(event.target.value)}/></label><p>Your birthdate is private. A moderator must complete age review before community contact is enabled.</p><details><summary>Age &amp; contact safety</summary><p>{SAFETY_NOTICE}</p><p>{SAFETY_GUIDANCE}</p></details></>}
             <button className="primary" disabled={busy}>{register ? 'Create account' : 'Sign in'}</button>
             <button type="button" disabled={busy} onClick={() => setRegister(value => !value)}>{register ? 'I already have an account' : 'Create an account'}</button>
           </form><p className="hint">Keep your password safe. Password recovery is not available in this first version.</p>
         </>}
+        {welcome&&<section className="age-safety-panel" role="status"><h3>Welcome to Oathkeeper</h3><p>{PROFILE_NOTICE}</p><p>{DICE_NOTICE}</p><p>You can find these notices again in Settings → About.</p><button onClick={()=>setWelcome(false)}>Continue</button></section>}
+        {session.user&&<AgeSafety user={session.user} onChange={refresh}/>}
       </section>
       {session.user && (section==='Friends'||section==='Messages') && <Friends key={session.user.id} userId={session.user.id} />}
       <div className="community-controls panel" hidden={section!=='Posts' && section!=='Groups'}>
@@ -92,7 +100,7 @@ export function Community({ initialSection = 'Posts' }: { initialSection?: strin
         </>}
       </div>
       {section==='Groups' && group && session.user && <GroupMembers key={group._id} group={group} user={session.user} />}
-      {(section==='Posts' || section==='Groups') && <CommunitySpace key={`${session.user?.id ?? 'guest'}:${scope}`} session={session} group={group} onStorageChange={() => void refresh().catch(error => setError(errorText(error)))} />}
+      {session.user?.ageStatus==='verified'&&(section==='Posts' || section==='Groups') && <CommunitySpace key={`${session.user?.id ?? 'guest'}:${scope}`} session={session} group={group} onStorageChange={() => void refresh().catch(error => setError(errorText(error)))} />}
       {!session.user && section!=='Account' && <button data-tab="Account">Log in / Create account</button>}
       {session.user?.moderator && <><ReportQueue /><SafetyQueue /></>}
     </>}

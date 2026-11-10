@@ -1,5 +1,7 @@
 # Oathkeeper — consolidated task record
 
+**Latest update:** [reference-and-safety-update.md](reference-and-safety-update.md) records the newly approved reference design and server-side age-safety changes, published separately on `reference-safety-update` to preserve the earlier session.
+
 Updated November 10, 2026. This file brings the app requirements and progress from the prior Oathkeeper sessions into one place. It consolidates project work; the ChatGPT conversation threads themselves remain separate.
 
 ## Current source
