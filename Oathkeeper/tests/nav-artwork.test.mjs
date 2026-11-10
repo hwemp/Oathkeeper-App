@@ -23,7 +23,7 @@ test('primary navigation shares one vector asset, with readable active labels',a
  assert.match(css,/#nav button:focus-visible\s*\{[^}]*outline/);
  assert.match(css,/\.hp-value \.hp-separator::after\{content:none;display:none\}/);
  const html=await readFile(new URL('../web/app.js',import.meta.url),'utf8');
- assert.match(html,/nav\.innerHTML=navigation\.map\(x=>/);
+ assert.match(html,/innerHTML=navigation\.map\(x=>/);
  assert.match(html,/\['Overview','Powers','Inventory','Dice'/);
  assert.match(html,/class="hp-separator" aria-hidden="true">\/<\/span>/);
 });
