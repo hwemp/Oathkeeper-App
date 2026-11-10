@@ -104,13 +104,13 @@ test('each background opens an image preview with the correct unique source and 
 
 test('store background preview fits image and clicking a tile preserves live preview', async()=>{
  const css=await readFile(new URL('../web/fantasy.css',import.meta.url),'utf8');
- const imageRule=css.match(/\\.store-background-preview-image\\{[^}]+\\}/g)?.at(-1)||'';
+ const imageRule=css.match(/\.store-background-preview-image\{[^}]+\}/g)?.at(-1)||'';
  assert.match(imageRule,/object-fit:contain/);
  assert.match(imageRule,/object-position:center/);
- assert.match(css,/grid-template-columns:repeat\\(5,minmax\\(0,1fr\\)\\)/);
+ assert.match(css,/grid-template-columns:repeat\(5,minmax\(0,1fr\)\)/);
  const app=await readFile(new URL('../web/app.js',import.meta.url),'utf8');
- assert.match(app,/c\\.storePreviewBackground=selected;storePreviewOpen=true;save\\(\\);render\\(\\);return/);
- assert.match(app,/storeCategory=t\\.dataset\\.storeCategory;storePreviewOpen=false;render\\(\\);return/);
+ assert.match(app,/c\.storePreviewBackground=selected;storePreviewOpen=true;save\(\);render\(\);return/);
+ assert.match(app,/storeCategory=t\.dataset\.storeCategory;storePreviewOpen=false;render\(\);return/);
  const empty=storePage('elvenleaf',false,{category:'backgrounds',backgroundSlug:'mystic-lake'});
  assert.doesNotMatch(empty,/store-background-preview-image/);
  assert.equal((empty.match(/class="store-background-tile selected"/g)||[]).length,1);
