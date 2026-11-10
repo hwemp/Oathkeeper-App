@@ -17,7 +17,7 @@ async function setup(origin = '', handler = async () => ({ user: null, uploadsEn
   w.open = () => { throw new Error('Community must stay in the app'); };
   w.eval(result.outputFiles[0].text);
   const app = w.testApp, q = selector => w.document.querySelector(selector);
-  const click = async text => { const b = [...w.document.querySelectorAll('button')].find(x => x.textContent === text); assert(b, text); await app.act(async () => b.click()); };
+  const click = async text => { if(['Posts','Friends','Messages','Groups','Account'].includes(text)){await app.act(async()=>app.mountCommunity(q('#communityRoot'),text==='Account',text));return;} const b = [...w.document.querySelectorAll('button')].find(x => x.textContent === text); assert(b, text); await app.act(async () => b.click()); };
   await app.act(async () => app.mountCommunity(q('#communityRoot')));
   return { w, app, requests, q, click, close: async () => { await app.act(async()=>app.unmountCommunity()); channels.forEach(c=>{c.port1.close();c.port2.close()});dom.window.close(); } };
 }
@@ -65,7 +65,7 @@ test('API failures are visible and service origins reject insecure or credential
 
 test('mobile shell mounts community and account locally without website launch or URL field', async()=>{
   const source=await readFile('web/app.js','utf8');
-  assert.match(source,/mountCommunity\(\$\('#communityRoot'\),tab==='Account'\)/);
+  assert(source.includes("mountCommunity($('#communityRoot'),tab==='Account',tab==='Community'?'Posts':tab)"));
   assert(!source.includes('openCommunity'));
   assert(!source.includes('communityAddress'));
   const config=JSON.parse(await readFile('capacitor.config.json','utf8'));

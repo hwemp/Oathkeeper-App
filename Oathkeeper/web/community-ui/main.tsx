@@ -1,24 +1,21 @@
 import { createRoot, type Root } from 'react-dom/client';
-import { useState } from 'react';
 import { Community } from './community';
 import { base } from './service';
 import './style.css';
 
 let root: Root | null = null;
 export function unmountCommunity() { root?.unmount(); root = null; }
-export function mountCommunity(element: HTMLElement, account = false) {
+export function mountCommunity(element: HTMLElement, account = false, section = account ? 'Account' : 'Posts') {
   unmountCommunity();
   root = createRoot(element);
-  root.render(base ? <Community accountFirst={account} /> : <CommunityPending account={account} />);
+  root.render(base ? <Community initialSection={section} /> : <CommunityPending section={section} />);
 }
-function CommunityPending({ account }: { account: boolean }) {
-  const [section, setSection] = useState(account ? 'Account' : 'Posts');
+function CommunityPending({ section }: { section: string }) {
   return <div className="in-app-community">
     <section className="panel"><p className="eyebrow">YOUR PARTY, IN ONE PLACE</p><h2>Oathkeeper community</h2>
       <p>Posts, friends, messages and your account stay inside Oathkeeper.</p>
       <p className="notice" role="status">The online community has not launched yet. You do not need to enter a website address. Your character, journal and equipment still work offline.</p>
     </section>
-    <div className="community-tabs" aria-label="Community sections">{['Posts','Friends','Messages','Groups','Account'].map(name=><button key={name} aria-pressed={section===name} className={section===name?'active':''} onClick={()=>setSection(name)}>{name}</button>)}</div>
     <section className="panel">
       {section==='Posts' && <><h2>Community posts</h2><p>Share adventures, images, videos, maps, files and character sheets here once the community is online.</p><button disabled>Create post</button></>}
       {section==='Friends' && <><h2>Friends</h2><p>Find people, accept friend requests and manage blocked users here once the community is online.</p><button disabled>Find friends</button></>}

@@ -33,14 +33,14 @@ function AttachmentView({ file }: { file: Attachment }) {
   </div>;
 }
 
-export function Community({ accountFirst = false }: { accountFirst?: boolean }) {
+export function Community({ initialSection = 'Posts' }: { initialSection?: string }) {
   const [session, setSession] = useState<Session | null>(null);
   const [groups, setGroups] = useState<Group[]>([]);
   const [invitations, setInvitations] = useState<{ _id: string; name: string }[]>([]);
   const [scope, setScope] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
-  const [section, setSection] = useState(accountFirst ? 'Account' : 'Posts');
+  const section = initialSection;
   const [register, setRegister] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -68,7 +68,6 @@ export function Community({ accountFirst = false }: { accountFirst?: boolean }) 
   const group = groups.find(value => value._id === scope);
   return <>
     <div className="intro"><p className="eyebrow">BEYOND THE CHARACTER SHEET</p><h1>A place for your party.</h1><p>Share adventures, trade maps, and keep the conversation going.</p></div>
-    <div className="community-tabs" aria-label="Community sections">{['Posts','Friends','Messages','Groups','Account'].map(name=><button key={name} aria-pressed={section===name} className={section===name?'active':''} onClick={()=>setSection(name)}>{name}</button>)}</div>
     <p className="notice">Public posts are visible to everyone. Private group posts, files, and messages are visible only to group members. Character worksheets still need to be downloaded separately.</p>
     {error && <p role="alert" className="notice">{error}</p>}
     {!session && !error && <p role="status">Connecting to the community…</p>}
@@ -94,7 +93,7 @@ export function Community({ accountFirst = false }: { accountFirst?: boolean }) 
       </div>
       {section==='Groups' && group && session.user && <GroupMembers key={group._id} group={group} user={session.user} />}
       {(section==='Posts' || section==='Groups') && <CommunitySpace key={`${session.user?.id ?? 'guest'}:${scope}`} session={session} group={group} onStorageChange={() => void refresh().catch(error => setError(errorText(error)))} />}
-      {!session.user && section!=='Account' && <button onClick={()=>setSection('Account')}>Log in / Create account</button>}
+      {!session.user && section!=='Account' && <button data-tab="Account">Log in / Create account</button>}
       {session.user?.moderator && <><ReportQueue /><SafetyQueue /></>}
     </>}
   </>;
