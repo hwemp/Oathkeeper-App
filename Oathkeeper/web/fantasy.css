@@ -208,10 +208,12 @@ body .terms-accept:disabled{opacity:.45}
 .store-preview-pane{display:grid;grid-template-columns:minmax(150px,1fr) minmax(0,1fr);gap:15px;
   background:#172138e8;border:1px solid var(--store-selected-outline);border-radius:12px;padding:13px}
 .store-preview-image{
-  display:block;width:100%;max-width:520px;height:auto;aspect-ratio:auto;
+  display:block;width:100%;max-width:520px;height:auto;aspect-ratio:248/175;
   justify-self:center;margin-inline:auto;
   border:1px solid #d2a665;border-radius:9px;
-  object-fit:contain;overflow:hidden;background:#0b1023;
+  overflow:hidden;background-color:#0b1023;
+  background-size:500% 200%;
+  background-position:var(--store-atlas-x,0%) var(--store-atlas-y,0%);
   box-shadow:0 6px 18px #0006;
 }
 .store-preview-pane h3{margin:0 0 9px}.store-preview-pane p{font-size:15px}
