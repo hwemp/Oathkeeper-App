@@ -31,16 +31,33 @@ test('first-launch terms block app until the truthful age declaration is accepte
   assert.match(s.q('#view').textContent,/Community access unavailable/);
  }finally{await s.close()}
 });
-test('dice animation is off by default and may be enabled from Settings without changing roll totals',async()=>{
- const s=await shell();try{
+test('Dice page alone controls persisted optional animation without altering roll totals',async()=>{
+ let s=await shell(),saved;
+ try{
   s.click('[data-tab="Settings"]');
+  assert.equal(s.q('[data-k="diceAnimation"]'),null);
+  s.click('[data-tab="Dice"]');
   assert.equal(s.q('[data-k="diceAnimation"]').checked,false);
+  assert.match(s.q('.dice-animation-setting').textContent,/Animate rolls/);
   s.q('[data-k="diceAnimation"]').click();
   assert.equal(s.saved().diceAnimation,true);
-  s.click('[data-tab="Dice"]');
   s.q('#diceForm').dispatchEvent(new s.w.Event('submit',{bubbles:true,cancelable:true}));
   assert(s.q('.dice-page.roll-animated'));
   assert.equal(s.saved().rollHistory.length,1);
+  saved=s.saved();
+ }finally{await s.close()}
+ s=await shell(saved);
+ try{
+  s.click('[data-tab="Dice"]');
+  assert.equal(s.q('[data-k="diceAnimation"]').checked,true);
+  s.q('[data-k="diceAnimation"]').click();
+  assert.equal(s.saved().diceAnimation,false);
+  assert.equal(s.q('.dice-page.roll-animated'),null);
+  s.q('#diceForm').dispatchEvent(new s.w.Event('submit',{bubbles:true,cancelable:true}));
+  assert.equal(s.q('.dice-page.roll-animated'),null);
+  assert.equal(s.saved().rollHistory.length,2);
+  s.click('[data-tab="Settings"]');
+  assert.equal(s.q('[data-k="diceAnimation"]'),null);
  }finally{await s.close()}
 });
 test('DM Overview summarizes character abilities and environment',async()=>{
@@ -197,4 +214,47 @@ test('four primary navigation tabs remain interactive and HP uses one visible sl
   s.click('#nav [data-tab="Dice"]');
   assert(s.q('.dice-page'));
  } finally {await s.close()}
+});
+
+test('Inventory coin stepper adjusts all five denominations, updates totals, persists, and never goes negative',async()=>{
+ let s=await shell(),saved;
+ try{
+  s.click('[data-tab="Inventory"]');
+  assert.equal(s.q('.coin-purse-grid').querySelectorAll('.coin-stepper').length,5);
+  const keys=['cp','sp','ep','gp','pp'];
+  for(const key of keys){
+   assert(s.q('[data-coin-change="'+key+'"][data-coin-delta="1"]'));
+   assert(s.q('[data-coin-change="'+key+'"][data-coin-delta="-1"]'));
+  }
+  assert.equal(s.q('[data-coin-change="cp"][data-coin-delta="-1"]').disabled,true);
+  s.click('[data-coin-change="cp"][data-coin-delta="1"]');
+  s.click('[data-coin-change="sp"][data-coin-delta="1"]');
+  s.click('[data-coin-change="ep"][data-coin-delta="1"]');
+  s.click('[data-coin-change="gp"][data-coin-delta="1"]');
+  s.click('[data-coin-change="pp"][data-coin-delta="1"]');
+  assert.deepEqual(keys.map(key=>s.saved()[key]),[1,1,1,16,1]);
+  assert.match(s.q('#view').textContent,/26.61 GP equivalent/);
+  assert.match(s.q('#view').textContent,/Remaining 123.6 lb/);
+  s.click('[data-coin-change="gp"][data-coin-delta="-1"]');
+  assert.equal(s.saved().gp,15);
+  s.click('[data-coin-change="cp"][data-coin-delta="-1"]');
+  assert.equal(s.saved().cp,0);
+  assert.equal(s.q('[data-coin-change="cp"][data-coin-delta="-1"]').disabled,true);
+  // Even a synthetic activation of a formerly disabled button cannot go negative.
+  s.q('[data-coin-change="cp"][data-coin-delta="-1"]').disabled=false;
+  s.click('[data-coin-change="cp"][data-coin-delta="-1"]');
+  assert.equal(s.saved().cp,0);
+  saved=s.saved();
+ }finally{await s.close()}
+ s=await shell(saved);
+ try{
+  s.click('[data-tab="Inventory"]');
+  assert.deepEqual(['cp','sp','ep','gp','pp'].map(key=>s.saved()[key]),[0,1,1,15,1]);
+  assert.match(s.q('.coin-purse-grid').textContent,/GP: 15/);
+  const dialog=s.q('#equipmentEditor');
+  dialog.showModal=()=>{dialog.open=true};
+  s.click('[data-action="edit-equipment"]');
+  for(const key of ['cp','sp','ep','gp','pp'])
+    assert.equal(s.q('[data-draft-key="'+key+'"]'),null);
+ }finally{await s.close()}
 });
