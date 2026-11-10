@@ -9,12 +9,12 @@ export const SELECTED_DICE = Object.freeze([
     "name": "Dragonfire",
     "accent": "#ec5c25",
     "bg": "#311018",
-    "glyph": "✦",
     "proposedProductId": "oathkeeper.dice.dragonfire",
-    "previewFilename": "dice_01.png",
+    "previewFilename": "oathkeeper-dice-store-atlas.webp",
     "type": "non_consumable_cosmetic",
     "price": null,
-    "status": "art_review_only"
+    "status": "preview_only",
+    "atlasIndex": 0
   },
   {
     "selection": 2,
@@ -22,12 +22,12 @@ export const SELECTED_DICE = Object.freeze([
     "name": "Frostborne",
     "accent": "#76cffa",
     "bg": "#10294c",
-    "glyph": "❄",
     "proposedProductId": "oathkeeper.dice.frostborne",
-    "previewFilename": "dice_02.png",
+    "previewFilename": "oathkeeper-dice-store-atlas.webp",
     "type": "non_consumable_cosmetic",
     "price": null,
-    "status": "art_review_only"
+    "status": "preview_only",
+    "atlasIndex": 1
   },
   {
     "selection": 4,
@@ -35,12 +35,12 @@ export const SELECTED_DICE = Object.freeze([
     "name": "Elvenleaf",
     "accent": "#9bdb6c",
     "bg": "#153b25",
-    "glyph": "❧",
     "proposedProductId": "oathkeeper.dice.elvenleaf",
-    "previewFilename": "dice_04.png",
+    "previewFilename": "oathkeeper-dice-store-atlas.webp",
     "type": "non_consumable_cosmetic",
     "price": null,
-    "status": "art_review_only"
+    "status": "preview_only",
+    "atlasIndex": 2
   },
   {
     "selection": 5,
@@ -48,12 +48,12 @@ export const SELECTED_DICE = Object.freeze([
     "name": "Celestial",
     "accent": "#f2d99c",
     "bg": "#41406b",
-    "glyph": "✧",
     "proposedProductId": "oathkeeper.dice.celestial",
-    "previewFilename": "dice_05.png",
+    "previewFilename": "oathkeeper-dice-store-atlas.webp",
     "type": "non_consumable_cosmetic",
     "price": null,
-    "status": "art_review_only"
+    "status": "preview_only",
+    "atlasIndex": 3
   },
   {
     "selection": 7,
@@ -61,12 +61,12 @@ export const SELECTED_DICE = Object.freeze([
     "name": "Abyssal",
     "accent": "#24bed5",
     "bg": "#061d36",
-    "glyph": "◈",
     "proposedProductId": "oathkeeper.dice.abyssal",
-    "previewFilename": "dice_07.png",
+    "previewFilename": "oathkeeper-dice-store-atlas.webp",
     "type": "non_consumable_cosmetic",
     "price": null,
-    "status": "art_review_only"
+    "status": "preview_only",
+    "atlasIndex": 4
   },
   {
     "selection": 8,
@@ -74,12 +74,12 @@ export const SELECTED_DICE = Object.freeze([
     "name": "Gold-Forged",
     "accent": "#dba94b",
     "bg": "#4d2f10",
-    "glyph": "◆",
     "proposedProductId": "oathkeeper.dice.gold-forged",
-    "previewFilename": "dice_08.png",
+    "previewFilename": "oathkeeper-dice-store-atlas.webp",
     "type": "non_consumable_cosmetic",
     "price": null,
-    "status": "art_review_only"
+    "status": "preview_only",
+    "atlasIndex": 5
   },
   {
     "selection": 11,
@@ -87,12 +87,12 @@ export const SELECTED_DICE = Object.freeze([
     "name": "Necrotic",
     "accent": "#91ce56",
     "bg": "#1a2c1e",
-    "glyph": "☠",
     "proposedProductId": "oathkeeper.dice.necrotic",
-    "previewFilename": "dice_11.png",
+    "previewFilename": "oathkeeper-dice-store-atlas.webp",
     "type": "non_consumable_cosmetic",
     "price": null,
-    "status": "art_review_only"
+    "status": "preview_only",
+    "atlasIndex": 6
   },
   {
     "selection": 13,
@@ -100,12 +100,12 @@ export const SELECTED_DICE = Object.freeze([
     "name": "Astral",
     "accent": "#a89af9",
     "bg": "#28204e",
-    "glyph": "✺",
     "proposedProductId": "oathkeeper.dice.astral",
-    "previewFilename": "dice_13.png",
+    "previewFilename": "oathkeeper-dice-store-atlas.webp",
     "type": "non_consumable_cosmetic",
     "price": null,
-    "status": "art_review_only"
+    "status": "preview_only",
+    "atlasIndex": 7
   },
   {
     "selection": 15,
@@ -113,12 +113,12 @@ export const SELECTED_DICE = Object.freeze([
     "name": "Oceanic",
     "accent": "#4ad3d4",
     "bg": "#0b3f56",
-    "glyph": "≈",
     "proposedProductId": "oathkeeper.dice.oceanic",
-    "previewFilename": "dice_15.png",
+    "previewFilename": "oathkeeper-dice-store-atlas.webp",
     "type": "non_consumable_cosmetic",
     "price": null,
-    "status": "art_review_only"
+    "status": "preview_only",
+    "atlasIndex": 8
   },
   {
     "selection": 17,
@@ -126,11 +126,11 @@ export const SELECTED_DICE = Object.freeze([
     "name": "Sunfire",
     "accent": "#ffc365",
     "bg": "#76300d",
-    "glyph": "☀",
     "proposedProductId": "oathkeeper.dice.sunfire",
-    "previewFilename": "dice_17.png",
+    "previewFilename": "oathkeeper-dice-store-atlas.webp",
     "type": "non_consumable_cosmetic",
     "price": null,
-    "status": "art_review_only"
+    "status": "preview_only",
+    "atlasIndex": 9
   }
 ].map(item=>Object.freeze(item)));
