@@ -77,7 +77,9 @@ const assert=require('node:assert/strict');
     if(width===320||width===430){
      await mobile.evaluate(()=>window.scrollTo(0,0));
      await mobile.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+     console.log('Navigation before screenshot',width,mode,await mobile.locator('#nav').evaluate(nav=>({left:nav.scrollLeft,width:nav.clientWidth,total:nav.scrollWidth,dice:nav.querySelector('[data-tab=Dice]').getBoundingClientRect().toJSON(),bounds:nav.getBoundingClientRect().toJSON()})));
      await mobile.screenshot({path:`preview-output/${mode.startsWith('Official')?'official':'unofficial'}-dice-${width}.png`,fullPage:true});
+     console.log('Navigation after screenshot',width,mode,await mobile.locator('#nav').evaluate(nav=>({left:nav.scrollLeft,width:nav.clientWidth,total:nav.scrollWidth,dice:nav.querySelector('[data-tab=Dice]').getBoundingClientRect().toJSON(),bounds:nav.getBoundingClientRect().toJSON()})));
     }
    }
    await mobile.getByRole('button',{name:'Overview',exact:true}).click();
