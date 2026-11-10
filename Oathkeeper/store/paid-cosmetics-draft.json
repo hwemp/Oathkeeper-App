@@ -1,0 +1,231 @@
+{
+  "version": 1,
+  "checkoutEnabled": false,
+  "paymentAccountsConnected": false,
+  "currency": "USD",
+  "nonConsumable": true,
+  "products": [
+    {
+      "id": "oathkeeper.dice.dragonfire",
+      "slug": "dragonfire",
+      "name": "Dragonfire",
+      "kind": "dice",
+      "priceCents": 100,
+      "currency": "USD",
+      "type": "non_consumable"
+    },
+    {
+      "id": "oathkeeper.dice.frostborne",
+      "slug": "frostborne",
+      "name": "Frostborne",
+      "kind": "dice",
+      "priceCents": 100,
+      "currency": "USD",
+      "type": "non_consumable"
+    },
+    {
+      "id": "oathkeeper.dice.elvenleaf",
+      "slug": "elvenleaf",
+      "name": "Elvenleaf",
+      "kind": "dice",
+      "priceCents": 100,
+      "currency": "USD",
+      "type": "non_consumable"
+    },
+    {
+      "id": "oathkeeper.dice.celestial",
+      "slug": "celestial",
+      "name": "Celestial",
+      "kind": "dice",
+      "priceCents": 100,
+      "currency": "USD",
+      "type": "non_consumable"
+    },
+    {
+      "id": "oathkeeper.dice.abyssal",
+      "slug": "abyssal",
+      "name": "Abyssal",
+      "kind": "dice",
+      "priceCents": 100,
+      "currency": "USD",
+      "type": "non_consumable"
+    },
+    {
+      "id": "oathkeeper.dice.gold_forged",
+      "slug": "gold-forged",
+      "name": "Gold-Forged",
+      "kind": "dice",
+      "priceCents": 100,
+      "currency": "USD",
+      "type": "non_consumable"
+    },
+    {
+      "id": "oathkeeper.dice.necrotic",
+      "slug": "necrotic",
+      "name": "Necrotic",
+      "kind": "dice",
+      "priceCents": 100,
+      "currency": "USD",
+      "type": "non_consumable"
+    },
+    {
+      "id": "oathkeeper.dice.astral",
+      "slug": "astral",
+      "name": "Astral",
+      "kind": "dice",
+      "priceCents": 100,
+      "currency": "USD",
+      "type": "non_consumable"
+    },
+    {
+      "id": "oathkeeper.dice.oceanic",
+      "slug": "oceanic",
+      "name": "Oceanic",
+      "kind": "dice",
+      "priceCents": 100,
+      "currency": "USD",
+      "type": "non_consumable"
+    },
+    {
+      "id": "oathkeeper.dice.sunfire",
+      "slug": "sunfire",
+      "name": "Sunfire",
+      "kind": "dice",
+      "priceCents": 100,
+      "currency": "USD",
+      "type": "non_consumable"
+    },
+    {
+      "id": "oathkeeper.background.moonlit_citadel",
+      "slug": "moonlit-citadel",
+      "name": "Moonlit Citadel",
+      "kind": "backgrounds",
+      "priceCents": 50,
+      "currency": "USD",
+      "type": "non_consumable"
+    },
+    {
+      "id": "oathkeeper.background.ancient_ruins",
+      "slug": "ancient-ruins",
+      "name": "Ancient Ruins",
+      "kind": "backgrounds",
+      "priceCents": 50,
+      "currency": "USD",
+      "type": "non_consumable"
+    },
+    {
+      "id": "oathkeeper.background.enchanted_forest",
+      "slug": "enchanted-forest",
+      "name": "Enchanted Forest",
+      "kind": "backgrounds",
+      "priceCents": 50,
+      "currency": "USD",
+      "type": "non_consumable"
+    },
+    {
+      "id": "oathkeeper.background.dragons_crag",
+      "slug": "dragons-crag",
+      "name": "Dragon’s Crag",
+      "kind": "backgrounds",
+      "priceCents": 50,
+      "currency": "USD",
+      "type": "non_consumable"
+    },
+    {
+      "id": "oathkeeper.background.shadow_marsh",
+      "slug": "shadow-marsh",
+      "name": "Shadow Marsh",
+      "kind": "backgrounds",
+      "priceCents": 50,
+      "currency": "USD",
+      "type": "non_consumable"
+    },
+    {
+      "id": "oathkeeper.background.celestial_plains",
+      "slug": "celestial-plains",
+      "name": "Celestial Plains",
+      "kind": "backgrounds",
+      "priceCents": 50,
+      "currency": "USD",
+      "type": "non_consumable"
+    },
+    {
+      "id": "oathkeeper.background.crystal_caverns",
+      "slug": "crystal-caverns",
+      "name": "Crystal Caverns",
+      "kind": "backgrounds",
+      "priceCents": 50,
+      "currency": "USD",
+      "type": "non_consumable"
+    },
+    {
+      "id": "oathkeeper.background.elder_grove",
+      "slug": "elder-grove",
+      "name": "Elder Grove",
+      "kind": "backgrounds",
+      "priceCents": 50,
+      "currency": "USD",
+      "type": "non_consumable"
+    },
+    {
+      "id": "oathkeeper.background.mystic_lake",
+      "slug": "mystic-lake",
+      "name": "Mystic Lake",
+      "kind": "backgrounds",
+      "priceCents": 50,
+      "currency": "USD",
+      "type": "non_consumable"
+    },
+    {
+      "id": "oathkeeper.background.eternal_keep",
+      "slug": "eternal-keep",
+      "name": "Eternal Keep",
+      "kind": "backgrounds",
+      "priceCents": 50,
+      "currency": "USD",
+      "type": "non_consumable"
+    }
+  ],
+  "freeIcons": [
+    {
+      "slug": "icon-01",
+      "priceCents": 0
+    },
+    {
+      "slug": "icon-02",
+      "priceCents": 0
+    },
+    {
+      "slug": "icon-04",
+      "priceCents": 0
+    },
+    {
+      "slug": "icon-05",
+      "priceCents": 0
+    },
+    {
+      "slug": "icon-06",
+      "priceCents": 0
+    },
+    {
+      "slug": "icon-07",
+      "priceCents": 0
+    },
+    {
+      "slug": "icon-08",
+      "priceCents": 0
+    },
+    {
+      "slug": "icon-11",
+      "priceCents": 0
+    },
+    {
+      "slug": "icon-12",
+      "priceCents": 0
+    },
+    {
+      "slug": "icon-14",
+      "priceCents": 0
+    }
+  ]
+}
