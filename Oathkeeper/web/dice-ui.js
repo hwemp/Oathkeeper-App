@@ -1,8 +1,9 @@
+import {statisticsPage} from './roll-statistics.js';
 import { OFFICIAL_DICE, UNOFFICIAL_DICE, diceStatistics } from './dice.js';
 const order = [3,4,6,8,10,12,20,50,100];
 const number = n => Number(n).toLocaleString(undefined, { maximumFractionDigits: 2 });
 const art = (n,face) => `<span class="die-art die-art-${n}" aria-hidden="true" style="--die-x:${order.indexOf(n)%3};--die-y:${Math.floor(order.indexOf(n)/3)}">${face===undefined?'':`<span class="die-face-overlay">${face}</span>`}</span>`;
-export function dicePage(state) {
+export function dicePage(state,history=[]) {
   const list = state.mode === 'official' ? OFFICIAL_DICE : UNOFFICIAL_DICE;
   const s = diceStatistics(state.sides, state.quantity, state.modifier);
   const r = state.result;
@@ -20,5 +21,5 @@ export function dicePage(state) {
     ${r?`<p class="dice-breakdown">${r.rolls.map(x=>number(x.value)).join(' + ')}${r.modifier?' '+(r.modifier>0?'+':'−')+' '+number(Math.abs(r.modifier)):''} = ${number(r.total)}</p>${state.mode==='official'&&r.sides===3?`<p class="dice-note">D6 rolls: ${r.rolls.map(x=>`${x.d6} → ${x.value}`).join(', ')}</p>`:''}${state.mode==='official'&&r.sides===100?`<p class="dice-note">Percentile rolls: ${r.rolls.map(x=>`${String(x.tens).padStart(2,'0')} + ${x.ones} → ${x.value}`).join(', ')}</p>`:''}`:''}
     <p id="diceError" class="dice-error" role="alert"></p>
     <details class="dice-probabilities"><summary>Roll probabilities</summary><p>Each face of D${state.sides}: ${number(s.chance*100)}% per die. Average total: ${number(s.mean)}. Total range: ${number(s.minimum)}–${number(s.maximum)}. Each roll is independent.</p><p>Artwork does not affect the result. Uses your device’s secure random-number generator. Modifiers are added once to the total.</p></details>
-    </section></section>`;
+    </section>${statisticsPage(history,state.mode,state.sides)}</section>`;
 }

@@ -47,3 +47,7 @@ cookie persistence, logout and large-file memory behavior still require device
 tests against the configured backend. Durable upload storage must be enabled on
 the backend before files can be shared. Existing per-file limits still apply.
 Run npm run check, npm run typecheck, npm test and npm run build in Oathkeeper.
+
+## Combined November 10 work
+
+The consolidated task ledger and resume point is [Oathkeeper/docs/consolidated-status.md](Oathkeeper/docs/consolidated-status.md). It includes Support, observed dice statistics, the DM desk and an owner-approved AI repair service alongside the earlier navigation and fantasy dice work. See the ledger for tested behavior, unconfigured online dependencies and the publication/Android-test status.

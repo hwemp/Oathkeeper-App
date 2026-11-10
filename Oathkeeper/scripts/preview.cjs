@@ -88,6 +88,34 @@ const assert=require('node:assert/strict');
    await mobile.getByRole('heading',{name:'Ready for the next encounter'}).waitFor();
    await mobile.close();
   }
-  console.log('PASS: font, safe areas, no overflow, tabs, dice selection, D3, D100, D50, quantity/modifier, mode reset, bell');
+  // Render and exercise the combined workspaces at narrow and wide phone sizes.
+  for(const width of [320,393,430]){
+   const workspace=await browser.newPage({viewport:{width,height:852},deviceScaleFactor:1});
+   const errors=[];workspace.on('pageerror',e=>errors.push(e.message));
+   await workspace.goto('http://127.0.0.1:5173');
+   await workspace.evaluate(()=>document.fonts.ready);
+   const open=async name=>{await workspace.locator('#appMenu summary').click();await workspace.locator('#appMenu [data-tab="'+name+'"]').click()};
+   await open('Dice');await workspace.getByRole('button',{name:'Roll dice',exact:true}).click();
+   await workspace.locator('.roll-statistics').scrollIntoViewIfNeeded();
+   await workspace.screenshot({path:`preview-output/statistics-${width}.png`});
+   await open('Support');await workspace.getByRole('heading',{name:'Contact support',exact:true}).waitFor();
+   assert(await workspace.getByRole('link',{name:'ecclesyus@gmail.com',exact:true}).isVisible());
+   assert(!await workspace.locator('#supportAuto').isChecked());
+   assert(!(await workspace.evaluate(()=>document.documentElement.scrollWidth>innerWidth)),`Support overflow at ${width}`);
+   await workspace.evaluate(()=>window.scrollTo(0,0));await workspace.screenshot({path:`preview-output/support-${width}.png`});
+   await open('DM');await workspace.getByRole('heading',{name:'Session ledger',exact:true}).waitFor();
+   assert(!(await workspace.evaluate(()=>document.documentElement.scrollWidth>innerWidth)),`DM Session overflow at ${width}`);
+   await workspace.evaluate(()=>window.scrollTo(0,0));await workspace.screenshot({path:`preview-output/dm-session-${width}.png`});
+   await workspace.locator('[data-dm="placement"]').selectOption('tab');
+   await workspace.locator('#nav [data-tab="DM"]').waitFor({state:'visible'});
+   for(const section of ['Encounter','Campaign','Rules & Books']){
+    await workspace.getByRole('button',{name:section,exact:true}).click();
+    assert(!(await workspace.evaluate(()=>document.documentElement.scrollWidth>innerWidth)),`DM ${section} overflow at ${width}`);
+    await workspace.evaluate(()=>window.scrollTo(0,0));
+    await workspace.screenshot({path:`preview-output/dm-${section.split(' ')[0].toLowerCase()}-${width}.png`});
+   }
+   assert.deepEqual(errors,[],`Workspace page errors at ${width}`);await workspace.close();
+  }
+  console.log('PASS: font, safe areas, no overflow, dice, stats, Support, DM sections and placement; phone screenshots saved');
  }finally{if(browser)await browser.close();server.kill()}
 })().catch(e=>{console.error(e);process.exitCode=1});
