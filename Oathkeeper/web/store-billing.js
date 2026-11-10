@@ -11,10 +11,12 @@ const isInstalled=()=>Capacitor.isNativePlatform() &&
 export async function loadStoreBilling() {
   if(!isInstalled()) return {available:false,reason:'Install the mobile app to make purchases.',ownedIds:[],products:[]};
   try {
-    const [catalog,entitlements]=await Promise.all([
+    const [catalogResult,entitlementResult]=await Promise.allSettled([
       plugin.getProducts({ids:[...STORE_PRODUCT_IDS]}),
       plugin.getEntitlements()
     ]);
+    const catalog=catalogResult.status==='fulfilled'?catalogResult.value:{ready:false,products:[]};
+    const entitlements=entitlementResult.status==='fulfilled'?entitlementResult.value:{verified:false,ready:false,productIds:[]};
     const ownedIds=verifiedOwnedIds(entitlements);
     const products=Array.isArray(catalog?.products)?catalog.products.filter(x=>STORE_PRODUCT_IDS.includes(x.id)):[];
     const checkoutAllowed=STORE_PRICING.dice.checkoutEnabled===true &&
@@ -38,7 +40,7 @@ export async function restoreStorePurchases(){
 }
 
 export async function buyStoreProduct(productId){
-  // Cannot be bypassed through UI state or localStorage. Native verification
+  // Cannot be bypassed through UI state. Native verification
   // must be operational before the app is released with checkout enabled.
   if(STORE_PRICING.dice.checkoutEnabled!==true ||
      STORE_PRICING.backgrounds.checkoutEnabled!==true)

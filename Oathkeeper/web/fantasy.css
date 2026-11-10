@@ -325,3 +325,23 @@ font-weight:700;letter-spacing:.09em}
 .store-restore-button{background:linear-gradient(160deg,#293249,#151b31);color:#f9ddaa}
 .store-icon-action-buttons button:disabled{opacity:.58;cursor:not-allowed}
 .store-icon-action-buttons button:focus-visible{outline:3px solid #fff4d0;outline-offset:2px}
+
+/* Apply verified paid cosmetics without changing the default appearance. */
+body[data-store-paid-background]::before{
+ background:linear-gradient(#0b102344,#0b10237a),var(--oathkeeper-paid-background) center top/cover no-repeat;
+}
+.store-cosmetic-actions{display:flex;gap:8px;flex-wrap:wrap;grid-column:1/-1}
+.store-cosmetic-actions button{flex:1 1 180px;padding:8px 14px;min-height:44px}
+.store-cosmetic-actions button:disabled{opacity:.5;cursor:not-allowed}
+.store-billing-status{grid-column:1/-1;font-size:clamp(11px,1.5vw,15px);opacity:.8}
+.dice-applied-skin{display:flex;gap:14px;align-items:center;padding:12px;
+ border:1px solid var(--store-selected-outline);border-radius:12px;
+ background:#161d31ed;margin-bottom:16px}
+.dice-applied-art{width:min(32vw,180px);flex:0 0 min(32vw,180px);aspect-ratio:248/175;
+ border:2px solid var(--store-selected-outline);border-radius:9px;
+ background-image:url('/art/oathkeeper-dice-store-atlas.webp');
+ background-size:500% 200%;background-position:var(--store-atlas-x) var(--store-atlas-y);
+ background-repeat:no-repeat}
+.dice-applied-skin p{min-width:0;line-height:1.45}
+.dice-page.has-dice-skin .dice-card{border-color:var(--store-selected-outline)}
+@media(max-width:500px){.dice-applied-art{width:115px;flex-basis:115px}}

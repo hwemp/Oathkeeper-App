@@ -135,3 +135,26 @@ test('icon selection persists across store visits without charging the user',asy
   assert.equal(sh.q('.store-icon-preview-image').getAttribute('src'),'/art/store-icons/icon-07.webp');
  }finally{await sh.close()}
 });
+
+test('forged local purchase flags never unlock dice and background cosmetics',async()=>{
+ const shellState=await shell();
+ let saved;
+ try{
+  saved=shellState.saved();
+ }finally{await shellState.close()}
+ saved.activeStoreDice='dragonfire';
+ saved.activeStoreBackground='mystic-lake';
+ saved.purchased=['oathkeeper.dice.dragonfire','oathkeeper.background.mystic-lake'];
+ saved.ownedProducts=[...saved.purchased];
+ const s=await shell(saved);
+ try{
+  s.click('[data-tab="Dice"]');
+  assert.equal(s.q('.dice-applied-skin'),null);
+  assert.equal(s.w.document.body.hasAttribute('data-store-paid-background'),false);
+  s.click('[data-tab="Store"]');
+  assert.equal(s.q('[data-store-apply-cosmetic="dice:elvenleaf"]').disabled,true);
+  s.click('[data-store-category="backgrounds"]');
+  assert.equal(s.q('[data-store-apply-cosmetic="backgrounds:moonlit-citadel"]').disabled,true);
+  assert.equal(s.q('[data-store-restore-purchases="true"]').disabled,true);
+ }finally{await s.close()}
+});

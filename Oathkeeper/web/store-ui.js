@@ -2,6 +2,7 @@ import {SELECTED_DICE} from './store-dice-catalog.js';
 import {SELECTED_BACKGROUNDS} from './store-background-catalog.js';
 import {SELECTED_APP_ICONS,APPROVED_FREE_ICON_CONCEPTS} from './store-icon-catalog.js';
 import {STORE_PRICING,formatStorePrice} from './store-pricing.js';
+import {productFor,ownedItem} from './store-products.js';
 
 const esc = value => String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 const diceArtStyle = index => '--store-atlas-x:' + (index % 5) * 25 + '%;--store-atlas-y:' + Math.floor(index / 5) * 100 + '%';
@@ -15,18 +16,37 @@ function categoryRow(current) {
     + '<span class="store-category-upcoming" aria-disabled="true">Bundles</span></div>';
 }
 
-function selectionFooter(kind, active, category) {
+function selectionFooter(kind, active, category, options={}) {
   if(STORE_PRICING[category].mode === 'free'){
     return '<div class="store-selection-footer"><p><strong>' + esc(active.name)
       + '</strong> selected. App icons are FREE, with no purchase or payment required. '
       + 'Alternative icons can be applied after their individual artwork is bundled.</p>'
       + '<span class="store-free-label" aria-label="Free item">FREE</span></div>';
   }
+  const owned=ownedItem(category,active.slug,options.ownedIds||[]);
+  const applied=(category==='dice'?options.activeDice:options.activeBackground)===active.slug;
+  const product=productFor(category,active.slug);
+  const actualPrice=options.billingReady && options.products?.find(item=>item.id===product.id)?.displayPrice;
+  const displayPrice=actualPrice||formatStorePrice(active.priceCents);
   return '<div class="store-selection-footer"><p>Tap a ' + kind
     + ' to preview it instantly. <strong>' + esc(active.name)
-    + '</strong> selected. Price: <strong>' + formatStorePrice(active.priceCents) + '</strong> USD. Checkout is not available yet.</p>'
+    + '</strong> selected. Price: <strong>' + esc(displayPrice)
+    + '</strong> USD. ' + (owned ? 'Purchased and verified.' :
+      'Checkout is not available yet; previewing does not unlock this item.') + '</p>'
     + '<button type="button" class="store-purchase-disabled" disabled aria-disabled="true"'
-    + ' title="Paid purchases are not available yet">Purchase</button></div>';
+    + ' title="Paid purchases are not available yet" data-store-buy-id="' + esc(product.id) + '">Purchase</button>'
+    + '<div class="store-cosmetic-actions">'
+    + '<button type="button" data-store-restore-purchases="true"'
+    + (!options.billingReady?' disabled aria-disabled="true"':'')
+    + '>Restore Purchases</button>'
+    + '<button type="button" data-store-apply-cosmetic="' + esc(category + ':' + active.slug) + '"'
+    + (!owned||applied?' disabled aria-disabled="true"':'') + '>'
+    + (applied?'Applied':'Apply Owned Design') + '</button>'
+    + '<button type="button" data-store-restore-cosmetic="' + esc(category) + '"'
+    + (!(category==='dice'?options.activeDice:options.activeBackground)?' disabled aria-disabled="true"':'')
+    + '>Restore Default</button></div>'
+    + '<p class="store-billing-status" role="status">Purchase restoration and checkout require your app-store account setup.</p>'
+    + '</div>';
 }
 
 function storeShell(category, body, note) {
@@ -36,7 +56,7 @@ function storeShell(category, body, note) {
 }
 
 export function storePage(selectedSlug = 'elvenleaf', options = {}) {
-  if (options.category === 'backgrounds') return backgroundStorePage(options.backgroundSlug);
+  if (options.category === 'backgrounds') return backgroundStorePage(options.backgroundSlug,options);
   if (options.category === 'icons') return iconStorePage(options.iconSlug,options.iconStatus);
   const active = SELECTED_DICE.find(item => item.slug === selectedSlug) || SELECTED_DICE[2] || SELECTED_DICE[0];
   const tiles = SELECTED_DICE.map(item => {
@@ -54,11 +74,11 @@ export function storePage(selectedSlug = 'elvenleaf', options = {}) {
   return storeShell('dice',
     '<h2 class="store-collection-title">Dice Collection <small>(' + SELECTED_DICE.length + ')</small></h2>'
     + '<div class="store-dice-grid" role="group" aria-label="Select a dice set to preview">' + tiles + '</div>'
-    + preview + selectionFooter('dice set', active, 'dice'),
+    + preview + selectionFooter('dice set', active, 'dice', options),
     'Dice designs are $1.00 each (USD). Checkout is not yet connected; previewing is free.');
 }
 
-function backgroundStorePage(selectedSlug = 'moonlit-citadel') {
+function backgroundStorePage(selectedSlug = 'moonlit-citadel', options={}) {
   const active = SELECTED_BACKGROUNDS.find(item => item.slug === selectedSlug) || SELECTED_BACKGROUNDS[0];
   const tiles = SELECTED_BACKGROUNDS.map(item => {
     const selected = item.slug === active.slug;
@@ -79,7 +99,7 @@ function backgroundStorePage(selectedSlug = 'moonlit-citadel') {
   return storeShell('backgrounds',
     '<h2 class="store-collection-title">Background Collection <small>(' + SELECTED_BACKGROUNDS.length + ')</small></h2>'
     + '<div class="store-background-grid" role="group" aria-label="Select a fantasy background to preview">' + tiles + '</div>'
-    + preview + selectionFooter('background', active, 'backgrounds'),
+    + preview + selectionFooter('background', active, 'backgrounds', options),
     'Backgrounds are $0.50 each (USD). Checkout is not yet connected; previewing is free.');
 }
 

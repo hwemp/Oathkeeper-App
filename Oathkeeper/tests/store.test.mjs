@@ -149,3 +149,18 @@ test('free icon pricing stays separate from paid dice and backgrounds',()=>{
  assert.match(storePage('elvenleaf',{category:'backgrounds'}),/Purchase<\/button>/);
  assert.doesNotMatch(icons,/>Purchase<\/button>/);
 });
+
+test('paid cosmetics never apply before verified ownership, and restore works',()=>{
+ for(const [category,slug,key] of [['dice','dragonfire','activeDice'],['backgrounds','moonlit-citadel','activeBackground']]){
+  const choice=category==='dice'?SELECTED_DICE[0]:SELECTED_BACKGROUNDS[0];
+  const page=storePage(choice.slug,{category,...(category==='dice'?{}:{backgroundSlug:slug})});
+  assert(page.includes('data-store-apply-cosmetic="'+category+':'+slug+'" disabled aria-disabled="true"'));
+  assert(page.includes('data-store-restore-purchases="true" disabled aria-disabled="true"'));
+  const owned=storePage(choice.slug,{category,...(category==='dice'?{}:{backgroundSlug:slug}),ownedIds:[choice.proposedProductId]});
+  assert(owned.includes('data-store-apply-cosmetic="'+category+':'+slug+'"'));
+  assert(!owned.includes('data-store-apply-cosmetic="'+category+':'+slug+'" disabled'));
+  const applied=storePage(choice.slug,{category,...(category==='dice'?{}:{backgroundSlug:slug}),ownedIds:[choice.proposedProductId],[key]:slug});
+  assert(applied.includes('data-store-restore-cosmetic="'+category+'"'));
+  assert(!applied.includes('data-store-restore-cosmetic="'+category+'" disabled'));
+ }
+});
