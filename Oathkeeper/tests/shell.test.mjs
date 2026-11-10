@@ -158,3 +158,43 @@ test('forged local purchase flags never unlock dice and background cosmetics',as
   assert.equal(s.q('[data-store-restore-purchases="true"]').disabled,true);
  }finally{await s.close()}
 });
+
+
+test('equipment editing hides all five coin inputs without altering the coin purse',async()=>{
+ const s=await shell();
+ try {
+  const dialog=s.q('#equipmentEditor');
+  dialog.showModal=()=>{dialog.open=true};
+  dialog.close=()=>{dialog.open=false};
+  s.click('[data-action="edit-equipment"]');
+  const fields=[...s.q('#equipmentFields').querySelectorAll('[data-draft-key]')];
+  assert.deepEqual(fields.map(x=>x.dataset.draftKey),['body']);
+  for (const key of ['cp','sp','ep','gp','pp'])
+   assert.equal(s.q('[data-draft-key="'+key+'"]'),null,key+' must not be editable');
+  assert(s.q('#equipmentFields').textContent.includes('Body weight'));
+  s.input('[data-draft-key="body"]','205');
+  s.click('[data-action="save-equipment"]');
+  assert.equal(s.saved().body,205);
+  assert.deepEqual(['cp','sp','ep','gp','pp'].map(k=>s.saved()[k]),[0,0,0,15,0]);
+  assert.match(s.q('#view').textContent,/Coin purse/);
+  assert.match(s.q('#view').textContent,/GP: 15/);
+ } finally {await s.close()}
+});
+
+test('four primary navigation tabs remain interactive and HP uses one visible slash',async()=>{
+ const s=await shell();
+ try {
+  for(const name of ['Overview','Powers','Inventory','Dice'])
+   assert(s.q('#nav [data-tab="'+name+'"]'),name+' tab');
+  const separator=s.q('.hp-value .hp-separator');
+  assert.equal(separator.textContent,'/');
+  assert.equal(separator.getAttribute('aria-hidden'),'true');
+  assert.equal(s.q('.hp-value .sr-only').textContent,'out of');
+  s.click('#nav [data-tab="Powers"]');
+  assert(s.q('#nav [data-tab="Powers"]').classList.contains('active'));
+  s.click('#nav [data-tab="Inventory"]');
+  assert.match(s.q('#view').textContent,/Coin purse/);
+  s.click('#nav [data-tab="Dice"]');
+  assert(s.q('.dice-page'));
+ } finally {await s.close()}
+});
