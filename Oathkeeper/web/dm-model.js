@@ -1,0 +1,19 @@
+import {NOTEBOOKS} from './dm-content.js';
+export const XP_BUDGETS=[[50,75,100],[100,150,200],[150,225,400],[250,375,500],[500,750,1100],[600,1000,1400],[750,1300,1700],[1000,1700,2100],[1300,2000,2600],[1600,2300,3100],[1900,2900,4100],[2200,3700,4700],[2600,4200,5400],[2900,4900,6200],[3300,5400,7800],[3800,6100,9800],[4500,7200,11700],[5000,8700,14200],[5500,10700,17200],[6400,13200,22000]];
+export function createDM(){return {placement:'menu',section:'Session',title:'My campaign',round:1,activeId:'',elapsed:0,checklist:[],combatants:[],notes:Object.fromEntries(NOTEBOOKS.map(n=>[n,''])),environment:{location:'',terrain:'',weather:'',light:'Bright',pace:'Normal',hazards:''},partyLevels:'1,1,1,1',monsterXP:0}}
+const text=(v,max=20000)=>typeof v==='string'?v.slice(0,max):'';
+const number=(v,min,max)=>Number.isFinite(v)?Math.max(min,Math.min(max,v)):min;
+export function validateDM(v){
+ if(!v||typeof v!=='object'||Array.isArray(v))throw Error('Invalid DM workspace');
+ const d=createDM();d.placement=v.placement==='tab'?'tab':'menu';d.section=['Session','Encounter','Campaign','Rules & Books'].includes(v.section)?v.section:'Session';d.title=text(v.title,120)||d.title;d.round=Math.trunc(number(v.round,1,100000));d.elapsed=number(v.elapsed,0,100000000);d.activeId=text(v.activeId,80);d.partyLevels=text(v.partyLevels,200)||d.partyLevels;d.monsterXP=number(v.monsterXP,0,100000000);
+ d.checklist=Array.isArray(v.checklist)?[...new Set(v.checklist.filter(n=>Number.isInteger(n)&&n>=0&&n<11))]:[];
+ for(const k of Object.keys(d.notes))d.notes[k]=text(v.notes?.[k]);
+ for(const k of Object.keys(d.environment))d.environment[k]=text(v.environment?.[k],5000)||d.environment[k];
+ if(!Array.isArray(v.combatants)||v.combatants.length>100)throw Error('Invalid encounter roster');
+ const ids=new Set();d.combatants=v.combatants.map((x,i)=>{if(!x||typeof x!=='object')throw Error('Invalid combatant');const id=text(x.id,80)||'import-'+i;if(ids.has(id))throw Error('Duplicate combatant ID');ids.add(id);const maxhp=Math.trunc(number(x.maxhp,1,1000000));return {id,name:text(x.name,100)||'Unnamed',kind:x.kind==='monster'?'monster':'player',level:Math.trunc(number(x.level,1,20)),initiative:number(x.initiative,-1000,1000),tie:number(x.tie,0,1000),maxhp,hp:number(x.hp,0,maxhp),temp:number(x.temp,0,1000000),ac:number(x.ac,0,1000),successes:Math.trunc(number(x.successes,0,3)),failures:Math.trunc(number(x.failures,0,3)),exhaustion:Math.trunc(number(x.exhaustion,0,6)),concentration:text(x.concentration,300),conditions:text(x.conditions,1000),resources:text(x.resources,2000),action:!!x.action,bonus:!!x.bonus,reaction:!!x.reaction}});
+ if(!ids.has(d.activeId))d.activeId='';return d;
+}
+export const turnOrder=dm=>[...dm.combatants].sort((a,b)=>b.initiative-a.initiative||a.tie-b.tie||a.id.localeCompare(b.id));
+export function nextTurn(dm){const list=turnOrder(dm);if(!list.length)return;const i=list.findIndex(x=>x.id===dm.activeId),next=i<0?0:(i+1)%list.length;if(i>=0&&next===0)dm.round++;dm.activeId=list[next].id;const c=list[next];c.action=c.bonus=c.reaction=false;}
+export function applyHealth(c,amount,heal=false){if(!Number.isFinite(amount)||amount<0)throw Error('Enter a non-negative amount');if(heal){c.hp=Math.min(c.maxhp,c.hp+amount);if(c.hp>0)c.successes=c.failures=0}else{const absorbed=Math.min(c.temp,amount);c.temp-=absorbed;c.hp=Math.max(0,c.hp-(amount-absorbed));if(c.hp===0)c.concentration=''}return c}
+export function encounterBudget(levels){if(typeof levels!=='string'||!/^\s*\d{1,2}(\s*,\s*\d{1,2})*\s*$/.test(levels))throw Error('Enter comma-separated levels from 1 to 20');const a=levels.split(',').map(Number);if(a.length>20||a.some(n=>n<1||n>20))throw Error('Use 1–20 characters, each level 1–20');return a.reduce((s,n)=>s.map((x,i)=>x+XP_BUDGETS[n-1][i]),[0,0,0])}
