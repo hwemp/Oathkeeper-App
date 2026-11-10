@@ -40,3 +40,27 @@ test('selection preview changes without altering roll logic or enabling purchase
  assert.match(html,/Purchase — disabled/);
  assert.doesNotMatch(html,/data-purchase=|data-checkout=|payment-provider|cashapp|paypal|venmo/i);
 });
+
+test('every dice design previews its own atlas cell rather than Dragonfire', async()=>{
+ const positions=new Set();
+ for(const dice of SELECTED_DICE){
+  const html=storePage(dice.slug,true);
+  const x=(dice.atlasIndex%5)*25;
+  const y=Math.floor(dice.atlasIndex/5)*100;
+  const expectedStyle=`--store-atlas-x:${x}%;--store-atlas-y:${y}%`;
+  assert.match(html,new RegExp(`data-store-atlas-index="${dice.atlasIndex}" style="${expectedStyle}"`));
+  assert.match(html,new RegExp(`Larger preview of ${dice.name} dice`));
+  assert.match(html,/class="store-preview-image" role="img"/);
+  assert.doesNotMatch(html,/<canvas/);
+  positions.add(expectedStyle);
+ }
+ assert.equal(positions.size,SELECTED_DICE.length);
+ const css=await readFile(new URL('../web/fantasy.css',import.meta.url),'utf8');
+ const previewCss=css.match(/\\.store-preview-image\\{[^}]+\\}/g)?.at(-1)||'';
+ assert.match(previewCss,/aspect-ratio:248\\/175/);
+ assert.match(previewCss,/background-color:#0b1023/);
+ assert.doesNotMatch(previewCss,/background:#0b1023/);
+ const app=await readFile(new URL('../web/app.js',import.meta.url),'utf8');
+ assert.match(app,/c\\.storePreviewDice=selected;save\\(\\);render\\(\\);return/);
+ assert.doesNotMatch(app,/storePreviewOpen=false;save\\(\\);render\\(\\)/);
+});
