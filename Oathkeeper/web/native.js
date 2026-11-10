@@ -10,3 +10,22 @@ export function persist(value){if(isNative&&!nativeReady)return Promise.reject(n
 export async function exportBackup(character){const data=JSON.stringify({format:'oathkeeper',version:1,character},null,2);if(isNative){const path='Oathkeeper-character.json';const result=await Filesystem.writeFile({path,data,directory:Directory.Cache,encoding:Encoding.UTF8});await Share.share({title:'Oathkeeper character backup',url:result.uri,dialogTitle:'Save or share your backup'});return}const url=URL.createObjectURL(new Blob([data],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='Oathkeeper-character.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
 export async function clearStored(){await queue.catch(()=>{});if(isNative)await Preferences.remove({key:KEY});localStorage.removeItem(KEY)}
 if(isNative)App.addListener('backButton',({canGoBack})=>{const dialog=document.querySelector('dialog[open]');if(dialog)dialog.close();else if(canGoBack)history.back();else document.dispatchEvent(new Event('navigate-home'))});
+
+export async function saveCommunityAttachment(blob, filename) {
+  const name = filename.replace(/[^a-zA-Z0-9._-]/g, '_').slice(-150) || 'attachment';
+  if (isNative) {
+    const data = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result).split(',')[1]);
+      reader.onerror = () => reject(new Error('Could not read this attachment.'));
+      reader.readAsDataURL(blob);
+    });
+    const result = await Filesystem.writeFile({ path: 'community-' + Date.now() + '-' + name, data, directory: Directory.Cache });
+    await Share.share({ title: filename, url: result.uri, dialogTitle: 'Save or share attachment' });
+  } else {
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url; anchor.download = name; anchor.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+}

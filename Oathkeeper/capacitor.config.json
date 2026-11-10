@@ -1,1 +1,17 @@
-{"appId":"com.harrisonwaters.oathkeeper","appName":"Oathkeeper","webDir":"dist","backgroundColor":"#131119","android":{"allowMixedContent":false},"ios":{"contentInset":"automatic"}}
+{
+  "appId": "com.harrisonwaters.oathkeeper",
+  "appName": "Oathkeeper",
+  "webDir": "dist",
+  "backgroundColor": "#131119",
+  "android": {
+    "allowMixedContent": false
+  },
+  "ios": {
+    "contentInset": "automatic"
+  },
+  "plugins": {
+    "CapacitorHttp": {
+      "enabled": true
+    }
+  }
+}
