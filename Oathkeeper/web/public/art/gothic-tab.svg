@@ -1,9 +1,79 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 88" fill="none">
-<defs><linearGradient id="metal" x2="0" y2="1"><stop stop-color="#fff2b5"/><stop offset=".22" stop-color="#91612d"/><stop offset=".45" stop-color="#e7bf72"/><stop offset=".58" stop-color="#6c431b"/><stop offset=".85" stop-color="#c89349"/><stop offset="1" stop-color="#ffe9a0"/></linearGradient><linearGradient id="face" x2="0" y2="1"><stop stop-color="#48301c"/><stop offset=".5" stop-color="#1f170f"/><stop offset="1" stop-color="#382518"/></linearGradient><radialGradient id="gem" cx=".35" cy=".25" r=".8"><stop stop-color="#f1d1ff"/><stop offset=".25" stop-color="#b96bf2"/><stop offset=".55" stop-color="#7023a6"/><stop offset="1" stop-color="#200a3a"/></radialGradient></defs>
-<path d="M19 15H72L80 11H100L108 15H161Q163 25 176 28V60Q163 63 161 73H108L100 77H80L72 73H19Q17 63 4 60V28Q17 25 19 15Z" fill="url(#metal)" stroke="#442b13" stroke-width="2"/>
-<path d="M22 20H73L81 16H99L107 20H158Q162 30 171 32V56Q162 59 158 68H107L99 72H81L73 68H22Q18 59 9 56V32Q18 30 22 20Z" fill="url(#face)" stroke="#f3d192"/>
-<path d="M24 24H67M113 24H156M24 64H67M113 64H156" stroke="#987040" stroke-width=".8"/>
-<g stroke="url(#metal)" stroke-width="1.6"><path d="M70 16q-15-12-15 0q4 8 13 3l-6-7m48 4q15-12 15 0q-4 8-13 3l6-7M70 72q-15 12-15 0q4-8 13-3l-6 7m48-4q15 12 15 0q-4-8-13-3l6 7"/><path d="m76 15 14-11 14 11-14 12zm0 58 14-12 14 12-14 11z" fill="#593a1b"/></g>
-<ellipse cx="90" cy="15" rx="7" ry="10" fill="url(#gem)" stroke="#f7d695" stroke-width="2"/><ellipse cx="90" cy="73" rx="7" ry="10" fill="url(#gem)" stroke="#f7d695" stroke-width="2"/>
-<g fill="#c19a5a" stroke="#49301b"><circle cx="19" cy="35" r="1.8"/><circle cx="19" cy="53" r="1.8"/><circle cx="161" cy="35" r="1.8"/><circle cx="161" cy="53" r="1.8"/></g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 88" fill="none" role="img" aria-label="Ornate gold-edged fantasy plaque with faceted amethyst jewels">
+<defs>
+  <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+    <stop stop-color="#fff5d0"/><stop offset=".10" stop-color="#b97c30"/>
+    <stop offset=".23" stop-color="#fff0aa"/><stop offset=".38" stop-color="#94601d"/>
+    <stop offset=".55" stop-color="#ffe5a0"/><stop offset=".72" stop-color="#986021"/>
+    <stop offset=".88" stop-color="#f2c36a"/><stop offset="1" stop-color="#fff1bb"/>
+  </linearGradient>
+  <linearGradient id="innerGold" x1="0" y1="0" x2="0" y2="1">
+    <stop stop-color="#fff0b8"/><stop offset=".42" stop-color="#ad7734"/>
+    <stop offset=".62" stop-color="#ffe8a7"/><stop offset="1" stop-color="#9d6329"/>
+  </linearGradient>
+  <linearGradient id="face" x1="0" y1="0" x2="0" y2="1">
+    <stop stop-color="#4c3426"/><stop offset=".22" stop-color="#261b16"/>
+    <stop offset=".62" stop-color="#1b1513"/><stop offset="1" stop-color="#402718"/>
+  </linearGradient>
+  <radialGradient id="amethyst" cx=".44" cy=".40" r=".67">
+    <stop stop-color="#ffe4ff"/><stop offset=".12" stop-color="#ed9aff"/>
+    <stop offset=".38" stop-color="#c645ff"/><stop offset=".72" stop-color="#6d20d8"/>
+    <stop offset="1" stop-color="#260344"/>
+  </radialGradient>
+  <linearGradient id="facet" x1="0" y1="0" x2="1" y2="1">
+    <stop stop-color="#d875ff"/><stop offset=".32" stop-color="#7b20e2"/><stop offset=".66" stop-color="#bd3ef5"/><stop offset="1" stop-color="#3e0b8f"/>
+  </linearGradient>
+  <filter id="glow" x="-100%" y="-100%" width="300%" height="300%">
+    <feGaussianBlur stdDeviation="1.5"/>
+  </filter>
+  <g id="jewel">
+    <path d="M0-14L14 0 0 14-14 0Z" fill="#221022" stroke="url(#gold)" stroke-width="2.3"/>
+    <path d="M0-11L11 0 0 11-11 0Z" fill="url(#amethyst)" stroke="#713b99" stroke-width=".8"/>
+    <path d="M0-10L-9 0H0Z" fill="#e7a9ff" opacity=".31"/>
+    <path d="M0-10L9 0H0Z" fill="#5813b0" opacity=".55"/>
+    <path d="M-9 0L0 10V0Z" fill="#3f0d8f" opacity=".64"/>
+    <path d="M9 0L0 10V0Z" fill="url(#facet)" opacity=".73"/>
+    <path d="M0-10V10M-10 0H10" stroke="#f4c0ff" stroke-width=".65" opacity=".63"/>
+    <path d="M0-9Q1.1-2.1 8.5 0Q1.1 1.9 0 9Q-1.1 1.9-8.5 0Q-1.1-2.1 0-9Z" fill="#f5aaff" opacity=".72" filter="url(#glow)"/>
+    <path d="M0-8Q1.1-2.1 6.2 0Q1.1 1.9 0 8Q-1.1 1.9-6.2 0Q-1.1-2.1 0-8Z" fill="#fff0ff"/>
+    <circle r="1.7" fill="white"/>
+  </g>
+  <g id="scroll">
+    <path d="M18 17Q21 9 31 10Q44 11 51 15Q48 8 55 7Q62 8 65 15" stroke="#5f3618" stroke-width="3.9" stroke-linecap="round"/>
+    <path d="M18 17Q21 9 31 10Q44 11 51 15Q48 8 55 7Q62 8 65 15" stroke="url(#innerGold)" stroke-width="2.1" stroke-linecap="round"/>
+    <path d="M32 11Q30 4 38 5Q42 7 39 11M51 15Q47 22 54 22Q59 21 59 16" stroke="url(#gold)" stroke-width="1.9" stroke-linecap="round"/>
+    <path d="M25 14Q27 9 32 10M52 13Q53 10 57 10" stroke="#fff8d9" stroke-width=".85" stroke-linecap="round"/>
+    <path d="M8 30Q17 25 20 18M8 58Q17 63 20 70" stroke="url(#gold)" stroke-width="2.6"/>
+    <path d="M8 30L16 30L19 23M8 58L16 58L19 65" stroke="#fff2b5" stroke-width=".8"/>
+  </g>
+</defs>
+<!-- Slanted, complete metallic plaque silhouette with full corner and side flourishes. -->
+<path d="M20 13L68 13L76 8L84 8L90 3L96 8L104 8L112 13L160 13
+ Q162 22 175 26L179 34L175 44L179 54L175 62Q162 66 160 75L112 75
+ L104 80L96 80L90 85L84 80L76 80L68 75L20 75Q18 66 5 62L1 54L5 44
+ L1 34L5 26Q18 22 20 13Z"
+ fill="#29170c" stroke="#462507" stroke-width="2.4" stroke-linejoin="round"/>
+<path d="M20 13L68 13L76 8L84 8L90 3L96 8L104 8L112 13L160 13
+ Q162 22 175 26L179 34L175 44L179 54L175 62Q162 66 160 75L112 75
+ L104 80L96 80L90 85L84 80L76 80L68 75L20 75Q18 66 5 62L1 54L5 44
+ L1 34L5 26Q18 22 20 13Z"
+ stroke="url(#gold)" stroke-width="2.6" stroke-linejoin="round"/>
+<path d="M21 19L67 19L77 14H103L113 19H159Q160 29 171 32L173 44L171 56
+ Q160 59 159 69H113L103 74H77L67 69H21Q20 59 9 56L7 44L9 32Q20 29 21 19Z"
+ fill="url(#face)" stroke="url(#innerGold)" stroke-width="1.8"/>
+<path d="M24 23H67L77 19H103L113 23H155Q158 32 167 35V53Q158 56 155 65
+ H113L103 69H77L67 65H24Q20 55 13 53V35Q20 32 24 23Z"
+ stroke="#875924" stroke-width="1.1"/>
+<path d="M24 20H67L78 16M156 20H113L102 16M24 68H67L78 72M156 68H113L102 72"
+ stroke="#fff0ae" stroke-width=".85" opacity=".88" stroke-linecap="round"/>
+<path d="M15 34L10 44L15 54M165 34L170 44L165 54" stroke="url(#gold)" stroke-width="1.8"/>
+<!-- Fully rendered mirrored gold scrollwork, not cropped by the reference photo. -->
+<use href="#scroll"/>
+<use href="#scroll" transform="translate(180 0) scale(-1 1)"/>
+<use href="#scroll" transform="translate(0 88) scale(1 -1)"/>
+<use href="#scroll" transform="translate(180 88) scale(-1 -1)"/>
+<!-- Faceted reference-style purple diamond gems with four-point white flares. -->
+<use href="#jewel" x="90" y="13"/>
+<use href="#jewel" x="90" y="75"/>
+<circle cx="20" cy="36" r="1.1" fill="#ecc67a"/><circle cx="20" cy="52" r="1.1" fill="#ecc67a"/>
+<circle cx="160" cy="36" r="1.1" fill="#ecc67a"/><circle cx="160" cy="52" r="1.1" fill="#ecc67a"/>
 </svg>
