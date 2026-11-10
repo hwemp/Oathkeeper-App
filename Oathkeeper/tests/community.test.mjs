@@ -26,7 +26,11 @@ test('unconfigured community stays in-app, shows sections, never requests a webs
   const t = await setup();
   try {
     assert.match(t.q('#communityRoot').textContent, /has not launched/);
-    for (const section of ['Friends','Messages','Groups','Account','Posts']) await t.click(section);
+    for (const section of ['Friends','Messages','Groups','Account','Posts']) {
+      await t.click(section);
+      assert(!t.q('#communityRoot').textContent.includes('Oathkeeper community'), section);
+      assert(!t.q('#communityRoot').textContent.includes('has not launched'), section);
+    }
     assert.equal(t.requests.length, 0);
     assert.equal(t.q('input[type=url]'), null);
     await t.click('Account');
@@ -65,7 +69,7 @@ test('API failures are visible and service origins reject insecure or credential
 
 test('mobile shell mounts community and account locally without website launch or URL field', async()=>{
   const source=await readFile('web/app.js','utf8');
-  assert(source.includes("mountCommunity($('#communityRoot'),tab==='Account',tab==='Community'?'Posts':tab)"));
+  assert(source.includes("mountCommunity($('#communityRoot'),tab==='Account',tab)"));
   assert(!source.includes('openCommunity'));
   assert(!source.includes('communityAddress'));
   const config=JSON.parse(await readFile('capacitor.config.json','utf8'));

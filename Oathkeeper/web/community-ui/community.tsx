@@ -40,7 +40,7 @@ export function Community({ initialSection = 'Posts' }: { initialSection?: strin
   const [scope, setScope] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
-  const section = initialSection;
+  const section = initialSection === 'Community' ? 'Posts' : initialSection;
   const [register, setRegister] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -67,7 +67,7 @@ export function Community({ initialSection = 'Posts' }: { initialSection?: strin
   }
   const group = groups.find(value => value._id === scope);
   return <>
-    <div className="intro"><p className="eyebrow">BEYOND THE CHARACTER SHEET</p><h1>A place for your party.</h1><p>Share adventures, trade maps, and keep the conversation going.</p></div>
+    {initialSection==='Community' && <div className="intro"><p className="eyebrow">BEYOND THE CHARACTER SHEET</p><h1>A place for your party.</h1><p>Share adventures, trade maps, and keep the conversation going.</p></div>}
     <p className="notice">Public posts are visible to everyone. Private group posts, files, and messages are visible only to group members. Character worksheets still need to be downloaded separately.</p>
     {error && <p role="alert" className="notice">{error}</p>}
     {!session && !error && <p role="status">Connecting to the community…</p>}
