@@ -13,7 +13,7 @@ function readAcceptance() {
   } catch {}
   return null;
 }
-export function canUseCommunity() { return accepted && tier === 'adult'; }
+export function canUseCommunity() { return accepted && tier === 'adult' && document.querySelector('meta[name="oathkeeper-community-safety-verified"]')?.getAttribute('content') === 'verified'; }
 export function isTermsAccepted() { return accepted; }
 export function currentAgeTier() { return tier; }
 
