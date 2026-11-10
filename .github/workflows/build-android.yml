@@ -6,6 +6,8 @@ on:
       - 'Oathkeeper/**'
       - '!Oathkeeper/docs/**'
       - '!Oathkeeper/scripts/**'
+      - '!Oathkeeper/tests/**'
+      - '!Oathkeeper/support-server/**'
       - '.github/workflows/build-android.yml'
   workflow_dispatch:
 permissions:
