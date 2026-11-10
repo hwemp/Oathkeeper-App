@@ -101,9 +101,9 @@ test('store category switching and tile taps immediately update the correct prev
   assert.equal(s.q('.store-background-preview-image').getAttribute('src'),'/art/store-backgrounds/mystic-lake.webp');
   assert.equal(s.saved().storePreviewBackground,'mystic-lake');
   s.click('[data-store-category="icons"]');
-  assert.equal(s.q('.store-icon-preview-image').getAttribute('src'),'/icon.svg');
-  s.click('[data-store-icon="oathkeeper-shield"]');
-  assert.equal(s.saved().storePreviewIcon,'oathkeeper-shield');
+  assert.equal(s.q('.store-icon-preview-image').getAttribute('src'),'/art/arcane-chronicle.webp');
+  s.click('[data-store-icon="arcane-chronicle"]');
+  assert.equal(s.saved().storePreviewIcon,'arcane-chronicle');
   assert.equal(s.q('[data-store-preview]'),null);
   assert.equal(s.q('.store-purchase-disabled').disabled,true);
   s.click('[data-store-category="dice"]');

@@ -76,7 +76,7 @@ function backgroundStorePage(selectedSlug = 'moonlit-citadel') {
     'These background designs are preview-only concept art. No checkout, unlocks or wallpaper application are enabled.');
 }
 
-function iconStorePage(selectedSlug = 'oathkeeper-shield') {
+function iconStorePage(selectedSlug = 'arcane-chronicle') {
   const active = SELECTED_APP_ICONS.find(item => item.slug === selectedSlug) || SELECTED_APP_ICONS[0];
   const tiles = SELECTED_APP_ICONS.map(item => {
     const selected = item.slug === active.slug;

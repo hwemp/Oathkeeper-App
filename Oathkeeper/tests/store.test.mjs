@@ -73,8 +73,9 @@ test('icon category automatically previews the existing icon without inventing p
     assert.equal(item.price,null);
     assert.equal(item.proposedProductId,null);
     assert.equal(item.status,'preview_only');
-    const image=await readFile(new URL('../web'+item.imagePath,import.meta.url),'utf8');
-    assert.match(image,/<svg/);
+    const image=await readFile(new URL('../web/public'+item.imagePath,import.meta.url));
+    assert(image.length>1000);
+    assert.equal(image.toString('ascii',0,4),'RIFF');
     const html=storePage('elvenleaf',{category:'icons',iconSlug:item.slug});
     assertOneTapSelection(html,'icons');
     assert.match(html,/class="store-icon-preview-pane" aria-live="polite"/);
