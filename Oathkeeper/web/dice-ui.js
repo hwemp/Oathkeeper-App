@@ -1,7 +1,7 @@
 import { OFFICIAL_DICE, UNOFFICIAL_DICE, diceStatistics } from './dice.js';
 const order = [3,4,6,8,10,12,20,50,100];
 const number = n => Number(n).toLocaleString(undefined, { maximumFractionDigits: 2 });
-const art = n => `<span class="die-art die-art-${n}" aria-hidden="true" style="--die-x:${order.indexOf(n)%3};--die-y:${Math.floor(order.indexOf(n)/3)}"></span>`;
+const art = (n,face) => `<span class="die-art die-art-${n}" aria-hidden="true" style="--die-x:${order.indexOf(n)%3};--die-y:${Math.floor(order.indexOf(n)/3)}">${face===undefined?'':`<span class="die-face-overlay">${face}</span>`}</span>`;
 export function dicePage(state) {
   const list = state.mode === 'official' ? OFFICIAL_DICE : UNOFFICIAL_DICE;
   const s = diceStatistics(state.sides, state.quantity, state.modifier);
@@ -13,7 +13,7 @@ export function dicePage(state) {
       <button data-dice-mode="unofficial" aria-pressed="${state.mode==='unofficial'}" class="${state.mode==='unofficial'?'selected':''}">Unofficial dice</button>
     </div>
     <section class="card dice-card"><div class="dice-grid" role="group" aria-label="Choose a die">
-      ${list.map(n=>`<button class="die-tile ${state.sides===n?'selected':''} ${state.mode==='official'&&n===100?'percentile-tile':''}" data-die="${n}" aria-label="D${n}${state.mode==='official'&&n===100?' percentile':state.mode==='official'&&n===3?' simulated with D6':''}" aria-pressed="${state.sides===n}"><span class="die-label">D${n}${state.mode==='official'&&n===100?' · Percentile':''}</span>${state.mode==='official'&&n===100?`<span class="percentile-art">${art(10)}${art(10)}<span class="percentile-caption">00 + 0</span></span>`:art(n)}${state.mode==='official'&&n===3?'<small>D6 ÷ 2, rounded up</small>':''}</button>`).join('')}
+      ${list.map(n=>`<button class="die-tile ${state.sides===n?'selected':''} ${state.mode==='official'&&n===100?'percentile-tile':''}" data-die="${n}" aria-label="D${n}${state.mode==='official'&&n===100?' percentile':state.mode==='official'&&n===3?' simulated with D6':''}" aria-pressed="${state.sides===n}"><span class="die-label">D${n}${state.mode==='official'&&n===100?' · Percentile':''}</span>${state.mode==='official'&&n===100?`<span class="percentile-art">${art(10,'00')}${art(10,'0')}<span class="percentile-caption">00 + 0</span></span>`:art(n)}${state.mode==='official'&&n===3?'<small>D6 ÷ 2, rounded up</small>':''}</button>`).join('')}
     </div>${state.mode==='official'?'<p class="dice-note">D100: 00 + 0 = 100. D3 uses a D6, divided by 2 and rounded up.</p>':''}
     <form id="diceForm" class="dice-controls"><label>Quantity<input id="diceQuantity" type="number" min="1" max="100" step="1" required value="${state.quantity}"></label><label>Modifier<input id="diceModifier" type="number" min="-10000" max="10000" step="1" required value="${state.modifier}"></label><button type="submit" class="dice-roll">Roll dice</button></form>
     <div class="dice-result" role="status" aria-live="polite"><span>Result</span><strong class="gold-text">${r?number(r.total):'—'}</strong></div>
