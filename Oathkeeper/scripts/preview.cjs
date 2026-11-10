@@ -32,7 +32,7 @@ const assert=require('node:assert/strict');
   const backgrounds=await page.locator('.die-art').evaluateAll(nodes=>nodes.map(n=>getComputedStyle(n).backgroundImage));
   assert(backgrounds.every(x=>x.includes('fantasy-dice')),'Dice artwork is referenced');
   await page.evaluate(()=>window.scrollTo(0,0));
-  await page.screenshot({path:'preview-output/official-dice.png',fullPage:true});
+  await page.screenshot({path:'preview-output/official-dice.png'});
   await page.getByRole('button',{name:'D3 simulated with D6',exact:true}).click();
   await page.getByRole('button',{name:'Roll dice',exact:true}).click();
   assert.match(await page.locator('.dice-result strong').innerText(),/^[123]$/);
@@ -54,7 +54,7 @@ const assert=require('node:assert/strict');
   const fifty=Number(await page.locator('.dice-result strong').innerText());
   assert(fifty>=1&&fifty<=50,'D50 output range');
   await page.evaluate(()=>window.scrollTo(0,0));
-  await page.screenshot({path:'preview-output/unofficial-dice.png',fullPage:true});
+  await page.screenshot({path:'preview-output/unofficial-dice.png'});
   await page.getByRole('button',{name:'Official dice',exact:true}).click();
   assert(await page.getByRole('button',{name:'D20',exact:true}).getAttribute('aria-pressed')==='true','Unsupported D50 resets when changing to official');
   assert(!(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)),'Dice screen no page overflow');
@@ -77,9 +77,11 @@ const assert=require('node:assert/strict');
     if(width===320||width===430){
      await mobile.evaluate(()=>window.scrollTo(0,0));
      await mobile.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
-     console.log('Navigation before screenshot',width,mode,await mobile.locator('#nav').evaluate(nav=>({left:nav.scrollLeft,width:nav.clientWidth,total:nav.scrollWidth,dice:nav.querySelector('[data-tab=Dice]').getBoundingClientRect().toJSON(),bounds:nav.getBoundingClientRect().toJSON()})));
-     await mobile.screenshot({path:`preview-output/${mode.startsWith('Official')?'official':'unofficial'}-dice-${width}.png`,fullPage:true});
-     console.log('Navigation after screenshot',width,mode,await mobile.locator('#nav').evaluate(nav=>({left:nav.scrollLeft,width:nav.clientWidth,total:nav.scrollWidth,dice:nav.querySelector('[data-tab=Dice]').getBoundingClientRect().toJSON(),bounds:nav.getBoundingClientRect().toJSON()})));
+     await mobile.screenshot({path:`preview-output/${mode.startsWith('Official')?'official':'unofficial'}-dice-${width}.png`});
+     const inBounds=await mobile.locator('#nav').evaluate(nav=>{const box=nav.getBoundingClientRect(),die=nav.querySelector('[data-tab=Dice]').getBoundingClientRect();return die.left>=box.left-1&&die.right<=box.right+1});
+     assert(inBounds,`Screenshot must preserve Dice navigation at ${width}px`);
+     await mobile.locator('.dice-result').scrollIntoViewIfNeeded();
+     await mobile.screenshot({path:`preview-output/${mode.startsWith('Official')?'official':'unofficial'}-result-${width}.png`});
     }
    }
    await mobile.getByRole('button',{name:'Overview',exact:true}).click();
