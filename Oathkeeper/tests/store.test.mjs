@@ -104,8 +104,8 @@ test('each background opens an image preview with the correct unique source and 
 
 test('store background preview fits image and clicking a tile preserves live preview', async()=>{
  const css=await readFile(new URL('../web/fantasy.css',import.meta.url),'utf8');
- assert.match(css,/\\.store-category-row > span, \\.store-category-row > button\\{/);
- assert.doesNotMatch(css,/\\.store-category-row span, \\.store-category-row button\\{/);
+ assert.match(css,/\.store-category-row > span, \.store-category-row > button\{/);
+ assert.doesNotMatch(css,/\.store-category-row span, \.store-category-row button\{/);
  const imageRule=css.match(/\.store-background-preview-image\{[^}]+\}/g)?.at(-1)||'';
  assert.match(imageRule,/object-fit:contain/);
  assert.match(imageRule,/object-position:center/);
