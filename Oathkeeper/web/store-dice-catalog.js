@@ -84,7 +84,7 @@ export const SELECTED_DICE = Object.freeze([
     "name": "Gold-Forged",
     "accent": "#dba94b",
     "bg": "#4d2f10",
-    "proposedProductId": "oathkeeper.dice.gold-forged",
+    "proposedProductId": "oathkeeper.dice.gold_forged",
     "previewFilename": "oathkeeper-dice-store-atlas.webp",
     "type": "non_consumable_cosmetic",
     "price": 1,
