@@ -20,3 +20,18 @@ The user chose **10 of 20 proposed fantasy background concepts** for the optiona
 **Not authorized:** enabling payments, adding sale prices, publishing store offerings, or releasing app updates based solely on this selection. This documentation update does not change the app or trigger an APK rebuild.
 
 Design direction: Preserve the Oathkeeper fantasy aesthetic and the current theme highlight (gold for the base theme). The optional background list should eventually support tapping an image for a full preview and selecting/applying owned backgrounds; keep unowned selections disabled until a proper approved purchase and entitlement flow is implemented.
+
+## Implemented in the in-app Store
+
+A new **Backgrounds** category shows exactly the ten approved options. Each
+artwork is bundled as a distinct, local WebP file under
+`web/public/art/store-backgrounds/`; opening any preview uses that item's
+exact file path rather than sprite offsets or an asynchronous canvas.
+The selected tile is highlighted using the app theme's accent; tapping it
+opens a larger centered, contained preview with its name and description.
+The Store retains its existing Dice Sets category.
+
+**Artwork limitation:** These 508×360 files are crops from the original
+concept gallery. They are appropriate for store preview/testing but should
+not be confused with clean, full-resolution production phone wallpapers.
+Purchase, application, entitlements, prices and payments remain disabled.

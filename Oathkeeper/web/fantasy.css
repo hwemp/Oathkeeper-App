@@ -146,7 +146,7 @@ body .terms-accept:disabled{opacity:.45}
   display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(3px,.75vw,12px);
   align-items:stretch;
 }
-.store-category-row span{
+.store-category-row span, .store-category-row button{
   min-width:0;display:flex;align-items:center;justify-content:center;text-align:center;
   padding:8px 3px;line-height:1.18;
   background:linear-gradient(180deg,#233247,#080f1f);
@@ -228,3 +228,63 @@ body .terms-accept:disabled{opacity:.45}
   .store-preview-pane{grid-template-columns:1fr}
 }
 @media(prefers-reduced-motion:reduce){.store-dice-tile{transition:none}}
+
+/* Selected concept backgrounds: independently-addressed images, not a sprite.
+   The preview letterboxes the complete image without stretching, cropping or
+   inheriting the dice atlas background. */
+.store-category-row button{
+  appearance:none;cursor:pointer;margin:0;min-width:0;min-height:44px;
+  font-family:inherit;font-weight:600;
+}
+.store-category-row button:focus-visible{outline:3px solid #fff1d5;outline-offset:2px}
+.store-background-grid{
+  display:grid;grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:clamp(3px,1vw,13px);width:100%;
+}
+.store-background-tile{
+  display:flex;flex-direction:column;align-items:stretch;min-width:0;
+  width:100%;height:auto!important;padding:0!important;margin:0;
+  border:2px solid #aa864d!important;border-radius:clamp(4px,1vw,12px)!important;
+  overflow:hidden;background:#0e172a;
+  box-shadow:0 2px 8px #000b;-webkit-tap-highlight-color:transparent;
+  color:#f5dba6;cursor:pointer;
+}
+.store-background-tile.selected{
+  border-color:var(--store-selected-outline)!important;
+  box-shadow:0 0 0 1px var(--store-selected-outline),0 0 12px 2px var(--store-selected-outline);
+}
+.store-background-tile:focus-visible{outline:3px solid #fff3d6!important;outline-offset:2px}
+.store-background-tile-art{
+  display:block;width:100%;height:auto;aspect-ratio:508/360;
+  object-fit:contain;object-position:center;background-color:#0b1023;
+}
+.store-background-name{
+  display:flex;align-items:center;justify-content:center;text-align:center;
+  min-height:3em;padding:4px 2px;
+  font-size:clamp(9px,1.7vw,15px);line-height:1.14;
+  overflow-wrap:anywhere;
+}
+.store-background-preview-pane{
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,0.8fr);
+  gap:15px;align-items:start;padding:13px;min-width:0;
+  background:#172138e8;border:1px solid var(--store-selected-outline);border-radius:12px;
+}
+.store-background-preview-media{
+  display:grid;place-items:center;min-width:0;width:100%;
+  aspect-ratio:508/360;max-width:600px;justify-self:center;
+  overflow:hidden;border:1px solid #d2a665;border-radius:9px;
+  background-color:#0b1023;box-shadow:0 6px 18px #0006;
+}
+.store-background-preview-image{
+  display:block;width:100%;height:100%;
+  object-fit:contain;object-position:center;
+}
+.store-background-preview-details{min-width:0}
+.store-background-preview-details h3{margin:0 0 9px;color:#f3d9a0}
+.store-background-preview-details p{font-size:clamp(12px,2vw,15px);line-height:1.45}
+@media(max-width:580px){
+  .store-background-tile{border-width:1px!important}
+  .store-background-tile.selected{box-shadow:0 0 0 1px var(--store-selected-outline),0 0 8px var(--store-selected-outline)}
+  .store-background-preview-pane{grid-template-columns:minmax(0,1fr)}
+  .store-background-name{font-size:clamp(9px,2.4vw,12px)}
+}
