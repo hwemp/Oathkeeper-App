@@ -9,7 +9,7 @@ const isInstalled=()=>Capacitor.isNativePlatform() &&
   (Capacitor.getPlatform()==='ios'||Capacitor.getPlatform()==='android');
 
 export async function loadStoreBilling() {
-  if(!isInstalled()) return {available:false,reason:'Install the mobile app to make purchases.',ownedIds:[],products:[]};
+  if(!isInstalled()) return {available:false,restoreAvailable:false,reason:'Install the mobile app to restore purchases.',ownedIds:[],products:[]};
   try {
     const [catalogResult,entitlementResult]=await Promise.allSettled([
       plugin.getProducts({ids:[...STORE_PRODUCT_IDS]}),
@@ -24,12 +24,17 @@ export async function loadStoreBilling() {
       catalog?.ready===true && entitlements?.ready===true;
     return {
       available:checkoutAllowed,
+      // Restoring a previously owned non-consumable is separate from making
+      // a new purchase. StoreKit 2 can verify existing entitlements offline
+      // from our hosted billing backend, which Android still requires.
+      restoreAvailable:Capacitor.getPlatform()==='ios' &&
+        entitlementResult.status==='fulfilled' && entitlements?.verified===true,
       reason:checkoutAllowed?'':'Checkout is not connected yet.',
       ownedIds,
       products
     };
   }catch(error){
-    return {available:false,reason:'App-store billing is not available on this installation.',ownedIds:[],products:[]};
+    return {available:false,restoreAvailable:false,reason:'App-store billing is not available on this installation.',ownedIds:[],products:[]};
   }
 }
 
