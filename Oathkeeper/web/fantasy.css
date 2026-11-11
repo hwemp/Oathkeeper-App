@@ -542,3 +542,29 @@ body .coin-amount{font-family:var(--readable-fantasy)!important;font-weight:400!
 .dice-page [data-roll-reveal][hidden],.dice-tabletop [hidden]{display:none!important}
 @media(max-width:380px){.dice-tabletop canvas{height:185px}}
 @media(prefers-reduced-motion:reduce){.dice-tabletop canvas{height:auto}}
+
+/* Fifth-edition character rules desk; inherits the Oathkeeper amethyst/gold theme. */
+.rules-desk .card{min-width:0}
+.rule-metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(125px,100%),1fr));gap:9px;margin:14px 0}
+.rule-metric{padding:10px 9px;background:linear-gradient(135deg,#151b30,#291a34);border:1px solid #9d7c50;border-radius:9px;display:grid;gap:3px}
+.rule-metric span{font-size:13px;color:#d5bedb}
+.rule-metric strong{font-size:19px;line-height:1.25;color:#f5d795;font-weight:600}
+.rules-form-row{display:flex;align-items:end;flex-wrap:wrap;gap:10px;margin:12px 0}
+.rules-form-row label{display:flex;align-items:start;flex-direction:column;gap:5px;flex:1 1 125px;min-width:0}
+.rules-form-row label:has(input[type=checkbox]){align-items:center;flex-direction:row;min-height:40px;gap:7px;flex:1 1 180px}
+.rules-desk input,.rules-desk select{width:100%;max-width:100%;min-height:42px;font:inherit;font-size:16px!important;border:1px solid #b69b70;background:#151225;color:#f7d59a;border-radius:8px;padding:6px}
+.rules-desk input[type=checkbox]{width:20px;height:20px;min-height:20px;flex:0 0 20px;accent-color:#ae82da}
+.magic-effect-row{border:1px solid #9b729b;border-radius:12px;padding:12px;min-width:0;margin:13px 0;background:#0d1425a8}
+.magic-effect-row>label{display:flex;flex-direction:column;gap:4px}
+.magic-effect-row legend{color:#f9dca0;padding:0 5px}
+.power-rank-row{display:grid;grid-template-columns:minmax(90px,1fr) minmax(90px,auto) 40px 40px;gap:7px;align-items:center;border-bottom:1px solid #8c729577;padding:9px 0}
+.power-rank-row strong{font-weight:500}
+.power-rank-row span{font-size:14px}
+.power-rank-row button{min-height:40px;padding:4px;min-width:40px}
+.rules-warning{border-inline-start:3px solid #edbd6a;padding:8px 12px;background:#482732aa;color:#ffe7c2}
+.rules-desk form button,.rules-desk [data-magic-add]{min-height:44px}
+.bag-storage{display:flex!important;gap:5px;align-items:center;flex-wrap:nowrap;font-size:14px}
+.bag-storage input[type=checkbox]{width:20px;height:20px;flex:0 0 20px}
+.dice-context{display:flex;flex-direction:column;gap:5px;margin:10px 4px 2px;font-size:15px}
+.dice-context select{display:block;min-width:0;width:100%;max-width:100%;min-height:40px;border-radius:8px;padding:7px 10px;color:#f3d49c;background:#191426;border:1px solid #9f81a3;font:16px/1.3 var(--readable-fantasy)}
+@media(max-width:370px){.power-rank-row{grid-template-columns:minmax(0,1fr) 40px 40px}.power-rank-row span{grid-column:1/-1;grid-row:2}.power-rank-row button{grid-row:1}}
