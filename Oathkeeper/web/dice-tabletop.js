@@ -62,7 +62,14 @@ function project(p,x,y,r){
  const perspective=4.4/(4.4-p[2]*.52);
  return [x+p[0]*r*perspective,y-p[1]*r*perspective];
 }
-function drawDie(ctx,die,x,y,size,progress,finished){
+export function diceSkinPalette(skin){
+ const hex=typeof skin?.accent==='string'&&/^#[0-9a-f]{6}$/i.test(skin.accent)?skin.accent:'#8f32c2';
+ const rgb=[1,3,5].map(i=>parseInt(hex.slice(i,i+2),16));
+ const background=typeof skin?.bg==='string'&&/^#[0-9a-f]{6}$/i.test(skin.bg)?skin.bg:'#1d1032';
+ const gold=skin?.slug==='frostborne'?'#eaf1f5':skin?.slug==='celestial'?'#f4db9f':'#f0c568';
+ return {rgb,background,gold};
+}
+function drawDie(ctx,die,x,y,size,progress,finished,palette){
  const geom=getShape(die.geometry);
  const ease=1-Math.pow(1-progress,4);
  const rx=(1-ease)*TAU*(2.8+die.index*.19)+.35;
@@ -87,9 +94,9 @@ function drawDie(ctx,die,x,y,size,progress,finished){
   for(let j=1;j<coords.length;j++)ctx.lineTo(coords[j][0],coords[j][1]);
   ctx.closePath();
   const lit=Math.max(.12,Math.min(1,.43+f.normal[0]*.19+f.normal[1]*.29+f.normal[2]*.45));
-  ctx.fillStyle='rgb('+Math.round(27+lit*90)+','+Math.round(8+lit*29)+','+Math.round(53+lit*119)+')';
+  ctx.fillStyle='rgb('+palette.rgb.map(v=>Math.min(255,Math.round(v*(.25+lit*.65)))).join(',')+')';
   ctx.fill();
-  ctx.lineJoin='round';ctx.strokeStyle='#f0c568';ctx.lineWidth=Math.max(1.3,size*.048);ctx.stroke();
+  ctx.lineJoin='round';ctx.strokeStyle=palette.gold;ctx.lineWidth=Math.max(1.3,size*.048);ctx.stroke();
   ctx.strokeStyle='rgba(255,240,178,.56)';ctx.lineWidth=Math.max(.65,size*.015);ctx.stroke();
   const center=coords.reduce((p,q)=>[p[0]+q[0]/coords.length,p[1]+q[1]/coords.length],[0,0]);
   ctx.fillStyle='rgba(239,189,102,.75)';
@@ -117,7 +124,8 @@ function diceFor(result){
  return out;
 }
 // Returns a cleanup callback; detach-safe on every animation frame.
-export function playTabletopRoll(stage,result,onComplete){
+export function playTabletopRoll(stage,result,onComplete,skin=null){
+ const palette=diceSkinPalette(skin);
  const canvas=stage?.querySelector('canvas');
  const ctx=canvas?.getContext?.('2d');
  if(!ctx||!globalThis.requestAnimationFrame){if(stage)stage.hidden=true;onComplete();return ()=>{}}
@@ -146,9 +154,9 @@ export function playTabletopRoll(stage,result,onComplete){
   if(canvas.width!==pxW||canvas.height!==pxH){canvas.width=pxW;canvas.height=pxH}
   ctx.setTransform(ratio,0,0,ratio,0,0);ctx.clearRect(0,0,w,h);
   const sky=ctx.createLinearGradient(0,0,0,h);
-  sky.addColorStop(0,'#140d2a');sky.addColorStop(.5,'#27203d');sky.addColorStop(1,'#100e1d');
+  sky.addColorStop(0,palette.background);sky.addColorStop(.5,'#27203d');sky.addColorStop(1,'#100e1d');
   ctx.fillStyle=sky;ctx.fillRect(0,0,w,h);
-  ctx.strokeStyle='#b68b4b';ctx.lineWidth=2;
+  ctx.strokeStyle=palette.gold;ctx.lineWidth=2;
   ctx.beginPath();ctx.ellipse(w/2,h*.55,w*.46,h*.37,0,0,TAU);ctx.stroke();
   ctx.strokeStyle='rgba(236,204,143,.20)';ctx.lineWidth=1;
   ctx.beginPath();ctx.ellipse(w/2,h*.55,w*.43,h*.34,0,0,TAU);ctx.stroke();
@@ -160,7 +168,7 @@ export function playTabletopRoll(stage,result,onComplete){
    const slide=(1-Math.pow(1-t,3));
    const x=targetX+(j%2?-1:1)*(1-slide)*w*.36;
    const y=targetY+(1-slide)*(-h*.36);
-   drawDie(ctx,die,x,y,size,t,finished);
+   drawDie(ctx,die,x,y,size,t,finished,palette);
   });
   if(finished)finish();else frame=requestAnimationFrame(paint);
  }
