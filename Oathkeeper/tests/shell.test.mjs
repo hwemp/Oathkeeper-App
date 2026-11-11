@@ -258,3 +258,64 @@ test('Inventory coin stepper adjusts all five denominations, updates totals, per
     assert.equal(s.q('[data-draft-key="'+key+'"]'),null);
  }finally{await s.close()}
 });
+
+
+test('rules desk derives item effects from the current inventory and reverses them after removal',async()=>{
+ const s=await shell();
+ try{
+  s.click('[data-tab="Rules & effects"]');
+  assert.match(s.q('#view').textContent,/Character rules & effects/);
+  assert.match(s.q('#view').textContent,/270 lb/);
+  s.click('[data-magic-add]');
+  const effect=s.q('[data-magic-index="0"][data-magic-key="enabled"]');
+  assert(effect);
+  effect.click();
+  assert.equal(s.saved().magicEffects[0].enabled,true);
+  assert.match(s.q('#view').textContent,/285 lb/);
+  s.click('[data-tab="Inventory"]');
+  assert.match(s.q('#view').textContent,/Capacity 285 lb/);
+  s.click('[data-action="edit-equipment"]');
+  const quantity=s.q('[data-draft-item="0"][data-col="1"]');
+  quantity.value='0';quantity.dispatchEvent(new s.w.Event('input',{bubbles:true}));
+  s.click('[data-action="save-equipment"]');
+  assert.match(s.q('#view').textContent,/Capacity 270 lb/);
+  assert.equal(s.saved().items[0][1],0);
+ }finally{await s.close()}
+});
+
+test('level-up updates Paladin HP/proficiency and optional power rank affects dice without changing base attributes',async()=>{
+ const s=await shell();
+ try{
+  s.input('[data-k="level"]','5','change');
+  assert.equal(s.saved().level,5);
+  assert.equal(s.saved().hpBase,34);
+  assert.equal(s.saved().str,18);
+  assert.equal(s.q('.hp-value').textContent,'15/59');
+  s.click('[data-tab="Rules & effects"]');
+  assert.match(s.q('#view').textContent,/2 attacks/);
+  s.click('[data-power-rank="0"][data-rank-delta="1"]');
+  assert.equal(s.saved().powerRanks[0],2);
+  s.click('[data-tab="Dice"]');
+  s.input('#diceContext','holyPower0','change');
+  s.q('#diceForm').dispatchEvent(new s.w.Event('submit',{bubbles:true,cancelable:true}));
+  const latest=s.saved().rollHistory.at(-1);
+  assert.equal(latest.sides,8);
+  assert.equal(latest.values.length,2);
+  assert.equal(latest.context,'holyPower0');
+ }finally{await s.close()}
+});
+
+test('contextual dice record derived bonuses while a plain roll records only its own dice',async()=>{
+ const s=await shell();
+ try{
+  s.click('[data-tab="Dice"]');
+  s.input('#diceContext','damage','change');
+  s.q('#diceForm').dispatchEvent(new s.w.Event('submit',{bubbles:true,cancelable:true}));
+  const enhanced=s.saved().rollHistory.at(-1);
+  assert.equal(enhanced.total,enhanced.values[0]+4);
+  s.input('#diceContext','normal','change');
+  s.q('#diceForm').dispatchEvent(new s.w.Event('submit',{bubbles:true,cancelable:true}));
+  const plain=s.saved().rollHistory.at(-1);
+  assert.equal(plain.total,plain.values[0]);
+ }finally{await s.close()}
+});
