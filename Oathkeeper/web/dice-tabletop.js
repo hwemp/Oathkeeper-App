@@ -113,6 +113,53 @@ export function diceSkinPalette(skin){
  const gold=trim[slug]||'#f0c568';
  return {rgb,background,gold,ink:slug==='frostborne'?'#ffffff':'#fff1c6',slug};
 }
+
+// Display the approved painted dice artwork as actual surface texture rather
+// than relying on only a generic color palette. These are texture sources,
+// not RNG or replacement geometry; the numbered faces stay tied to the roll.
+const diceArtImages=new Map();
+const referenceCrops=Object.freeze({
+  3:[880,416,127,84],4:[1041,417,96,78],6:[1190,417,85,79],
+  8:[880,536,111,78],10:[1035,537,106,76],12:[1185,539,98,77],
+  20:[880,653,109,100],50:[1037,653,103,99],100:[1183,654,109,99]
+});
+function getArtwork(skin,sides){
+ const selected=skin && Number.isInteger(skin.atlasIndex)&&skin.atlasIndex>=0&&skin.atlasIndex<10;
+ const src=selected?'/art/oathkeeper-dice-store-atlas.webp':'/art/dice-reference.png';
+ if(!diceArtImages.has(src) && typeof globalThis.Image==='function'){
+   const image=new globalThis.Image();
+   image.decoding='async';
+   image.src=src;
+   diceArtImages.set(src,image);
+ }
+ const image=diceArtImages.get(src);
+ if(!image||!image.complete||!image.naturalWidth||!image.naturalHeight)return null;
+ if(selected){
+   const cellWidth=image.naturalWidth/5,cellHeight=image.naturalHeight/2;
+   const col=skin.atlasIndex%5,row=Math.floor(skin.atlasIndex/5);
+   return {image,rectangle:[
+     (col+.18)*cellWidth,(row+.07)*cellHeight,
+     .64*cellWidth,.73*cellHeight
+   ]};
+ }
+ const crop=referenceCrops[sides]||referenceCrops[20];
+ const scaleX=image.naturalWidth/1536,scaleY=image.naturalHeight/1024;
+ return {image,rectangle:[
+   crop[0]*scaleX,crop[1]*scaleY,crop[2]*scaleX,crop[3]*scaleY
+ ]};
+}
+function paintArtworkFacet(ctx,coords,artwork,dense){
+ if(!artwork)return;
+ const xs=coords.map(pt=>pt[0]),ys=coords.map(pt=>pt[1]);
+ const minX=Math.min(...xs),minY=Math.min(...ys);
+ const width=Math.max(1,Math.max(...xs)-minX),height=Math.max(1,Math.max(...ys)-minY);
+ ctx.save();polygon(ctx,coords);ctx.clip();
+ ctx.globalAlpha=dense?.30:.43;
+ const [sx,sy,sw,sh]=artwork.rectangle;
+ ctx.drawImage(artwork.image,sx,sy,sw,sh,minX,minY,width,height);
+ ctx.restore();
+}
+
 const blend=(a,b,t)=>a.map((v,i)=>Math.round(v*(1-t)+b[i]*t));
 const rgb=(a,alpha=1)=>'rgba('+a.map(v=>Math.max(0,Math.min(255,Math.round(v)))).join(',')+','+alpha+')';
 // Each selected cosmetic has a distinct projected ornament as well as its
@@ -161,7 +208,7 @@ function polygon(ctx,coords){
  for(let j=1;j<coords.length;j++)ctx.lineTo(coords[j][0],coords[j][1]);
  ctx.closePath();
 }
-function drawGemFace(ctx,coords,normal,size,palette,frontValue,showNumber,dense=false){
+function drawGemFace(ctx,coords,normal,size,palette,frontValue,showNumber,dense=false,artwork=null){
  const center=coords.reduce((p,q)=>[p[0]+q[0]/coords.length,p[1]+q[1]/coords.length],[0,0]);
  const bright=Math.max(.18,Math.min(1,.52+normal[0]*.16+normal[1]*.20+normal[2]*.30));
  const base=palette.rgb;
@@ -190,6 +237,7 @@ function drawGemFace(ctx,coords,normal,size,palette,frontValue,showNumber,dense=
   ctx.fillStyle=rgb(i%2?light:shadow,i%2?.14:.25);ctx.fill();
   ctx.strokeStyle=rgb(light,.12);ctx.lineWidth=Math.max(.6,size*.009);ctx.stroke();
  });
+ paintArtworkFacet(ctx,coords,artwork,dense);
  const glint=ctx.createRadialGradient(center[0]-size*.25,center[1]-size*.32,size*.01,center[0],center[1],size*1.25);
  glint.addColorStop(0,'rgba(255,232,255,.17)');glint.addColorStop(.55,'rgba(235,133,255,.035)');glint.addColorStop(1,'rgba(0,0,0,0)');
  ctx.fillStyle=glint;ctx.fillRect(center[0]-size*1.5,center[1]-size*1.5,size*3,size*3);
@@ -236,7 +284,7 @@ function winningFace(geom,index,geometry){
  });
  return face;
 }
-function drawDie(ctx,die,x,y,size,progress,finished,palette){
+function drawDie(ctx,die,x,y,size,progress,finished,palette,artwork){
  const geom=getShape(die.geometry);
  const ease=1-Math.pow(1-progress,4);
  const rx=(1-ease)*TAU*(2.8+die.index*.19)+.35;
@@ -266,7 +314,7 @@ function drawDie(ctx,die,x,y,size,progress,finished,palette){
   const numbered=die.geometry!==3||f.faceIndex<3;
   const label=1+(f.faceIndex+offset)%faces;
   const showNumber=numbered&&f.normal[2]>(dense?.40:.18)&&progress>.03;
-  drawGemFace(ctx,coords,f.normal,size,palette,label,showNumber,dense);
+  drawGemFace(ctx,coords,f.normal,size,palette,label,showNumber,dense,artwork);
  }
  ctx.restore();
 }
@@ -327,7 +375,7 @@ export function playTabletopRoll(stage,result,onComplete,skin=null){
    const slide=(1-Math.pow(1-t,3));
    const x=targetX+(j%2?-1:1)*(1-slide)*w*.36;
    const y=targetY+(1-slide)*(-h*.36);
-   drawDie(ctx,die,x,y,size,t,finished,palette);
+   drawDie(ctx,die,x,y,size,t,finished,palette,getArtwork(skin,die.geometry));
   });
   if(finished)finish();else frame=requestAnimationFrame(paint);
  }
