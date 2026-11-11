@@ -1029,7 +1029,7 @@ body:has(.store-page)>main>#view{width:100%;min-width:0}
  width:100%;height:100%;object-fit:contain!important;object-position:center!important;transform:none!important;
 }
 .store-page .bundle-offer-art{width:100%;height:clamp(125px,38vw,200px)}
-.store-page .bundle-offer-gem{width:100%;height:100%;max-width:none;object-fit:cover!important;object-position:center!important;border-radius:11px}
+.store-page .bundle-offer-gem{width:100%;height:100%;max-width:none;object-fit:contain!important;object-position:center!important;border-radius:11px}
 .store-page .bundle-offer{border:2px solid #c7974c;box-shadow:inset 0 0 12px #9e67286b}
 .store-page .bundle-offer.selected{border-color:#ffe7ab!important;box-shadow:0 0 0 1px #e8ac53,0 0 15px 3px #ffc65a!important}
 .store-page .bundle-offer :is(.bundle-offer-title,.bundle-offer-price){color:#ffe7a7;text-shadow:0 2px 5px #0a0616}
