@@ -153,7 +153,7 @@ test('preview sizing remains centered and selections do not alter dice or purcha
   assert.match(css,/\.store-icon-preview-image\{[^}]*object-fit:contain;object-position:center/);
   const app=await readFile(new URL('../web/app.js',import.meta.url),'utf8');
   assert.match(app,/c\.storePreviewBackground=selected;save\(\);render\(\);return/);
-  assert.match(app,/c\.storePreviewDice=selected;save\(\);render\(\);return/);
+  assert.match(app,/c\.storePreviewDice=selected;save\(\);render\(\);previewStoreDiceAnimation\(\);return/);
   assert.match(app,/c\.storePreviewIcon=selected;save\(\);render\(\);return/);
   assert.doesNotMatch(app,/storePreviewOpen|data\.storePreview/);
 });
