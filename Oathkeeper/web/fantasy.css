@@ -586,8 +586,8 @@ body .coin-amount{font-family:var(--readable-fantasy)!important;font-weight:400!
 /* Bundles: two ornamental offer cards without duplicate bottom purchase buttons. */
 .bundle-offers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(7px,1.5vw,18px)}
 .bundle-offer{display:flex;flex-direction:column;align-items:center;gap:5px;position:relative;overflow:hidden;min-width:0;min-height:190px;padding:8px 8px 12px;background:#100f27;border:2px solid #ac7c3c;border-radius:17px;color:#ffdfa0;font-family:var(--readable-fantasy),Georgia,serif;text-shadow:0 2px 5px #08030e}
-.bundle-offer::before{content:'';position:absolute;inset:0;opacity:.72;background:linear-gradient(180deg,#130d2977,#0a0813a0 70%,#170922),url('/art/store-backgrounds/dragons-crag.webp') center/cover no-repeat;z-index:0}
-.bundle-offer-coffer::before{background:linear-gradient(180deg,#160c3070,#130718a6 72%,#1c0c2b),url('/art/store-backgrounds/moonlit-citadel.webp') center/cover no-repeat}
+.bundle-offer::before{content:'';position:absolute;inset:0;opacity:.72;background:linear-gradient(180deg,#130d2977,#0a0813a0 70%,#170922),url('/art/store-backgrounds-hd/dragons-crag.webp') center/cover no-repeat;z-index:0}
+.bundle-offer-coffer::before{background:linear-gradient(180deg,#160c3070,#130718a6 72%,#1c0c2b),url('/art/store-backgrounds-hd/moonlit-citadel.webp') center/cover no-repeat}
 .bundle-offer>*{position:relative;z-index:1}
 .bundle-offer.selected{border-color:#ffe29c;box-shadow:0 0 0 1px #e7ae58,0 0 13px 2px #f4bb5d,inset 0 0 20px #f0bd6a44}
 .bundle-offer:focus-visible{outline:2px solid #fff1d4;outline-offset:3px}
@@ -855,3 +855,84 @@ body:has(.store-page)>main>#view{width:100%;min-width:0}
 /* Build 146: preserve source SVG full bleed, with separate, honest Android launcher mask sample. */
 .store-native-launcher-preview{display:flex;align-items:center;gap:12px;margin:10px 0 12px;max-width:420px;color:#eacb91;font-size:14px;line-height:1.35}
 .store-native-launcher-preview img{width:88px;height:88px;flex:0 0 88px;object-fit:contain;background:#131b30;border:1px solid #b89051;border-radius:12px}
+
+
+/* Build 149 visual repair. Keep the currently approved purple/gold controls and
+   stop magnifying the 5-by-2 atlas as a CSS background in Store previews. */
+.store-page[data-store-build="149"] .store-category-row button{
+  min-height:56px;border:2px solid #bb8c45;border-radius:11px;
+  background:linear-gradient(180deg,#29324f 0%,#12213a 43%,#050b1d 100%);
+  box-shadow:inset 0 0 0 1px #ffd28f49,inset 0 2px 8px #a9acdd20,0 3px 5px #000a;
+  color:#ffe5ac;text-shadow:0 1px 2px #110915;
+}
+.store-page[data-store-build="149"] .store-category-row button.store-category-current{
+  border-color:#ffe09a;background:linear-gradient(180deg,#7c348d,#48105d 56%,#250f43);
+  box-shadow:inset 0 0 13px #d88cfd73,0 0 0 1px #efbe72,0 0 13px #f6c165;
+}
+.store-page[data-store-build="149"] .store-category-row button:focus-visible,
+.store-page[data-store-build="149"] .store-dice-replay:focus-visible{
+  outline:2px solid #ffebbc;outline-offset:2px;
+}
+.store-page[data-store-build="149"] .store-dice-tile-art,
+.store-page[data-store-build="149"] .bundle-dice-art{
+  display:block;width:100%;height:100%;min-height:0;background-image:none!important;
+  object-fit:cover;object-position:center;
+}
+.store-page[data-store-build="149"] .store-preview-image{
+  background-image:none!important;overflow:hidden;display:block;aspect-ratio:248/175;
+}
+.store-page[data-store-build="149"] .store-dice-preview-art{
+  display:block;width:100%;height:100%;min-height:0;max-width:none;
+  object-fit:contain;object-position:center;image-rendering:auto;
+}
+.store-page[data-store-build="149"] .store-icon-tile-art,
+.store-page[data-store-build="149"] .store-icon-preview-image{
+  display:block;width:100%;height:100%;padding:0;object-fit:cover!important;
+  object-position:center;image-rendering:auto;
+}
+.store-page[data-store-build="149"] .store-background-tile-art,
+.store-page[data-store-build="149"] .store-background-preview-image{
+  object-fit:contain!important;object-position:center;image-rendering:auto;
+}
+.dice-applied-skin .dice-applied-art{
+  display:block;object-fit:cover;object-position:center;background-image:none!important;
+}
+.store-page[data-store-build="149"] .store-dice-demo{
+  width:100%;max-width:780px;min-width:0;display:grid;justify-items:stretch;gap:8px;
+}
+.store-page[data-store-build="149"] .store-dice-demo .dice-tabletop{
+  width:100%;margin:0;border:2px solid #b78c49;
+  box-shadow:inset 0 0 9px #deb76b33,0 0 11px #c08a4355;
+}
+.store-page[data-store-build="149"] .store-dice-demo canvas{
+  display:block;width:100%;height:240px;max-height:35vh;
+}
+.store-page[data-store-build="149"] .store-dice-replay{
+  justify-self:center;width:min(100%,330px);min-height:46px;border-radius:12px;
+  border:2px solid #e7b969;background:linear-gradient(#67217d,#2d103d);
+  box-shadow:inset 0 0 9px #c66bdb6b,0 0 9px #f6b95469;
+  font-family:var(--readable-fantasy),Georgia,serif;
+  font-size:clamp(13px,2.5vw,19px);color:#ffe0a1;
+}
+.store-page[data-store-build="149"] .store-dice-demo-note{
+  margin:0;text-align:center;font:12px/1.3 Georgia,serif;color:#d7c49b;
+}
+.store-page[data-store-build="149"] .store-native-launcher-preview{
+  margin:10px auto;justify-content:center;gap:12px;
+}
+.store-page[data-store-build="149"] .store-native-launcher-preview img{
+  width:104px;height:104px;flex:0 0 104px;border:1px solid #d9b16c;
+  background:#12182d;object-fit:contain;
+}
+.store-page[data-store-build="149"] .store-selection-footer button{
+  border-radius:11px;letter-spacing:.01em;
+}
+@media(max-width:580px){
+ .store-page[data-store-build="149"] .store-category-row button{
+   min-height:48px;padding:6px 2px;font-size:clamp(8px,2vw,11px);
+ }
+ .store-page[data-store-build="149"] .store-category-icon{
+   flex-basis:clamp(13px,3vw,19px);width:clamp(13px,3vw,19px);height:clamp(13px,3vw,19px);
+ }
+ .store-page[data-store-build="149"] .store-dice-demo canvas{height:205px}
+}
