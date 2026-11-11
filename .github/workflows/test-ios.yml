@@ -8,6 +8,7 @@ on:
       - 'Oathkeeper/ios/**'
       - 'Oathkeeper/web/**'
       - 'Oathkeeper/scripts/generate-free-icons.py'
+      - 'Oathkeeper/tests/**'
 permissions:
   contents: read
 jobs:
