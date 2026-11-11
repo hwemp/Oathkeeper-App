@@ -168,8 +168,8 @@ function drawGemFace(ctx,coords,normal,size,palette,frontValue,showNumber,dense=
  ctx.restore();
  // Two different metallic highlights give the beveled gold edge a dimensional look.
  polygon(ctx,coords);ctx.lineJoin='round';ctx.strokeStyle='rgba(65,20,40,.95)';ctx.lineWidth=Math.max(2,size*.093);ctx.stroke();
- ctx.strokeStyle=palette.gold;ctx.lineWidth=Math.max(dense?.9:1.8,size*(dense?.022:.060));ctx.stroke();
- ctx.strokeStyle='rgba(255,246,195,.88)';ctx.lineWidth=Math.max(dense?.35:.75,size*(dense?.007:.017));ctx.stroke();
+ ctx.strokeStyle=palette.gold;ctx.lineWidth=Math.max(dense ? .9 : 1.8,size*(dense ? .022 : .060));ctx.stroke();
+ ctx.strokeStyle='rgba(255,246,195,.88)';ctx.lineWidth=Math.max(dense ? .35 : .75,size*(dense ? .007 : .017));ctx.stroke();
  // Projected filigree at each real corner; every die geometry receives the same ornament treatment.
  if(!dense)coords.forEach((a,i)=>{
   const before=coords[(i-1+coords.length)%coords.length],after=coords[(i+1)%coords.length];
