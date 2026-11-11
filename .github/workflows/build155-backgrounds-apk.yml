@@ -5,7 +5,7 @@ on:
     paths:
       - 'Oathkeeper/**'
       - '.build142/payload.part*.bin'
-      - '.github/workflows/build155-apk.yml'
+      - '.github/workflows/build155-backgrounds-apk.yml'
   workflow_dispatch:
 permissions:
   contents: write
