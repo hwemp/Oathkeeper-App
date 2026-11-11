@@ -104,6 +104,12 @@ jobs:
               raise RuntimeError('Build 142 web assets are incomplete')
           print('Verified full ZIP SHA256 and installed Build 142 web assets')
           PY
+      - name: Center all selectable native launcher icons
+        run: |
+          python -m pip install --disable-pip-version-check Pillow
+          python scripts/repair-default-launcher.py
+          python scripts/generate-free-icons.py
+          test "$(find android/app/src/main/res/mipmap-anydpi-v26 -maxdepth 1 -name 'oathkeeper_icon_*.xml' | wc -l)" -eq 10
       - name: Sync Capacitor Android application
         run: npx cap sync android
       - name: Build debug-signed Android APK
