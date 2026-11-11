@@ -12,13 +12,16 @@ test('each native Android launcher is the exact corresponding Store image', asyn
   assert.equal(icon.iosIconName,'AppIcon-'+n);
   const store=await readFile(new URL('../web/public/art/store-icons/icon-'+n+'.webp',import.meta.url));
   const native=await readFile(new URL('../android/app/src/main/res/mipmap-nodpi/oathkeeper_icon_'+n+'.webp',import.meta.url));
+  const adaptive=await readFile(new URL('../android/app/src/main/res/drawable-nodpi/oathkeeper_icon_art_'+n+'.webp',import.meta.url));
   assert.equal(store.toString('ascii',0,4),'RIFF');
   assert.equal(store.toString('ascii',8,12),'WEBP');
   assert(store.length>20000);
   assert.deepEqual(native,store,'Native Android WebP must be identical to its Store source');
+  assert.deepEqual(adaptive,store,'Adaptive icon background must be identical to Store source');
   images.add(store.toString('base64'));
   const xml=await readFile(new URL('../android/app/src/main/res/mipmap-anydpi-v26/oathkeeper_icon_'+n+'.xml',import.meta.url),'utf8');
-  assert(xml.includes('<background android:drawable="@mipmap/oathkeeper_icon_'+n+'" />'));
+  assert(xml.includes('<background android:drawable="@drawable/oathkeeper_icon_art_'+n+'" />'));
+  assert(!xml.includes('<background android:drawable="@mipmap/oathkeeper_icon_'+n+'" />'),'XML must not self-reference its adaptive icon');
   assert(xml.includes('<foreground android:drawable="@android:color/transparent" />'));
  }
  assert.equal(images.size,10);
@@ -32,6 +35,7 @@ test('old alternate-image reservoir is removed; generator preserves primary laun
  const script=await readFile(new URL('../scripts/generate-free-icons.py',import.meta.url),'utf8');
  assert.match(script,/src = WEB \/ f"icon-\{number:02d\}\.webp"/);
  assert.match(script,/shutil\.copyfile\(src, native_path\)/);
+ assert.match(script,/shutil\.copyfile\(src, adaptive_path\)/);
  assert.match(script,/native_path\.read_bytes\(\) != src\.read_bytes\(\)/);
  assert.match(script,/same_pixels\(ios_path, scaled\(art, 1024\)\)/);
  assert.doesNotMatch(script,/SAFE_ART_RATIO|CLEAN_CROP_RATIO|GaussianBlur|putalpha/);

@@ -61,3 +61,7 @@ The original default launcher artwork is preserved.
 
 Android/Samsung launcher masks can trim the edges of a square image, and launcher caches may delay visible updates.
 Byte-for-byte asset parity does not guarantee identical OS-masked launcher pixels. Physical-device testing remains necessary.
+
+## Build 144 — Android adaptive resource reference correction
+
+Android adaptive launcher XML now references a uniquely named WebP in `drawable-nodpi`, avoiding a resource name collision with the same-name adaptive XML in `mipmap-anydpi-v26`. The legacy WebP in `mipmap-nodpi` and adaptive background WebP are exact byte-for-byte copies of the same Store art master; no second artwork rendering is performed. The new test confirms all three mappings and checks for self-referential XML. Build 143 remains archived as an earlier build; use Build 144 for device testing.
