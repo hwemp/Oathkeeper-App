@@ -77,7 +77,7 @@ function storeBundlePage(options={}){
   const isFull=offer.id==='dragons-treasure';
   return '<button type="button" class="bundle-offer '+(isFull?'bundle-offer-treasure':'bundle-offer-coffer')+(current?' selected':'')+'"'
    +' data-store-bundle-offer="'+esc(offer.id)+'" aria-pressed="'+current+'" aria-label="Select '+esc(offer.name)+' bundle for '+formatStorePrice(offer.priceCents)+'">'
-   +'<span class="bundle-offer-art" aria-hidden="true"><span class="bundle-offer-gem" style="'+diceArtStyle(isFull?7:3)+'"></span></span>'
+   +'<span class="bundle-offer-art" aria-hidden="true"><img class="bundle-offer-gem" src="'+esc((isFull?SELECTED_DICE[7]:SELECTED_DICE[3]).imagePath)+'" alt="" loading="lazy" decoding="async"></span>'
    +'<span class="bundle-offer-title">'+esc(offer.name)+'</span>'
    +'<span class="bundle-offer-price">'+formatStorePrice(offer.priceCents)+'</span>'
    +'<span class="bundle-offer-description">'+(isFull?'All 10 dice sets and all 10 backgrounds':'Pick any five dice sets and five backgrounds')+'</span>'
