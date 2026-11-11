@@ -1114,3 +1114,44 @@ body:has(.store-bundle-reference-page)>main>#view{padding:0!important}
 .store-bundle-reference-page .bundle-reference-picker-option.selected{border-color:#ffe59b;box-shadow:0 0 10px #f7c460}
 .store-bundle-reference-page .bundle-reference-picker-option img{display:block;width:100%;aspect-ratio:1.4;object-fit:contain}
 @media(max-width:520px){.store-bundle-reference-page .bundle-reference-picker-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.store-bundle-reference-page .bundle-reference-purchase{gap:8px!important;padding:10px 8px 16px!important}}
+
+/* Build 154: Fit all approved SVG art inside its original tile frame.
+   Scope excludes the user-approved image-based Bundles layout. */
+.store-page:not(.store-bundle-reference-page) .store-icon-tile,
+.store-page:not(.store-bundle-reference-page) .store-dice-tile{
+  display:grid!important;place-items:center!important;min-width:0;
+  isolation:isolate;overflow:hidden!important;background:#091127!important;
+}
+.store-page:not(.store-bundle-reference-page) .store-icon-tile-art,
+.store-page:not(.store-bundle-reference-page) .store-dice-tile-art{
+  display:block!important;width:100%!important;height:100%!important;
+  max-width:100%!important;max-height:100%!important;min-width:0!important;
+  object-fit:contain!important;object-position:center center!important;
+  transform:none!important;background:transparent!important;
+  background-image:none!important;margin:0!important;padding:0!important;
+}
+.store-page:not(.store-bundle-reference-page) .store-icon-tile-art{aspect-ratio:1}
+.store-page:not(.store-bundle-reference-page) .store-dice-tile-art{aspect-ratio:248/175}
+.store-page:not(.store-bundle-reference-page) .store-dice-preview-frame{
+  display:block;justify-self:center;width:100%;max-width:min(100%,780px);
+  height:auto!important;min-height:0!important;padding:0!important;
+  margin:0!important;border:0!important;border-radius:18px;
+  box-shadow:none!important;background:transparent!important;
+  overflow:visible;line-height:0;cursor:pointer;
+}
+.store-page:not(.store-bundle-reference-page) .store-dice-preview-frame .store-preview-image{
+  width:100%;max-width:100%;pointer-events:none;
+}
+.store-page:not(.store-bundle-reference-page) .store-dice-preview-frame:focus-visible{
+  outline:3px solid #fff0c8!important;outline-offset:4px;
+}
+.store-page:not(.store-bundle-reference-page) .store-dice-demo .dice-tabletop[hidden]{
+  display:none!important;
+}
+.store-page:not(.store-bundle-reference-page) .store-dice-demo canvas{
+  display:block;width:100%;height:clamp(270px,56vw,440px)!important;
+  max-height:none!important;border-radius:10px;image-rendering:auto;
+}
+@media (prefers-reduced-motion:reduce){
+  .store-page:not(.store-bundle-reference-page) .store-dice-demo .dice-tabletop{display:none!important}
+}

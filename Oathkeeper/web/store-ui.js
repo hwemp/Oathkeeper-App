@@ -144,11 +144,12 @@ export function storePage(selectedSlug = 'elvenleaf', options = {}) {
       + '<span class="sr-only">' + esc(item.name) + '</span></button>';
   }).join('');
   const preview = '<section class="store-preview-pane" aria-live="polite" aria-label="Selected dice preview">'
+    + '<button type="button" class="store-dice-preview-frame" data-store-preview-roll="' + esc(active.slug) + '" aria-label="Animate selected ' + esc(active.name) + ' D20 preview">'
     + '<div class="store-preview-image" role="img" aria-label="Larger preview of ' + esc(active.name)
-    + ' dice" data-store-atlas-index="' + active.atlasIndex + '" style="' + diceArtStyle(active.atlasIndex) + '"><img class="store-dice-preview-art" src="' + esc(active.imagePath) + '" alt="" loading="eager" decoding="async"></div>'
-    + '<div class="store-preview-description"><p>Selected dice design. Animated samples never affect real character rolls or probabilities.</p></div>'
+    + ' dice" data-store-atlas-index="' + active.atlasIndex + '" style="' + diceArtStyle(active.atlasIndex) + '"><img class="store-dice-preview-art" src="' + esc(active.imagePath) + '" alt="" loading="eager" decoding="async"></div></button>'
+    + '<div class="store-preview-description"><p>Selected dice design. Tap a set or the large image for an animated preview. Sample animations never affect real character rolls or probabilities.</p></div>'
     + '<div class="store-dice-demo" aria-label="Animated dice design demonstration">'
-    + '<div class="dice-tabletop" id="storeDiceTabletop" data-store-dice-demo="' + esc(active.slug) + '"><canvas aria-hidden="true"></canvas><p data-dice-landed hidden aria-live="polite"></p></div>'
+    + '<div class="dice-tabletop" id="storeDiceTabletop" data-store-dice-demo="' + esc(active.slug) + '" hidden><canvas aria-hidden="true"></canvas><p data-dice-landed hidden aria-live="polite"></p></div>'
     + '<button type="button" class="store-dice-replay" data-store-preview-roll="' + esc(active.slug) + '">Replay 3D Dice Animation</button>'
     + '<p class="store-dice-demo-note">Visual demonstration only · Sample D20, not a game roll · No purchase required to preview</p></div></section>';
   return storeShell('dice',

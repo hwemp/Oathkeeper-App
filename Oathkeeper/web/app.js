@@ -30,12 +30,18 @@ if(c.diceAnimationRestoreVersion!==152){
 }
 let tab=location.hash==='#notifications'?'Notifications':'Overview',pending={},last=null;
 let storeCategory='dice';let bundlePickerOpen=null;
-// Preview is a fixed sample for visual review, not a real dice roll or unlock.
+let stopStoreDicePreview=()=>{};
+// A fixed sample uses selected cosmetic materials without calling game RNG.
 function previewStoreDiceAnimation(){
  const stage=document.querySelector('#storeDiceTabletop');
  if(!stage)return;
+ stopStoreDicePreview();
  const skin=SELECTED_DICE.find(item=>item.slug===(c.storePreviewDice||'elvenleaf'))||SELECTED_DICE[2];
- playTabletopRoll(stage,{sides:20,quantity:1,rolls:[{value:12}],total:12},()=>{},skin);
+ stage.hidden=false;
+ stage.dataset.state='rolling';
+ const caption=stage.querySelector('[data-dice-landed]');
+ if(caption){caption.hidden=true;caption.textContent='';}
+ stopStoreDicePreview=playTabletopRoll(stage,{sides:20,quantity:1,rolls:[{value:20}],total:20},()=>{},skin);
 }
 let billingState={available:false,restoreAvailable:false,ownedIds:[],products:[],reason:'Checkout is not connected yet.'};
 const cosmetics=()=>effectiveCosmetics(c,billingState.ownedIds);
@@ -106,7 +112,6 @@ if(['Community','Posts','Friends','Messages','Groups'].includes(tab))html=(`${['
 if(tab==='Import & backup')html=`<div class="grid"><section class="card wide"><span class="eyebrow">Bring your character</span><h2>Import once. Keep adventuring.</h2><p>Import a character PDF, plain text, or an Oathkeeper JSON backup. Text PDFs are read on your device; scans need OCR before import.</p><button class="primary" data-action="import">Choose character file</button><p class="notice">Your Ecclesyus profile is already loaded from your sheet. This importer recognizes its form fields and common stat labels. Other PDFs may import only some fields. Review every proposed change; inventory and custom rules need manual entry for unfamiliar sheets.</p></section><section class="card"><h2>Take it with you</h2><button data-action="export">Export full backup</button><p>JSON includes your stats, equipment, character notes, DM notes and roll history. It contains DM secrets; review the file before sharing. Import it here on another device.</p><button data-action="install">Phone setup</button><p><small>Data stays on this device and does not sync automatically.</small></p></section></div>`;
 if(['Community','Posts','Friends','Messages','Groups','Account'].includes(tab)&&!canUseCommunity())html='<section class="card"><h2>Community access unavailable</h2><p>'+(currentAgeTier()==='teen'?'Ages 13–17 may use offline character and Dungeon Master tools. Online accounts and contact remain blocked until the age-verification and guardian-consent service is active.':'The online community is not enabled in this testing build. The matching backend must pass age-safety verification before accounts, messaging and uploads can be enabled.')+'</p><button data-tab="Overview">Return to character</button></section>';
 $('#view').innerHTML=html;
-if(tab==='Store'&&storeCategory==='dice')previewStoreDiceAnimation();
 if(tab==='Dice'&&diceState.justRolled&&c.diceAnimation&&diceState.result){
  const stage=document.querySelector('#diceTabletop'),result=diceState.result;
  if(stage)playTabletopRoll(stage,result,()=>{
@@ -158,7 +163,7 @@ if(t.dataset.storeBundleBackground){
  if(next.length===before.length&&!before.includes(t.dataset.storeBundleBackground)&&before.length===5){toast('Choose at most five backgrounds. Deselect one first.');return}
  c.storeBundleBackgrounds=next;save();render();return;
 }
-if(t.dataset.storeBackground){const selected=t.dataset.storeBackground;if(!SELECTED_BACKGROUNDS.some(item=>item.slug===selected))return;c.storePreviewBackground=selected;save();render();return}if(t.dataset.storeDice){const selected=t.dataset.storeDice;if(!SELECTED_DICE.some(item=>item.slug===selected))return;c.storePreviewDice=selected;save();render();return}if(t.dataset.storeIcon){const selected=t.dataset.storeIcon;if(!SELECTED_APP_ICONS.some(item=>item.slug===selected))return;c.storePreviewIcon=selected;save();render();return}
+if(t.dataset.storeBackground){const selected=t.dataset.storeBackground;if(!SELECTED_BACKGROUNDS.some(item=>item.slug===selected))return;c.storePreviewBackground=selected;save();render();return}if(t.dataset.storeDice){const selected=t.dataset.storeDice;if(!SELECTED_DICE.some(item=>item.slug===selected))return;c.storePreviewDice=selected;save();render();previewStoreDiceAnimation();return}if(t.dataset.storeIcon){const selected=t.dataset.storeIcon;if(!SELECTED_APP_ICONS.some(item=>item.slug===selected))return;c.storePreviewIcon=selected;save();render();return}
 if(t.dataset.storeApplyCosmetic){
   const [kind,slug]=t.dataset.storeApplyCosmetic.split(':');
   if(!['dice','backgrounds'].includes(kind)||!ownedItem(kind,slug,billingState.ownedIds)){

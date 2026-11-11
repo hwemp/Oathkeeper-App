@@ -381,7 +381,8 @@ export function playTabletopRoll(stage,result,onComplete,skin=null){
  if(!ctx||!globalThis.requestAnimationFrame){if(stage)stage.hidden=true;onComplete();return ()=>{}}
  const reduce=globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
  if(reduce){stage.hidden=true;onComplete();return ()=>{}}
- const dice=diceFor(result),duration=1650;
+ const storeDemo=stage.hasAttribute?.('data-store-dice-demo')===true;
+ const dice=diceFor(result),duration=storeDemo?1560:1650;
  let start=null,cancelled=false,frame=0;
  const finish=()=>{
   if(cancelled||!stage.isConnected)return;
@@ -412,7 +413,7 @@ export function playTabletopRoll(stage,result,onComplete,skin=null){
   ctx.strokeStyle='rgba(236,204,143,.20)';ctx.lineWidth=1;
   ctx.beginPath();ctx.ellipse(w/2,h*.55,w*.43,h*.34,0,0,TAU);ctx.stroke();
   const count=dice.length,cols=Math.min(count,4),rows=Math.ceil(count/cols);
-  const size=Math.max(14,Math.min(count===1?100:62,w/(cols*(count===1?3.4:3.0)),h/(rows*(count===1?2.7:3.3))));
+  const size=Math.max(14,Math.min(count===1?(storeDemo?185:100):62,w/(cols*(count===1?(storeDemo?2.4:3.4):3.0)),h/(rows*(count===1?(storeDemo?2.1:2.7):3.3))));
   dice.forEach((die,j)=>{
    const col=j%cols,row=Math.floor(j/cols);
    const targetX=(col+.5)*w/cols,targetY=(row+.55)*h/rows;
