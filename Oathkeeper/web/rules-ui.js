@@ -32,10 +32,11 @@ export function rulesPage(c){
  ].join('')+'</div>'+
  (d.exceedsCapacity?'<p class="rules-warning" role="alert">Carried weight exceeds carrying capacity. Check size, Strength, storage and equipment.</p>':'')+
  (d.attunementExceeded?'<p class="rules-warning" role="alert">More than three attuned magic items are active. The standard limit is three unless a feature says otherwise.</p>':'')+
+ (d.bagOverfilled?'<p class="rules-warning" role="alert">Bag of Holding contents exceed the standard 500 lb limit. Review the contents with your DM.</p>':'')+
  '<div class="rules-form-row">'+select('Creature size',options(SIZE_MULTIPLIERS).map(([k])=>[k,k]),d.size,'data-rules-field="size"')+
  '<label><input type="checkbox" data-rules-field="variantEncumbrance" '+(c.variantEncumbrance?'checked':'')+'> Optional 2014 variant encumbrance</label></div>'+
  (d.encumbrance?'<p>Variant encumbrance: '+(d.encumbrance.heavy?'Heavily encumbered':d.encumbrance.encumbered?'Encumbered':'Not encumbered')+'.</p>':'')+
- '<p><small>For each level gained, enter your new hit-die/base HP total in Overview. Constitution applies to all levels automatically. Ability Score Improvement choices are made in the ability fields; the app will not invent them.</small></p>'+
+ '<p><small>For a single-class Paladin, changing level adds the standard average +6 base HP per new level; Constitution applies once per level. Other classes or rolled HP require manual review. Ability Score Improvement choices are made in the ability fields; the app will not invent them.</small></p>'+
  '<label>Experience points <input type="number" data-rules-field="xp" min="0" max="20000000" value="'+esc(c.xp||0)+'"></label>'+
  '<p>Next XP milestone: '+(d.level>=20?'Maximum level':progress[d.level].toLocaleString())+'. Class feature selections are confirmed with the DM.</p></section>'+
  '<section class="card full"><h2>Magic items & multipliers</h2><p>An effect activates only if its named item exists in your inventory, is marked equipped/active, and has attunement when required. Missing, removed or zero-quantity items grant no bonus. Effects stack only when your DM permits them.</p>'+
@@ -54,5 +55,5 @@ export function rulesPage(c){
  '<div class="rules-form-row"><label>Exhaustion (0–6)<input data-rules-field="exhaustion" type="number" min="0" max="6" step="1" value="'+esc(c.exhaustion||0)+'"></label>'+
  '<label>Concentration <input data-rules-field="concentration" maxlength="120" value="'+esc(c.concentration||'')+'" placeholder="Spell / effect or blank"></label></div>'+
  '<label>Conditions <input data-rules-field="conditions" maxlength="400" value="'+esc(c.conditions||'')+'" placeholder="e.g. Poisoned, Prone"></label>'+
- '<p>Track death saving throws and other encounter conditions with the DM. Equipment and multipliers update the current summary automatically.</p></section></div>';
+ '<p>Track additional encounter conditions with the DM. Equipment and multipliers update the current summary automatically. Exhaustion follows the 2024 rules: a −2 D20 penalty and −5 ft Speed per level.</p></section></div>';
 }
