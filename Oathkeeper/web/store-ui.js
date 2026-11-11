@@ -3,6 +3,7 @@ import {SELECTED_BACKGROUNDS} from './store-background-catalog.js';
 import {SELECTED_APP_ICONS,APPROVED_FREE_ICON_CONCEPTS} from './store-icon-catalog.js';
 import {STORE_PRICING,formatStorePrice} from './store-pricing.js';
 import {productFor,ownedItem} from './store-products.js';
+import {BUNDLE_OFFERS,normalizeBundleChoices,isBundleOffer} from './store-bundles.js';
 
 const esc = value => String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 const diceArtStyle = index => '--store-atlas-x:' + (index % 5) * 25 + '%;--store-atlas-y:' + Math.floor(index / 5) * 100 + '%';
@@ -13,7 +14,9 @@ function categoryRow(current) {
       '<button type="button" data-store-category="' + key + '"'
       + (key === current ? ' class="store-category-current" aria-current="page"' : '')
       + '>' + label + '</button>').join('')
-    + '<span class="store-category-upcoming" aria-disabled="true">Bundles</span></div>';
+    + '<button type="button" data-store-category="bundles"'
+    + (current === 'bundles' ? ' class="store-category-current" aria-current="page"' : '')
+    + '>Bundles</button></div>';
 }
 
 function selectionFooter(kind, active, category, options={}) {
@@ -49,13 +52,77 @@ function selectionFooter(kind, active, category, options={}) {
     + '</div>';
 }
 
+
+function storeThemeFooter(){
+ // These buttons use the same delegated data-tab navigation as the rest of Oathkeeper.
+ const tabs=[['Overview','Home','⌂'],['My profile','Character','♜'],['Community','Community','♟'],['Messages','Messages','✉'],['Store','Store','♛']];
+ return '<nav class="store-themed-footer" aria-label="Oathkeeper main navigation">'
+  +tabs.map(([tab,label,symbol])=>'<button type="button" data-tab="'+esc(tab)+'"'
+  +(tab==='Store'?' class="active" aria-current="page"':'')
+  +'><span class="store-footer-glyph" aria-hidden="true">'+symbol+'</span><span class="store-footer-label">'+esc(label)+'</span></button>').join('')
+  +'</nav>';
+}
+function storeBundlePage(options={}){
+ const deal=isBundleOffer(options.bundleDeal)?options.bundleDeal:'golden-coffer';
+ const all=deal==='dragons-treasure';
+ const diceChoice=normalizeBundleChoices(options.bundleDice,'dice');
+ const bgChoice=normalizeBundleChoices(options.bundleBackgrounds,'backgrounds');
+ const promo=BUNDLE_OFFERS.map(offer=>{
+  const current=deal===offer.id;
+  const isFull=offer.id==='dragons-treasure';
+  return '<button type="button" class="bundle-offer '+(isFull?'bundle-offer-treasure':'bundle-offer-coffer')+(current?' selected':'')+'"'
+   +' data-store-bundle-offer="'+esc(offer.id)+'" aria-pressed="'+current+'" aria-label="Select '+esc(offer.name)+' bundle for '+formatStorePrice(offer.priceCents)+'">'
+   +'<span class="bundle-offer-art" aria-hidden="true"><span class="bundle-offer-gem" style="'+diceArtStyle(isFull?7:3)+'"></span></span>'
+   +'<span class="bundle-offer-title">'+esc(offer.name)+'</span>'
+   +'<span class="bundle-offer-price">'+formatStorePrice(offer.priceCents)+'</span>'
+   +'<span class="bundle-offer-description">'+(isFull?'All 10 dice sets and all 10 backgrounds':'Pick any five dice sets and five backgrounds')+'</span>'
+   +'</button>';
+ }).join('');
+ const diceTiles=SELECTED_DICE.map(item=>{
+  const selected=all||diceChoice.includes(item.slug);
+  return '<button type="button" class="bundle-pick bundle-dice-pick'+(selected?' selected':'')+'"'
+   +' data-store-bundle-dice="'+esc(item.slug)+'" aria-label="'+(all?'Included: ':'Select ')+esc(item.name)+' dice set"'
+   +' aria-pressed="'+selected+'"'+(all?' disabled aria-disabled="true"':'')
+   +' style="'+diceArtStyle(item.atlasIndex)+'"><span class="bundle-dice-art" aria-hidden="true"></span>'
+   +'<span class="bundle-pick-label">'+esc(item.name)+'</span></button>';
+ }).join('');
+ const backgrounds=SELECTED_BACKGROUNDS.map(item=>{
+  const selected=all||bgChoice.includes(item.slug);
+  return '<button type="button" class="bundle-pick bundle-background-pick'+(selected?' selected':'')+'"'
+   +' data-store-bundle-background="'+esc(item.slug)+'" aria-label="'+(all?'Included: ':'Select ')+esc(item.name)+' background"'
+   +' aria-pressed="'+selected+'"'+(all?' disabled aria-disabled="true"':'')+'>'
+   +'<img src="'+esc(item.imagePath)+'" alt="" loading="lazy" decoding="async">'
+   +'<span class="bundle-pick-label">'+esc(item.name)+'</span></button>';
+ }).join('');
+ const heading=all?'Everything in the collection is included automatically.':'Choose five of each to build your Golden Coffer.';
+ const tally=all?'All 10 included':'Selected '+diceChoice.length+' of 5';
+ const bgTally=all?'All 10 included':'Selected '+bgChoice.length+' of 5';
+ const complete=all||(diceChoice.length===5&&bgChoice.length===5);
+ const content='<div class="bundle-offers" role="group" aria-label="Choose a bundle">'+promo+'</div>'
+  +'<p class="bundle-instructions" role="status">'+esc(heading)+'</p>'
+  +'<section class="bundle-selection-section" aria-label="Dice bundle choices">'
+  +'<div class="bundle-section-heading"><h2>Choose your dice sets</h2><span>'+tally+'</span></div>'
+  +'<div class="bundle-picker-grid">'+diceTiles+'</div></section>'
+  +'<section class="bundle-selection-section" aria-label="Background bundle choices">'
+  +'<div class="bundle-section-heading"><h2>Choose your backgrounds</h2><span>'+bgTally+'</span></div>'
+  +'<div class="bundle-picker-grid">'+backgrounds+'</div></section>'
+  +'<div class="bundle-treasure-decoration" aria-hidden="true"><span>✦</span><span>♛</span><span>✦</span></div>'
+  +'<p class="bundle-preview-status" role="status">'+(complete
+    ?'Bundle selection ready for review. Checkout will be enabled only after secure billing is configured.'
+    :'Choose '+(5-diceChoice.length)+' more dice sets and '+(5-bgChoice.length)+' more backgrounds. Checkout is not yet enabled.')
+  +'</p>';
+ return storeShell('bundles',content,
+  "Bundle pricing is planned: Golden Coffer $5.00 (5 dice sets and 5 backgrounds), Dragon's Treasure $10.00 (all 10 of each). App icons stay free. No purchases are charged or unlocked in this preview.");
+}
+
 function storeShell(category, body, note) {
   return '<section class="store-page" aria-label="Oathkeeper in-app store">'
     + '<div class="store-hero" role="img" aria-label="Oathkeeper moonlit fantasy store banner with silver dragons"></div>'
-    + categoryRow(category) + body + '<p class="store-note">' + esc(note) + '</p></section>';
+    + categoryRow(category) + body + '<p class="store-note">' + esc(note) + '</p>' + storeThemeFooter() + '</section>';
 }
 
 export function storePage(selectedSlug = 'elvenleaf', options = {}) {
+  if (options.category === 'bundles') return storeBundlePage(options);
   if (options.category === 'backgrounds') return backgroundStorePage(options.backgroundSlug,options);
   if (options.category === 'icons') return iconStorePage(options.iconSlug,options.iconStatus);
   const active = SELECTED_DICE.find(item => item.slug === selectedSlug) || SELECTED_DICE[2] || SELECTED_DICE[0];
