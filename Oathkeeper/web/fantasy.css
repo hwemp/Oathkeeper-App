@@ -529,3 +529,16 @@ body[data-store-paid-background]::before{
 @media(prefers-reduced-motion:reduce){
   .dice-animation-switch,.dice-animation-switch::after{transition:none}
 }
+
+/* Unified readable-fantasy number typography and full-width coin controls. */
+body .hp-value,body .hp-value > span{font-family:var(--readable-fantasy)!important;font-weight:400!important;font-variant-numeric:lining-nums;letter-spacing:.008em}
+body .coin-purse-grid{grid-template-columns:minmax(0,1fr)}
+body .coin-purse-grid .coin-stepper:last-child:nth-child(odd){grid-column:auto;justify-self:stretch;width:100%}
+body .coin-amount{font-family:var(--readable-fantasy)!important;font-weight:400!important;font-size:clamp(17px,4vw,21px);font-variant-numeric:lining-nums tabular-nums;letter-spacing:.008em}
+/* Actual 3D-rendered tumbling dice, with a gold-trimmed purple tabletop. */
+.dice-tabletop{margin:9px 0 10px;padding:6px;border:1px solid #c9a363;border-radius:12px;background:linear-gradient(155deg,#261538,#130d29);box-shadow:inset 0 0 9px #ecc46b33,0 3px 9px #03020c88;overflow:hidden}
+.dice-tabletop canvas{display:block;width:100%;height:220px;border-radius:8px;background:#170f29}
+.dice-tabletop [data-dice-landed]{color:#f7dca0;font:15px/1.45 var(--readable-fantasy);text-align:center;margin:7px 6px 3px;overflow-wrap:anywhere}
+.dice-page [data-roll-reveal][hidden],.dice-tabletop [hidden]{display:none!important}
+@media(max-width:380px){.dice-tabletop canvas{height:185px}}
+@media(prefers-reduced-motion:reduce){.dice-tabletop canvas{height:auto}}
