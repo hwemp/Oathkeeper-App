@@ -27,35 +27,61 @@ ICONS = [(1,"moonlit-citadel"),(2,"ember-dragon"),(4,"lionheart-shield"),
          (8,"twin-battleaxes"),(11,"crystal-spires"),(12,"steel-sentinel"),
          (14,"sapphire-worldtree")]
 
-def normalized_art(source):
+# The original Store assets include fragments of adjacent concept-board cells
+# and, in some designs, cropped caption glyphs. Clean each approved source
+# independently. Values are (left, top, right, bottom), fractions of source.
+# Never derive all ten launcher icons from one shared image or concept sheet.
+SOURCE_CROPS = {
+    1: (0, 0, 1, 1),
+    2: (0, 0, 1, 1),
+    4: (.035, 0, .995, .962),
+    5: (.030, 0, .995, .966),
+    6: (.030, 0, .995, .966),
+    7: (0, 0, 1, 1),
+    8: (.027, 0, .990, .940),
+    11: (.041, 0, .997, .940),
+    12: (.041, 0, .997, .940),
+    14: (.041, 0, .997, .940),
+}
+
+def normalized_art(source, number):
     width, height = source.size
     if width < 256 or height < 256:
         raise ValueError(f"Approved launcher art is too small: {source.size}")
-    # Artwork exported from a concept grid has tiny adjacent tile fragments and
-    # caption fragments at its outer edges. Trim those, never the subjects.
+    if number not in SOURCE_CROPS:
+        raise ValueError(f"Missing dedicated source crop for icon {number}")
+    l, t, r, b = SOURCE_CROPS[number]
     clean = source.convert("RGB").crop((
-        round(width * .025), round(height * .015),
-        round(width * .975), round(height * .935)))
-    return ImageOps.fit(clean, (MASTER_SIZE, MASTER_SIZE),
-                        method=Image.Resampling.LANCZOS, centering=(.5, .5))
+        round(l * width), round(t * height),
+        round(r * width), round(b * height)))
+    # Pad rather than center-crop so neither a sword tip nor a gold border is cut.
+    # Each distinct cleaned image is also the EXACT art used in the Store preview.
+    return ImageOps.pad(clean, (MASTER_SIZE, MASTER_SIZE),
+                        method=Image.Resampling.LANCZOS,
+                        color=(8, 13, 27), centering=(.5, .5))
 
 def backdrop(art, side):
-    background = art.resize((side, side), Image.Resampling.LANCZOS)
-    background = background.filter(ImageFilter.GaussianBlur(max(2, side // 22)))
-    return Image.blend(background, Image.new("RGB", (side, side), (8, 13, 27)), .38).convert("RGBA")
+    # Use color from the center of the matching illustration, not a scaled,
+    # repeated gold border. The latter causes a visible second, off-center rim.
+    inset = round(art.width * .14)
+    interior = art.crop((inset, inset, art.width - inset, art.height - inset))
+    background = interior.resize((side, side), Image.Resampling.LANCZOS)
+    background = background.filter(ImageFilter.GaussianBlur(max(8, side // 7)))
+    return Image.blend(background, Image.new("RGB", (side, side),
+                                            (8, 13, 27)), .78).convert("RGBA")
 
 def centered_overlay(art, canvas_side, fraction):
     picture_side = round(canvas_side * fraction)
-    picture = art.resize((picture_side, picture_side), Image.Resampling.LANCZOS).convert("RGBA")
-    mask = Image.new("L", (picture_side, picture_side), 0)
-    ImageDraw.Draw(mask).rounded_rectangle((0, 0, picture_side - 1, picture_side - 1),
-                                          radius=round(picture_side * .16), fill=255)
-    mask = mask.filter(ImageFilter.GaussianBlur(max(.8, picture_side * .005)))
-    picture.putalpha(mask)
+    picture = art.resize((picture_side, picture_side),
+                         Image.Resampling.LANCZOS).convert("RGBA")
+    # The original Store art already has its OWN rounded gold frame. Applying
+    # another rounded-rectangle alpha mask clips or doubles that gold border.
     foreground = Image.new("RGBA", (canvas_side, canvas_side), (0, 0, 0, 0))
     offset = (canvas_side - picture_side) // 2
     foreground.alpha_composite(picture, (offset, offset))
-    assert abs(offset - (canvas_side - picture_side - offset)) <= 1
+    bounds = foreground.getbbox()
+    assert bounds and abs((bounds[0] + bounds[2]) - canvas_side) <= 1
+    assert abs((bounds[1] + bounds[3]) - canvas_side) <= 1
     return foreground
 
 def make_icon(number, slug):
@@ -64,8 +90,8 @@ def make_icon(number, slug):
     if not source.is_file():
         raise FileNotFoundError(f"Missing approved art: {slug} ({source})")
     with Image.open(source) as loaded:
-        art = normalized_art(loaded)
-    ANDROID.mkdir(parents=True, exist_ok=True)
+        art = normalized_art(loaded, number)
+    # Save an individual cleaned Store mockup from precisely this same source.\n    # Both native launcher and Store preview use these pixels, never a shared icon.\n    art.resize((512, 512), Image.Resampling.LANCZOS).save(\n        WEB / f"launcher-{number:02d}.webp", "WEBP", quality=96, method=6)\n    ANDROID.mkdir(parents=True, exist_ok=True)
     ADAPTIVE.mkdir(parents=True, exist_ok=True)
 
     # Android 8+ uses these resources from mipmap-anydpi-v26. The launcher
@@ -102,13 +128,13 @@ def make_icon(number, slug):
     return hashlib.sha256(art.tobytes()).hexdigest()
 
 def main():
-    hashes = [make_icon(*item) for item in ICONS]
+    if set(SOURCE_CROPS) != {number for number, _ in ICONS}:\n        raise RuntimeError("Source crop mapping must cover all approved icon designs")\n    hashes = [make_icon(*item) for item in ICONS]
     if len(set(hashes)) != len(ICONS):
         raise RuntimeError("Approved icon art must contain ten distinct designs")
     generated = list(ADAPTIVE.glob("oathkeeper_icon_*.xml"))
     if len(generated) < len(ICONS):
         raise RuntimeError("One or more adaptive launcher icons are missing")
-    print("Centered all 10 alternate Android adaptive/legacy and iOS icons; original kept")
+    print("Prepared 10 distinct cleaned Store previews and matching centered Android/iOS icons; original kept")
 
 if __name__ == "__main__":
     main()

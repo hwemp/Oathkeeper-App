@@ -3,10 +3,10 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {SELECTED_APP_ICONS} from '../web/store-icon-catalog.js';
 
-test('every free icon preview uses a distinct approved painted asset',async()=>{
+test('every free icon has its own approved source artwork and dedicated clean preview path',async()=>{
  const digests=new Set();
  for(const item of SELECTED_APP_ICONS){
-  const bytes=await readFile(new URL('../web/public'+item.imagePath,import.meta.url));
+  const sourcePath='../web/public/art/store-icons/icon-'+String(item.selection).padStart(2,'0')+'.webp';\n  assert.equal(item.imagePath,'/art/store-icons/launcher-'+String(item.selection).padStart(2,'0')+'.webp');\n  const bytes=await readFile(new URL(sourcePath,import.meta.url));
   assert.equal(bytes.toString('ascii',0,4),'RIFF');
   assert.equal(bytes.toString('ascii',8,12),'WEBP');
   assert(bytes.byteLength>20000);

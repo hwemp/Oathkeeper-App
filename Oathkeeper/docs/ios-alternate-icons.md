@@ -49,3 +49,4 @@ and the Android build workflow generates them before checks/compilation.
 
 For Apple's configuration guidance:
 https://developer.apple.com/documentation/xcode/configuring-your-app-to-use-alternate-app-icons
+\n## Corrected individual mockups and source-to-launcher parity (Nov 11, 2026)\n\nThe 10 approved source pictures are `web/public/art/store-icons/icon-XX.webp`. Several had fragments from neighboring concept tiles or labels. `generate-free-icons.py` now trims each source with its own crop, creates a separate `launcher-XX.webp` (no repeated picture), and uses that same cleaned image to compose the Android adaptive/legacy and iOS launcher icons. The web store catalog displays `launcher-XX.webp`, so each option's preview is the same design the phone applies. The original Android and iOS primary icons remain untouched. Android adaptive launcher masks can still differ between OEMs and must be checked on a device.\n

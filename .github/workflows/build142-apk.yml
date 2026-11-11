@@ -3,7 +3,7 @@ on:
   push:
     branches: [main]
     paths:
-      - '.build142/payload.part*.bin'
+      - '.build142/payload.part*.bin'\n      - 'Oathkeeper/scripts/generate-free-icons.py'\n      - 'Oathkeeper/web/store-icon-catalog.js'\n      - 'Oathkeeper/web/public/art/store-icons/icon-*.webp'
       - '.github/workflows/build142-apk.yml'
   workflow_dispatch:
 permissions:
@@ -113,7 +113,7 @@ jobs:
           for number in 01 02 04 05 06 07 08 11 12 14; do
             test -s "android/app/src/main/res/mipmap-anydpi-v26/oathkeeper_icon_${number}.xml"
             test -s "android/app/src/main/res/mipmap-nodpi/oathkeeper_icon_${number}_foreground.png"
-            test -s "android/app/src/main/res/mipmap-nodpi/oathkeeper_icon_${number}_background.png"
+            test -s "android/app/src/main/res/mipmap-nodpi/oathkeeper_icon_${number}_background.png"\n            test -s "web/public/art/store-icons/launcher-${number}.webp"\n            # Build 142 ships a frozen web payload: replace its icon previews\n            # so its Store image matches the very same installed native icon.\n            if test -f "dist/art/store-icons/icon-${number}.webp"; then\n              cp "web/public/art/store-icons/launcher-${number}.webp" "dist/art/store-icons/icon-${number}.webp"\n            fi
           done
       - name: Sync Capacitor Android application
         run: npx cap sync android
