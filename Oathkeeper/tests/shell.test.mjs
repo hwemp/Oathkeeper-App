@@ -116,7 +116,7 @@ test('store category switching and tile taps immediately update the correct prev
   s.click('[data-store-category="backgrounds"]');
   assert(s.q('.store-background-preview-image'));
   s.click('[data-store-background="mystic-lake"]');
-  assert.equal(s.q('.store-background-preview-image').getAttribute('src'),'/art/store-backgrounds/mystic-lake.webp');
+  assert.equal(s.q('.store-background-preview-image').getAttribute('src'),'/art/store-backgrounds-hd/mystic-lake.webp');
   assert.equal(s.saved().storePreviewBackground,'mystic-lake');
   s.click('[data-store-category="icons"]');
   assert.equal(s.q('.store-icon-grid').querySelectorAll('[data-store-icon]').length,10);
