@@ -189,8 +189,72 @@ $('#equipmentEditor').addEventListener('cancel',()=>{equipmentDraft=null});
 document.addEventListener('community-session',e=>{const button=document.querySelector('#appMenu .account-menu-button');if(button)button.textContent=e.detail?'Log out':'Log in'});
 
 function readDiceInputs(){const q=document.querySelector('#diceQuantity'),m=document.querySelector('#diceModifier');if(q&&m&&q.checkValidity()&&m.checkValidity()&&q.value.trim()&&m.value.trim()){diceState.quantity=Number(q.value);diceState.modifier=Number(m.value)}}
+document.addEventListener('change',e=>{const t=e.target;if(t.id!=='diceContext')return;readDiceInputs();diceState.context=t.value;const p=/^holyPower[012]$/.test(t.value)?powerAtRank(c,Number(t.value.slice(-1))):null;if(p){diceState.sides=8;diceState.mode='official';diceState.quantity=p.count;}diceState.result=null;diceState.justRolled=false;render()});
 document.addEventListener('click',e=>{const t=e.target.closest('button');if(!t)return;if(t.dataset.diceMode){readDiceInputs();diceState.mode=t.dataset.diceMode;const allowed=diceState.mode==='official'?OFFICIAL_DICE:UNOFFICIAL_DICE;if(!allowed.includes(diceState.sides))diceState.sides=20;diceState.result=null;render()}if(t.dataset.die){readDiceInputs();diceState.sides=Number(t.dataset.die);diceState.result=null;render()}});
-document.addEventListener('submit',e=>{if(e.target.id!=='diceForm')return;e.preventDefault();const q=document.querySelector('#diceQuantity'),m=document.querySelector('#diceModifier');try{if(!q.value.trim()||!m.value.trim())throw Error('Enter a quantity and modifier.');const result=rollDice({sides:diceState.sides,mode:diceState.mode,quantity:Number(q.value),modifier:Number(m.value)});c.rollHistory=recordRoll(c.rollHistory,result);diceState={...diceState,quantity:result.quantity,modifier:result.modifier,result,justRolled:true};render()}catch(error){document.querySelector('#diceError').textContent=error.message}});
+document.addEventListener('submit',e=>{if(e.target.id!=='diceForm')return;e.preventDefault();const q=document.querySelector('#diceQuantity'),m=document.querySelector('#diceModifier');try{
+ if(!q.value.trim()||!m.value.trim())throw Error('Enter a quantity and modifier.');
+ const context=diceState.context||'normal',index=/^holyPower[012]$/.test(context)?Number(context.slice(-1)):-1;
+ const power=index>=0?powerAtRank(c,index):null;
+ const rolled=rollDice({sides:power?8:diceState.sides,mode:power?'official':diceState.mode,quantity:power?power.count:Number(q.value),modifier:Number(m.value)});
+ const result=applyRollAdjustments(rolled,rollAdjustments(c,context,rolled.sides));
+ c.rollHistory=recordRoll(c.rollHistory,result);
+ diceState={...diceState,sides:rolled.sides,quantity:rolled.quantity,modifier:rolled.modifier,result,justRolled:true};
+ render();
+ }catch(error){document.querySelector('#diceError').textContent=error.message}});
+
+
+/* Rules desk controls: changes commit locally, recalculate from the same canonical state,
+   and never guess level-up ability selections or magic equipment entitlements. */
+document.addEventListener('change',e=>{
+ const t=e.target;
+ if(t.dataset.rulesField){
+  const k=t.dataset.rulesField;
+  const spec={size:'text',variantEncumbrance:'boolean',xp:'number',exhaustion:'number',concentration:'text',conditions:'text'};
+  if(!spec[k])return;
+  let value=spec[k]==='boolean'?t.checked:spec[k]==='number'?Number(t.value):t.value;
+  if(spec[k]==='number'&&(!Number.isSafeInteger(value)||value<0||(k==='exhaustion'?value>6:value>20000000))){toast('Enter a valid number');render();return}
+  if(k==='size'&&!['Tiny','Small','Medium','Large','Huge','Gargantuan'].includes(value)){render();return}
+  commit('Changed '+k);c[k]=value;refresh();return;
+ }
+ if(t.dataset.magicIndex!==undefined){
+  const i=Number(t.dataset.magicIndex),k=t.dataset.magicKey;
+  if(!Number.isInteger(i)||!c.magicEffects?.[i]||!['item','target','op','value','enabled','requiresAttunement','attuned'].includes(k))return;
+  let v=t.type==='checkbox'?t.checked:k==='value'?Number(t.value):t.value;
+  try{const row=validateEffect({...c.magicEffects[i],[k]:v});commit('Edited magic item effect');c.magicEffects[i]=row;refresh()}catch(err){toast(err.message);render()}
+  return;
+ }
+ if(t.dataset.spellSlot!==undefined){
+  const i=Number(t.dataset.spellSlot),maximum=paladinSlotMaximums(c.level)[i];
+  const v=Number(t.value);
+  if(!Number.isInteger(i)||i<0||i>4||!maximum||!Number.isInteger(v)||v<0||v>maximum){toast('Invalid used spell-slot count');render();return}
+  commit('Updated spell slots');c.spellSlotsUsed[i]=v;refresh();
+ }
+});
+document.addEventListener('click',e=>{
+ const t=e.target.closest('button');if(!t)return;
+ if(t.hasAttribute('data-magic-add')){
+  if((c.magicEffects?.length||0)>=60)return toast('Maximum 60 effects');
+  const first=c.items?.find(i=>Number(i[1])>0)?.[0]||'Name of inventory item';
+  commit('Added magic effect');c.magicEffects.push({item:first,target:'str',op:'minimum',value:19,enabled:false,requiresAttunement:true,attuned:false});refresh();return;
+ }
+ if(t.dataset.magicRemove!==undefined){
+  const i=Number(t.dataset.magicRemove);if(!c.magicEffects?.[i])return;
+  commit('Removed magic effect');c.magicEffects.splice(i,1);refresh();return;
+ }
+ if(t.dataset.powerRank!==undefined){
+  const i=Number(t.dataset.powerRank),delta=Number(t.dataset.rankDelta);
+  if(!Number.isInteger(i)||i<0||i>2||![1,-1].includes(delta))return;
+  const next=(c.powerRanks?.[i]||1)+delta;if(next<1||next>10)return;
+  commit('Changed custom power rank');c.powerRanks[i]=next;refresh();return;
+ }
+});
+document.addEventListener('submit',e=>{
+ if(e.target.id!=='layOnHandsForm')return;
+ e.preventDefault();const value=Number(document.querySelector('#layPoints')?.value);
+ const max=derived().paladinLayOnHandsMax;
+ if(!Number.isInteger(value)||value<1||value>max-(c.layOnHandsSpent||0))return toast('Invalid points to spend');
+ commit('Spent Paladin Lay on Hands pool points');c.layOnHandsSpent+=value;refresh();
+});
 
 bindDM({state:()=>c.dm,save,render,toast});
 bindSupport();
