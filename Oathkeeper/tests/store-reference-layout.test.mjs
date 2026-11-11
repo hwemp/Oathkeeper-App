@@ -21,6 +21,7 @@ test('approved store reference: category artwork and full-size previews', () => 
     assert.match(page,/data-store-category="icons"/);
     assert.match(page,/data-store-category="bundles"/);
     assert.match(page,/class="store-themed-footer"/);
+    assert.match(page,/data-store-build="149"/);
   }
   const backgrounds=storePage('elvenleaf',{category:'backgrounds'});
   assert.match(backgrounds,/style="--store-preview-backdrop:url\(&quot;\/art\/store-backgrounds\/moonlit-citadel.webp&quot;\)"/);
