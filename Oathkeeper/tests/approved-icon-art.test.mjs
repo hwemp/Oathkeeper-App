@@ -8,7 +8,7 @@ test('each native Android launcher is the exact corresponding Store image', asyn
  assert.equal(SELECTED_APP_ICONS.length,10);
  for (const icon of SELECTED_APP_ICONS) {
   const n=String(icon.selection).padStart(2,'0');
-  assert.equal(icon.imagePath,'/art/store-icons/icon-'+n+'.webp');
+  assert.equal(icon.imagePath,'/art/store-icons/store-'+n+'.svg');
   assert.equal(icon.iosIconName,'AppIcon-'+n);
   const store=await readFile(new URL('../web/public/art/store-icons/icon-'+n+'.webp',import.meta.url));
   const native=await readFile(new URL('../android/app/src/main/res/mipmap-nodpi/oathkeeper_icon_'+n+'.webp',import.meta.url));

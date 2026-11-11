@@ -9,7 +9,7 @@ export const APPROVED_FREE_ICON_CONCEPTS = Object.freeze(items.map(([selection,n
  Object.freeze({
   selection,slug:'icon-'+String(selection).padStart(2,'0'),name,
   iosIconName:'AppIcon-'+String(selection).padStart(2,'0'),
-  imagePath:'/art/store-icons/icon-'+String(selection).padStart(2,'0')+'.webp',
+  imagePath:'/art/store-icons/store-'+String(selection).padStart(2,'0')+'.svg',
   description:name+' fantasy launcher icon. Free to use.',
   price:0,assetReady:true,status:'free',paymentType:'free'
  })

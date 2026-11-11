@@ -25,6 +25,18 @@ const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&
 const base={dm:createDM(),rollHistory:[],diceAnimation:false,magicEffects:[],powerRanks:[1,1,1],size:'Medium',variantEncumbrance:false,xp:0,layOnHandsSpent:0,spellSlotsUsed:[0,0,0,0,0],concentration:'',conditions:'',exhaustion:0,notifyEmail:false,notifyText:false,notifyPopup:true,notifyInApp:true,name:'Ecclesyus Ha Kawa',class:'Paladin',level:1,str:18,dex:14,con:20,int:12,wis:20,cha:18,luck:14,hp:15,hpBase:10,temp:0,holy:6,holyMax:6,armor:16,shield:true,aura:false,faith:false,speed:30,body:200,pre:true,lucky:true,oil:5,tapers:5,cp:0,sp:0,ep:0,gp:15,pp:0,notes:'Oath of the Faithful Servant • Lawful Good\nAcolyte — Faithful Servant. Messianic Jewish; follows Yeshua.\n\nTraits: gentle with the frightened, patient with questions, steadfast against cruelty.\nIdeal: repentance expressed through love, truth and service.\nBond: the memory of his wife and children, and the families he now protects.\nFlaw: grief drives him to take others’ burdens upon himself.\n\nHoly oil: blessing uses 1 dose; 1d4 on one non-attack check within 1 hour, once per recipient per long rest. Healing uses 1 dose for 1d4+1 HP, once per recipient per short or long rest. Dedication uses 2 doses, 1 Holy Point and 1 taper. Track recipient eligibility here.\n\nLanguages: Hebrew, Common Tongue, Aramaic, English.',items:[['Chainmail',1,55],['Shield with holy symbol',1,6],['Longsword',1,3],['Backpack',1,5],['Bedroll',1,7],['Mess kit',1,1],['Tinderbox',1,1],['Torches',10,1],['Rations',10,2],['Full waterskin',1,5],['Hemp rope (50 ft)',1,10],['Prayer book',1,5],['Tallit',1,1],['Clothes, boots, belt',1,3],['Belt pouch',1,1],['Purple traveling cloak',1,3],['Helmet',1,4],['Holy water, full flask',3,1],['Empty flask',0,.2]],log:[]};
 let c=structuredClone(base);try{let v=JSON.parse(localStorage.getItem('oathkeeper-v1'));if(v)c={...c,...v}}catch{}let tab=location.hash==='#notifications'?'Notifications':'Overview',pending={},last=null;
 let storeCategory='dice';
+let stopStoreDicePreview=()=>{};
+// Build 155 keeps Build 144 state and dice RNG unchanged. This is visual only.
+function previewStoreDiceAnimation(){
+ const stage=document.querySelector('#storeDiceTabletop');
+ if(!stage)return;
+ stopStoreDicePreview();
+ const skin=SELECTED_DICE.find(item=>item.slug===(c.storePreviewDice||'elvenleaf'))||SELECTED_DICE[2];
+ stage.hidden=false;stage.dataset.state='rolling';
+ const caption=stage.querySelector('[data-dice-landed]');
+ if(caption){caption.hidden=true;caption.textContent='';}
+ stopStoreDicePreview=playTabletopRoll(stage,{sides:20,quantity:1,rolls:[{value:20}],total:20},()=>{},skin);
+}
 let billingState={available:false,restoreAvailable:false,ownedIds:[],products:[],reason:'Checkout is not connected yet.'};
 const cosmetics=()=>effectiveCosmetics(c,billingState.ownedIds);
 let billingRefreshVersion=0;
@@ -121,6 +133,9 @@ if(t.dataset.coinChange!==undefined){
   commit('Adjusted '+key.toUpperCase()+' coins');
   c[key]=after;
   refresh();return;
+}if(t.dataset.storePreviewRoll){
+ if(tab==='Store'&&storeCategory==='dice')previewStoreDiceAnimation();
+ return;
 }if(t.dataset.storeCategory){if(!['dice','backgrounds','icons','bundles'].includes(t.dataset.storeCategory))return;storeCategory=t.dataset.storeCategory;render();if(storeCategory==='icons')void refreshIconState();else if(storeCategory!=='bundles')void refreshBillingState();return}
 if(t.dataset.storeBundleOffer){
  if(!isBundleOffer(t.dataset.storeBundleOffer))return;
@@ -140,7 +155,7 @@ if(t.dataset.storeBundleBackground){
  if(next.length===before.length&&!before.includes(t.dataset.storeBundleBackground)&&before.length===5){toast('Choose at most five backgrounds. Deselect one first.');return}
  c.storeBundleBackgrounds=next;save();render();return;
 }
-if(t.dataset.storeBackground){const selected=t.dataset.storeBackground;if(!SELECTED_BACKGROUNDS.some(item=>item.slug===selected))return;c.storePreviewBackground=selected;save();render();return}if(t.dataset.storeDice){const selected=t.dataset.storeDice;if(!SELECTED_DICE.some(item=>item.slug===selected))return;c.storePreviewDice=selected;save();render();return}if(t.dataset.storeIcon){const selected=t.dataset.storeIcon;if(!SELECTED_APP_ICONS.some(item=>item.slug===selected))return;c.storePreviewIcon=selected;save();render();return}
+if(t.dataset.storeBackground){const selected=t.dataset.storeBackground;if(!SELECTED_BACKGROUNDS.some(item=>item.slug===selected))return;c.storePreviewBackground=selected;save();render();return}if(t.dataset.storeDice){const selected=t.dataset.storeDice;if(!SELECTED_DICE.some(item=>item.slug===selected))return;c.storePreviewDice=selected;save();render();previewStoreDiceAnimation();return}if(t.dataset.storeIcon){const selected=t.dataset.storeIcon;if(!SELECTED_APP_ICONS.some(item=>item.slug===selected))return;c.storePreviewIcon=selected;save();render();return}
 if(t.dataset.storeApplyCosmetic){
   const [kind,slug]=t.dataset.storeApplyCosmetic.split(':');
   if(!['dice','backgrounds'].includes(kind)||!ownedItem(kind,slug,billingState.ownedIds)){

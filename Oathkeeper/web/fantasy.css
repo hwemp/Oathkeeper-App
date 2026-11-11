@@ -851,3 +851,60 @@ body:has(.store-page)>main>#view{width:100%;min-width:0}
   .store-selection-footer{grid-template-columns:repeat(2,minmax(0,1fr))}
   .store-selection-footer p{grid-column:1/-1}
 }
+
+/* Build 155 - Build 144 source preserved; icon/dice thumbnail and preview fixes.
+   Full artwork fits the gold-edged square without cropping, no selection circles. */
+.store-page .store-icon-tile,.store-page .store-dice-tile{
+  display:grid!important;place-items:center!important;min-width:0;
+  isolation:isolate;overflow:hidden!important;background:#091127!important;
+}
+.store-page .store-icon-tile-art,.store-page .store-dice-tile-art{
+  display:block!important;width:100%!important;height:100%!important;
+  min-width:0!important;max-width:100%!important;max-height:100%!important;
+  object-fit:contain!important;object-position:center center!important;
+  transform:none!important;background:none!important;
+  padding:0!important;margin:0!important;
+}
+.store-page .store-icon-tile-art{aspect-ratio:1}
+.store-page .store-dice-tile-art{aspect-ratio:248/175}
+.store-page .store-dice-preview-frame{
+  display:block;justify-self:center;width:100%;max-width:min(100%,780px);
+  height:auto!important;min-height:0!important;padding:0!important;
+  margin:0!important;border:0!important;border-radius:18px;
+  box-shadow:none!important;background:transparent!important;
+  overflow:visible;line-height:0;cursor:pointer;
+}
+.store-page .store-dice-preview-frame .store-preview-image{
+  width:100%;max-width:100%;pointer-events:none;background-image:none!important;
+}
+.store-page .store-dice-preview-art{
+  display:block;width:100%;height:100%;object-fit:contain!important;
+  object-position:center!important;transform:none!important;
+}
+.store-page .store-dice-preview-frame:focus-visible{outline:3px solid #fff0c8!important;outline-offset:4px}
+.store-page .store-dice-demo{
+  display:grid;gap:8px;justify-items:stretch;width:100%;
+  max-width:min(100%,780px);
+}
+.store-page .store-dice-demo .dice-tabletop[hidden]{display:none!important}
+.store-page .store-dice-demo .dice-tabletop{width:100%;margin:0;border:2px solid #b78c49}
+.store-page .store-dice-demo canvas{
+  display:block;width:100%;height:clamp(270px,56vw,440px)!important;
+  max-height:none!important;border-radius:10px;image-rendering:auto;
+}
+.store-page .store-dice-replay{
+  justify-self:center;width:min(100%,330px);min-height:46px;border-radius:12px;
+  border:2px solid #e7b969;background:linear-gradient(#67217d,#2d103d);
+  color:#ffe0a1;font-family:var(--readable-fantasy),Georgia,serif;
+  font-size:clamp(13px,2.5vw,19px);
+}
+.store-page .store-dice-demo-note{margin:0;text-align:center;font:12px/1.3 Georgia,serif;color:#d7c49b}
+@media(max-width:800px){
+ .store-page .store-dice-grid,.store-page .store-icon-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(7px,2vw,14px)}
+}
+@media(max-width:360px){
+ .store-page .store-dice-grid,.store-page .store-icon-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+}
+@media(prefers-reduced-motion:reduce){
+ .store-page .store-dice-demo .dice-tabletop{display:none!important}
+}
