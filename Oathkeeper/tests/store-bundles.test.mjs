@@ -36,7 +36,7 @@ test('approved Layout B has live gold-border selections, bottom navigation, no c
  assert.equal((html.match(/class="bundle-pick bundle-background-pick selected"/g)||[]).length,5);
  assert.doesNotMatch(html,/type="checkbox"|checkmark|selection-circle|data-store-buy-id=/i);
  assert.match(html,/class="store-bundle-purchase-actions"/);
- assert.match(html,/>Purchase<\\/button>/);
+ assert.match(html,/>Purchase<\/button>/);
  assert.match(html,/data-store-restore-purchases="true" disabled aria-disabled="true"/);
  assert.doesNotMatch(html,/bundle-treasure-decoration/);
  assert.match(html,/class="store-themed-footer"/);
@@ -53,6 +53,6 @@ test('full Dragon treasure includes all existing sets without changing the five-
 
 test('bundle restore can become available independently of payment checkout',()=>{
  const html=storePage('elvenleaf',{category:'bundles',restoreAvailable:true});
- assert.match(html,/data-store-restore-purchases="true">Restore Purchases<\\/button>/);
+ assert.match(html,/data-store-restore-purchases="true">Restore Purchases<\/button>/);
  assert.match(html,/class="store-purchase-disabled" disabled aria-disabled="true"/);
 });
