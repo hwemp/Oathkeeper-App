@@ -37,8 +37,8 @@ test('3D tabletop draws faceted solids and resolves results after normal-speed t
    const canvas=stage.querySelector('canvas');
    const ctx={
     setTransform(){},clearRect(){},fillRect(){},beginPath(){},ellipse(){},stroke(){gold++},
-    fill(){paints++},moveTo(){},lineTo(){},closePath(){},arc(){},save(){},restore(){},
-    strokeText(){},fillText(){},createLinearGradient(){return {addColorStop(){}}}
+    fill(){paints++},moveTo(){},lineTo(){},closePath(){},arc(){},save(){},restore(){},clip(){},quadraticCurveTo(){},
+    strokeText(){},fillText(){},createLinearGradient(){return {addColorStop(){}}},createRadialGradient(){return {addColorStop(){}}}
    };
    canvas.getContext=()=>ctx;
    canvas.getBoundingClientRect=()=>({width:380,height:220});
