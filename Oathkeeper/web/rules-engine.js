@@ -54,7 +54,7 @@ export function deriveCharacter(c){
  const coins=(safeNumber(c.cp)+safeNumber(c.sp)+safeNumber(c.ep)+safeNumber(c.gp)+safeNumber(c.pp))/50;
  const other=.2+safeNumber(c.oil)*.16+1.5+safeNumber(c.tapers)*.1;
  const bagPresent=(c.items||[]).some(i=>/^bag of holding$/i.test(String(i[0]).trim())&&Number(i[1])>0);
- const inBag=bagPresent?(c.items||[]).reduce((s,i)=>s+(i[3]===true&&(Number(i[1])||0)>0?(Number(i[1])||0)*(Number(i[2])||0):0),0):0;
+ const inBag=bagPresent?(c.items||[]).reduce((s,i)=>s+(i[3]===true&&!/^bag of holding$/i.test(String(i[0]).trim())&&(Number(i[1])||0)>0?(Number(i[1])||0)*(Number(i[2])||0):0),0):0;
  const packed=Math.max(0,itemWeight-inBag)+coins+other;
  const carried=rounded(Math.max(0,apply(packed,effects,'load')));
  const size=SIZE_MULTIPLIERS[c.size]===undefined?'Medium':c.size;
@@ -72,10 +72,10 @@ export function deriveCharacter(c){
  const speed=Math.max(0,apply(safeNumber(c.speed,30),effects,'speed'));
  const saveBonus=apply(0,effects,'save');
  const spellDC=8+proficiency+mods.cha+apply(0,effects,'spellDC');
- const attunedNames=new Set((c.magicEffects||[]).filter(e=>e?.enabled&&e?.requiresAttunement&&e?.attuned).map(e=>cleanName(e.item)));
+ const attunedNames=new Set((Array.isArray(c.magicEffects)?c.magicEffects:[]).filter(e=>e?.enabled&&e?.requiresAttunement&&e?.attuned).map(e=>cleanName(e.item)));
  const activeAttunements=[...attunedNames].filter(name=>effects.some(e=>cleanName(e.item)===name));
  const encumbrance=c.variantEncumbrance===true?{encumbered:carried>scores.str*5,heavy:carried>scores.str*10}:null;
- return {level,scores,mods,proficiency,maxHp:hp,weight:carried,capacity,remaining:rounded(capacity-carried),bodyPlusGear:rounded(safeNumber(c.body)+carried),size,attack,damage,healing,damageMultiplier,healingMultiplier,diceMultiplier,ac:armor,speed,saveBonus,spellDC,holyDC:spellDC,extraAttack:isPaladin&&level>=5?2:1,armorPresent,shieldPresent,paladinLayOnHandsMax:isPaladin?5*level:0,activeAttunements,attunementExceeded:activeAttunements.length>3,bagPresent,bagContents:rounded(inBag),encumbrance,exceedsCapacity:carried>capacity,effects};
+ return {level,scores,mods,proficiency,maxHp:hp,weight:carried,capacity,remaining:rounded(capacity-carried),bodyPlusGear:rounded(safeNumber(c.body)+carried),size,attack,damage,healing,damageMultiplier,healingMultiplier,diceMultiplier,ac:armor,speed,saveBonus,spellDC,holyDC:spellDC,extraAttack:isPaladin&&level>=5?2:1,armorPresent,shieldPresent,paladinLayOnHandsMax:isPaladin?5*level:0,activeAttunements,attunementExceeded:activeAttunements.length>3,bagPresent,bagContents:rounded(inBag),bagOverfilled:inBag>500,encumbrance,exceedsCapacity:carried>capacity,effects};
 }
 export function powerAtRank(c,index){
  const base=CUSTOM_POWERS[index];if(!base)return null;
