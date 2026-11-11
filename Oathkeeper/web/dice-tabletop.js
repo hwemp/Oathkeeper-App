@@ -17,22 +17,34 @@ function ico(){
  const f=[[0,11,5],[0,5,1],[0,1,7],[0,7,10],[0,10,11],[1,5,9],[5,11,4],[11,10,2],[10,7,6],[7,1,8],[3,9,4],[3,4,2],[3,2,6],[3,6,8],[3,8,9],[4,9,5],[2,4,11],[6,2,10],[8,6,7],[9,8,1]];
  return {v,f:orient(v,f)};
 }
-// Closed, convex 100-triangle geodesic solid: twenty icosahedron faces
-// each subdivide into five. Euler check: V=52, E=150, F=100.
-function hundred(){
- const base=ico(),v=base.v.map(p=>[...p]),f=[];
- for(const [a,b,c] of base.f){
-  const A=v[a],B=v[b],C=v[c];
-  // One central point leaves two equal outer triangles (one fifth each);
-  // the remaining three triangles also occupy one fifth of the base face.
-  const u=normalized(A.map((x,k)=>.2*x+.2*B[k]+.6*C[k]));
-  const ui=v.push(u)-1;
-  const q=normalized(A.map((x,k)=>(x+B[k]+u[k])/3));
-  const qi=v.push(q)-1;
-  f.push([a,b,qi],[b,ui,qi],[ui,a,qi],[b,c,ui],[c,a,ui]);
+// Rounded convex die with real triangular faces, rather than an enlarged D20
+// or an uneven subdivision of icosahedron faces. With five latitude rings,
+// ten columns give exactly 100 faces; five columns give exactly 50 faces.
+// Euler: V = 2 + 5*k, F = 10*k, E = 15*k.
+function sphericalFacets(columns){
+ const rings=5,v=[[0,0,1],[0,0,-1]],f=[];
+ for(let ring=0;ring<rings;ring++){
+  const theta=Math.PI*(ring+1)/(rings+1),z=Math.cos(theta),r=Math.sin(theta);
+  const offset=ring%2?Math.PI/columns:0;
+  for(let j=0;j<columns;j++){
+   const a=j*TAU/columns+offset;
+   v.push([r*Math.cos(a),r*Math.sin(a),z]);
+  }
  }
+ for(let j=0;j<columns;j++)f.push([0,2+j,2+(j+1)%columns]);
+ for(let ring=0;ring<rings-1;ring++){
+  const a=2+ring*columns,b=a+columns;
+  for(let j=0;j<columns;j++){
+   const next=(j+1)%columns;
+   f.push([a+j,b+j,a+next],[a+next,b+j,b+next]);
+  }
+ }
+ const last=2+(rings-1)*columns;
+ for(let j=0;j<columns;j++)f.push([1,last+(j+1)%columns,last+j]);
  return {v,f:orient(v,f)};
 }
+function hundred(){return sphericalFacets(10);}
+
 function dodeca(){
  const i=ico();
  const v=i.f.map(ids=>normalized(ids.reduce((acc,id)=>acc.map((x,k)=>x+i.v[id][k]/3),[0,0,0])));
@@ -53,15 +65,7 @@ function shape(sides){
   }
   return {v:v.map(normalized),f:orient(v,[[0,1,4,3],[1,2,5,4],[2,0,3,5],[0,2,1],[3,4,5]])};
  }
- if(sides===50){
-  // A real 50-face geometry rather than substituting a ten-sided mesh.
-  const n=25,v=[[0,0,1],[0,0,-1]];
-  for(let i=0;i<n;i++){const a=(i+.5)*TAU/n;v.push([Math.cos(a)*.91,Math.sin(a)*.91,.055*Math.cos(a*2)]);}
-  const f=[];for(let i=0;i<n;i++){
-   f.push([0,2+i,2+(i+1)%n],[1,2+(i+1)%n,2+i]);
-  }
-  return {v:v.map(normalized),f:orient(v,f)};
- }
+ if(sides===50)return sphericalFacets(5);
  if(sides===4){
   const v=[[1,1,1],[-1,-1,1],[-1,1,-1],[1,-1,-1]].map(normalized);
   return {v,f:orient(v,[[0,1,2],[0,3,1],[0,2,3],[1,3,2]])};
