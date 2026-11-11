@@ -35,6 +35,10 @@ test('approved Layout B has live gold-border selections, bottom navigation, no c
  assert.equal((html.match(/class="bundle-pick bundle-dice-pick selected"/g)||[]).length,5);
  assert.equal((html.match(/class="bundle-pick bundle-background-pick selected"/g)||[]).length,5);
  assert.doesNotMatch(html,/type="checkbox"|checkmark|selection-circle|data-store-buy-id=/i);
+ assert.match(html,/class="store-bundle-purchase-actions"/);
+ assert.match(html,/>Purchase<\\/button>/);
+ assert.match(html,/data-store-restore-purchases="true" disabled aria-disabled="true"/);
+ assert.doesNotMatch(html,/bundle-treasure-decoration/);
  assert.match(html,/class="store-themed-footer"/);
  for(const tab of ['Overview','My profile','Community','Messages','Store'])assert.match(html,new RegExp('data-tab="'+tab+'"'));
 });
@@ -43,6 +47,12 @@ test('full Dragon treasure includes all existing sets without changing the five-
  assert.match(html,/All 10 included/);
  assert.equal((html.match(/class="bundle-pick bundle-dice-pick selected"/g)||[]).length,10);
  assert.equal((html.match(/class="bundle-pick bundle-background-pick selected"/g)||[]).length,10);
- assert.equal((html.match(/disabled aria-disabled="true"/g)||[]).length,20);
+ assert.equal((html.match(/disabled aria-disabled="true"/g)||[]).length,22);
  assert.doesNotMatch(html,/>Purchase Bundle|>Add to Cart/i);
+});
+
+test('bundle restore can become available independently of payment checkout',()=>{
+ const html=storePage('elvenleaf',{category:'bundles',restoreAvailable:true});
+ assert.match(html,/data-store-restore-purchases="true">Restore Purchases<\\/button>/);
+ assert.match(html,/class="store-purchase-disabled" disabled aria-disabled="true"/);
 });
