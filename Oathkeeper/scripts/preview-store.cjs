@@ -76,6 +76,9 @@ const assert=require('node:assert/strict');
       assert.equal(await page.locator('.bundle-reference-offer').count(),2,'Original offers receive accurate invisible selection hotspots');
       assert.equal(await page.locator('.bundle-reference-pick').count(),10,'Five pictured dice and five backgrounds remain selectable');
       const reference=page.locator('.bundle-reference-art');
+      // After switching categories the new img element may not have finished
+      // its network load/decode. Verify the actual rendered pixels, not a race.
+      await reference.evaluate(img=>img.decode());
       const referenceData=await reference.evaluate(img=>({loaded:img.complete&&img.naturalWidth>0,w:img.naturalWidth,h:img.naturalHeight,fit:getComputedStyle(img).objectFit}));
       assert.deepEqual(referenceData,{loaded:true,w:1024,h:1536,fit:'contain'},'Exact approved image was not loaded as a whole, un-cropped reference');
       assert.equal(await page.locator('.store-bundle-purchase-actions button').count(),2);
