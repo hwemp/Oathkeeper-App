@@ -106,18 +106,21 @@ function storeBundlePage(options={}){
   +'<section class="bundle-selection-section" aria-label="Background bundle choices">'
   +'<div class="bundle-section-heading"><h2>Choose your backgrounds</h2><span>'+bgTally+'</span></div>'
   +'<div class="bundle-picker-grid">'+backgrounds+'</div></section>'
-  +'<div class="bundle-treasure-decoration" aria-hidden="true"><span>✦</span><span>♛</span><span>✦</span></div>'
   +'<p class="bundle-preview-status" role="status">'+(complete
     ?'Bundle selection ready for review. Checkout will be enabled only after secure billing is configured.'
     :'Choose '+(5-diceChoice.length)+' more dice sets and '+(5-bgChoice.length)+' more backgrounds. Checkout is not yet enabled.')
-  +'</p>';
+  +'</p>'
+  +'<div class="store-bundle-purchase-actions" role="group" aria-label="Bundle purchase controls">'
+  +'<button type="button" class="store-purchase-disabled" disabled aria-disabled="true" title="Checkout is not connected yet">Purchase</button>'
+  +'<button type="button" data-store-restore-purchases="true"'+(!options.restoreAvailable?' disabled aria-disabled="true"':'')+'>Restore Purchases</button>'
+  +'</div>';
  return storeShell('bundles',content,
   "Bundle pricing is planned: Golden Coffer $5.00 (5 dice sets and 5 backgrounds), Dragon's Treasure $10.00 (all 10 of each). App icons stay free. No purchases are charged or unlocked in this preview.");
 }
 
 function storeShell(category, body, note) {
   return '<section class="store-page" aria-label="Oathkeeper in-app store">'
-    + '<div class="store-hero" role="img" aria-label="Oathkeeper moonlit fantasy store banner with silver dragons"></div>'
+    + '<div class="store-hero" role="img" aria-label="Oathkeeper in-app store banner"></div>'
     + categoryRow(category) + body + '<p class="store-note">' + esc(note) + '</p>' + storeThemeFooter() + '</section>';
 }
 
