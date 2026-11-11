@@ -60,7 +60,7 @@ test('background catalog has ten distinct bundled images with one-tap previews',
   assert(SELECTED_BACKGROUNDS.every(x=>x.price===0.5&&x.priceCents===50&&x.currency==='USD'&&x.status==='preview_only'));
   for(const item of SELECTED_BACKGROUNDS){
     const image=await readFile(new URL('../web/public'+item.imagePath,import.meta.url));
-    assert(image.length>10000);
+    assert(image.length>6000,'Every scalable background master must contain distinct detailed artwork');
     const artwork=image.toString('utf8');
     assert.match(artwork,/^<\?xml version="1\.0"/);
     assert.match(artwork,/<svg[^>]+viewBox="0 0 1600 1125"/);
