@@ -5,12 +5,19 @@ const assert=require('node:assert/strict');
 (async()=>{
  const server=spawn('python3',['-m','http.server','5173','--directory','dist'],{stdio:'ignore'});
  let browser;
+ const acceptTerms=async p=>{
+  if(await p.locator('#termsGate').isVisible()){
+   await p.locator('#termsAge').selectOption('teen');
+   await p.locator('#termsAgree').check();
+   await p.locator('#termsAccept').click();
+  }
+ };
  try{
   for(let i=0;i<40;i++){try{if((await fetch('http://127.0.0.1:5173')).ok)break}catch{}await new Promise(r=>setTimeout(r,250))}
   browser=await chromium.launch({headless:true,...(process.env.CHROMIUM_PATH?{executablePath:process.env.CHROMIUM_PATH}:{})});
   const page=await browser.newPage({viewport:{width:393,height:852},deviceScaleFactor:2});
   await page.addInitScript(()=>document.addEventListener('DOMContentLoaded',()=>{document.documentElement.style.setProperty('--safe-area-inset-top','24px');document.documentElement.style.setProperty('--safe-area-inset-bottom','24px')}));
-  await page.goto('http://127.0.0.1:5173');
+  await page.goto('http://127.0.0.1:5173');await acceptTerms(page);
   await page.evaluate(()=>document.fonts.ready);
   await page.getByRole('heading',{name:'Ready for the next encounter'}).waitFor();
   assert(await page.evaluate(()=>document.fonts.check('700 24px Chronicle')),'Gothic font must load');
@@ -63,7 +70,7 @@ const assert=require('node:assert/strict');
   // Test Dice as the very first destination, including narrow Android screens.
   for(const width of [320,360,393,430,852]){
    const mobile=await browser.newPage({viewport:{width,height:852},deviceScaleFactor:1});
-   await mobile.goto('http://127.0.0.1:5173');
+   await mobile.goto('http://127.0.0.1:5173');await acceptTerms(mobile);
    await mobile.evaluate(()=>document.fonts.ready);
    await mobile.getByRole('button',{name:'Dice',exact:true}).click();
    await mobile.waitForFunction(()=>{const nav=document.querySelector('#nav').getBoundingClientRect(),dice=document.querySelector('#nav [data-tab=Dice]').getBoundingClientRect();return dice.left>=nav.left-1&&dice.right<=nav.right+1});
@@ -92,7 +99,7 @@ const assert=require('node:assert/strict');
   for(const width of [320,393,430]){
    const workspace=await browser.newPage({viewport:{width,height:852},deviceScaleFactor:1});
    const errors=[];workspace.on('pageerror',e=>errors.push(e.message));
-   await workspace.goto('http://127.0.0.1:5173');
+   await workspace.goto('http://127.0.0.1:5173');await acceptTerms(workspace);
    await workspace.evaluate(()=>document.fonts.ready);
    const open=async name=>{await workspace.locator('#appMenu summary').click();await workspace.locator('#appMenu [data-tab="'+name+'"]').click()};
    await workspace.locator('#nav [data-tab="Dice"]').click();await workspace.getByRole('button',{name:'Roll dice',exact:true}).click();
