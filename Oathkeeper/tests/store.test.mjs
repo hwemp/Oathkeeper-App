@@ -108,7 +108,17 @@ test('the artwork cards and enlarged previews have no visible names',()=>{
   const page=storePage('elvenleaf',{category:'backgrounds',backgroundSlug:item.slug});
   assert.doesNotMatch(page,/class="store-background-name"/);
   assert.doesNotMatch(page,/<h3>[^<]+<\/h3>/);
-  assert.match(page,new RegExp('aria-label="Preview '+item.name.replace(/[.*+?^${}()|[\]\\]/g,'\\test('all categories auto-preview the initial selection without a separate preview button',()=>{')));
+  assert(page.includes('aria-label="Preview '+item.name));
+ }
+ for(const item of SELECTED_APP_ICONS){
+  const page=storePage('elvenleaf',{category:'icons',iconSlug:item.slug});
+  assert.doesNotMatch(page,/class="store-background-name"/);
+  assert.doesNotMatch(page,/<h3>[^<]+<\/h3>/);
+  assert.match(page,/class="store-icon-preview-media"/);
+ }
+});
+
+test('all categories auto-preview the initial selection without a separate preview button',()=>{')));
  }
  for(const item of SELECTED_APP_ICONS){
   const page=storePage('elvenleaf',{category:'icons',iconSlug:item.slug});
