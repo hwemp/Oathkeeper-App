@@ -127,8 +127,8 @@ const referenceCrops=Object.freeze({
 function getArtwork(skin,sides){
  // For every purchased skin, project its own SVG animated face material,
  // never the Store thumbnail containing a static group of dice.
- if(skin?.slug){
-  const image=liveDieFaceTexture(skin);
+ {
+  const image=liveDieFaceTexture(skin||{slug:'royal-purple'});
   return image?{image,rectangle:[0,0,512,512]}:null;
  }
  const selected=skin && Number.isInteger(skin.atlasIndex)&&skin.atlasIndex>=0&&skin.atlasIndex<10;
