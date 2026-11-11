@@ -88,11 +88,14 @@ test('all ten free icons have distinct previews and native resource IDs',async()
     const file=await readFile(new URL('../web/public'+item.imagePath,import.meta.url));
     assert(file.length>5000);
     const svg=file.toString('utf8');
-    assert.match(svg,/^<\\?xml version="1\\.0"/);
-    const embedded=svg.match(/href="data:image\\/webp;base64,([A-Za-z0-9+/=]+)"/);
-    assert(embedded,'Each Store SVG must embed the approved original artwork');
+    assert(svg.startsWith('<?xml version="1.0"'));
+    const dataStart='href="data:image/webp;base64,';
+    const start=svg.indexOf(dataStart);
+    assert(start>=0,'Each Store SVG must embed the approved original artwork');
+    const tail=svg.slice(start+dataStart.length);
+    const encoded=tail.slice(0,tail.indexOf('"'));
     const master=await readFile(new URL('../web/public'+item.masterImagePath,import.meta.url));
-    assert.deepEqual(Buffer.from(embedded[1],'base64'),master,'Store SVG must contain the exact native icon master');
+    assert.deepEqual(Buffer.from(encoded,'base64'),master,'Store SVG must contain the exact native icon master');
     const preview=await readFile(new URL('../web/public'+item.launcherPreviewPath,import.meta.url));
     assert.equal(preview.toString('ascii',0,4),'RIFF');
     const html=storePage('elvenleaf',{category:'icons',iconSlug:item.slug});
