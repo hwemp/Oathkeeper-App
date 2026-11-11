@@ -1,4 +1,4 @@
-name: Build Oathkeeper 151 - SVG Store Artwork and Dice Roll APK
+name: Build Oathkeeper 152 - SVG Store Artwork and Dice Roll APK
 on:
   push:
     branches: [build-152]
