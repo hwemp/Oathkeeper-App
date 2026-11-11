@@ -104,10 +104,10 @@ jobs:
       - name: Verify compiled APK and prepare Build 145 file
         run: |
           APK=android/app/build/outputs/apk/debug/app-debug.apk
-          unzip -Z1 "$APK" | grep -Fq 'assets/public/art/store-icons/preview-01.webp'
+          unzip -Z1 "$APK" | grep -F 'assets/public/art/store-icons/preview-01.webp'
           BUILD_TOOLS=$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -n 1)
           "$BUILD_TOOLS/apksigner" verify --verbose "$APK"
-          "$BUILD_TOOLS/aapt" dump resources "$APK" | grep -Fq 'oathkeeper_icon_fg_01'
+          "$BUILD_TOOLS/aapt" dump resources "$APK" | grep -F 'oathkeeper_icon_fg_01'
           "$BUILD_TOOLS/aapt" dump badging "$APK" | sed -n '1,8p'
           mkdir -p output
           cp "$APK" output/Oathkeeper-Build-145-Icon-Repair.apk
@@ -118,6 +118,46 @@ jobs:
           name: Oathkeeper-Build-145-Icon-Repair
           path: Oathkeeper/output/*
           if-no-files-found: error
+          retention-days: 30
+      - name: Verify actual launcher drawables on Android emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          disable-animations: true
+          script: |
+            cd Oathkeeper/android
+            ./gradlew connectedDebugAndroidTest --no-daemon --stacktrace
+            cd ../..
+            mkdir -p Oathkeeper/output/emulator-rendered
+            for number in 01 02 04 05 06 07 08 11 12 14; do
+              adb pull "/sdcard/Android/data/com.harrisonwaters.oathkeeper/files/rendered-launcher-${number}.png" "Oathkeeper/output/emulator-rendered/rendered-launcher-${number}.png"
+              test -s "Oathkeeper/output/emulator-rendered/rendered-launcher-${number}.png"
+            done
+      - name: Compare emulator-rendered icons with generated Store launcher previews
+        run: |
+          python - <<'PY'
+          from PIL import Image, ImageChops, ImageStat
+          from pathlib import Path
+          for n in ('01','02','04','05','06','07','08','11','12','14'):
+              store = Image.open(Path('web/public/art/store-icons') / ('preview-'+n+'.webp')).convert('RGBA')
+              actual = Image.open(Path('output/emulator-rendered') / ('rendered-launcher-'+n+'.png')).convert('RGBA')
+              store = store.resize(actual.size, Image.Resampling.LANCZOS)
+              diff = ImageChops.difference(store, actual)
+              means = ImageStat.Stat(diff).mean
+              print(f'Icon {n}: emulator vs generated circular Store preview channel differences: {means}')
+              if max(means[:3]) > 115:
+                  raise RuntimeError(f'Android is rendering the wrong illustration for launcher icon {n}')
+          PY
+      - name: Upload rendered Android launcher evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Oathkeeper-Build-145-Android-Launcher-Renderings
+          path: Oathkeeper/output/emulator-rendered/*.png
+          if-no-files-found: warn
           retention-days: 30
       - name: Publish downloadable test build
         env:
