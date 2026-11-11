@@ -9,7 +9,9 @@ export const APPROVED_FREE_ICON_CONCEPTS = Object.freeze(items.map(([selection,n
  Object.freeze({
   selection,slug:'icon-'+String(selection).padStart(2,'0'),name,
   iosIconName:'AppIcon-'+String(selection).padStart(2,'0'),
-  imagePath:'/art/store-icons/icon-'+String(selection).padStart(2,'0')+'.webp',
+  // Device-style preview is composited from the exact original source by generate-free-icons.py.
+  imagePath:'/art/store-icons/preview-'+String(selection).padStart(2,'0')+'.webp',
+  masterImagePath:'/art/store-icons/icon-'+String(selection).padStart(2,'0')+'.webp',
   description:name+' fantasy launcher icon. Free to use.',
   price:0,assetReady:true,status:'free',paymentType:'free'
  })

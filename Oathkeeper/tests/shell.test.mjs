@@ -120,9 +120,9 @@ test('store category switching and tile taps immediately update the correct prev
   assert.equal(s.saved().storePreviewBackground,'mystic-lake');
   s.click('[data-store-category="icons"]');
   assert.equal(s.q('.store-icon-grid').querySelectorAll('[data-store-icon]').length,10);
-  assert.equal(s.q('.store-icon-preview-image').getAttribute('src'),'/art/store-icons/icon-01.webp');
+  assert.equal(s.q('.store-icon-preview-image').getAttribute('src'),'/art/store-icons/preview-01.webp');
   s.click('[data-store-icon="icon-14"]');
-  assert.equal(s.q('.store-icon-preview-image').getAttribute('src'),'/art/store-icons/icon-14.webp');
+  assert.equal(s.q('.store-icon-preview-image').getAttribute('src'),'/art/store-icons/preview-14.webp');
   assert.equal(s.saved().storePreviewIcon,'icon-14');
   assert.equal(s.q('[data-store-preview]'),null);
   assert.match(s.q('#view').textContent,/FREE/);
@@ -150,7 +150,7 @@ test('icon selection persists across store visits without charging the user',asy
   sh.click('[data-tab="Store"]');
   sh.click('[data-store-category="icons"]');
   assert.equal(sh.q('.store-icon-tile.selected').dataset.storeIcon,'icon-07');
-  assert.equal(sh.q('.store-icon-preview-image').getAttribute('src'),'/art/store-icons/icon-07.webp');
+  assert.equal(sh.q('.store-icon-preview-image').getAttribute('src'),'/art/store-icons/preview-07.webp');
  }finally{await sh.close()}
 });
 
