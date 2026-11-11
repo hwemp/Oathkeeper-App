@@ -645,3 +645,9 @@ body .coin-amount{font-family:var(--readable-fantasy)!important;font-weight:400!
 }
 /* Extra canvas pixels are drawn at runtime; CSS keeps the tabletop at a natural height. */
 .dice-tabletop canvas{image-rendering:auto}
+
+
+/* The D100 is a single one-hundred-face solid, not two percentile D10s. */
+.percentile-single-die{justify-content:center}
+.percentile-single-die .reference-die{display:block;width:auto;height:72px;max-width:100%;aspect-ratio:109/99}
+@media(max-width:350px){.percentile-single-die .reference-die{height:62px}}
