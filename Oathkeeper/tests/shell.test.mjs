@@ -42,7 +42,8 @@ test('Dice page alone controls persisted optional animation without altering rol
   s.q('[data-k="diceAnimation"]').click();
   assert.equal(s.saved().diceAnimation,true);
   s.q('#diceForm').dispatchEvent(new s.w.Event('submit',{bubbles:true,cancelable:true}));
-  assert(s.q('.dice-page.roll-animated'));
+  assert(s.q('#diceTabletop'));
+   assert.equal(s.q('.dice-page.roll-animated'),null);
   assert.equal(s.saved().rollHistory.length,1);
   saved=s.saved();
  }finally{await s.close()}
@@ -52,9 +53,9 @@ test('Dice page alone controls persisted optional animation without altering rol
   assert.equal(s.q('[data-k="diceAnimation"]').checked,true);
   s.q('[data-k="diceAnimation"]').click();
   assert.equal(s.saved().diceAnimation,false);
-  assert.equal(s.q('.dice-page.roll-animated'),null);
+  assert.equal(s.q('#diceTabletop'),null);
   s.q('#diceForm').dispatchEvent(new s.w.Event('submit',{bubbles:true,cancelable:true}));
-  assert.equal(s.q('.dice-page.roll-animated'),null);
+  assert.equal(s.q('#diceTabletop'),null);
   assert.equal(s.saved().rollHistory.length,2);
   s.click('[data-tab="Settings"]');
   assert.equal(s.q('[data-k="diceAnimation"]'),null);
@@ -203,10 +204,9 @@ test('four primary navigation tabs remain interactive and HP uses one visible sl
  try {
   for(const name of ['Overview','Powers','Inventory','Dice'])
    assert(s.q('#nav [data-tab="'+name+'"]'),name+' tab');
-  const separator=s.q('.hp-value .hp-separator');
-  assert.equal(separator.textContent,'/');
-  assert.equal(separator.getAttribute('aria-hidden'),'true');
-  assert.equal(s.q('.hp-value .sr-only').textContent,'out of');
+  assert.equal(s.q('.hp-value').textContent,'15/15');
+  assert.equal(s.q('.hp-value').getAttribute('aria-label'),'15 of 15 hit points');
+  assert.equal(s.q('.hp-value .hp-separator'),null);
   s.click('#nav [data-tab="Powers"]');
   assert(s.q('#nav [data-tab="Powers"]').classList.contains('active'));
   s.click('#nav [data-tab="Inventory"]');
