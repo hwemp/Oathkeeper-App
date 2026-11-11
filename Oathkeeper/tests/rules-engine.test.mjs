@@ -26,7 +26,7 @@ test('Strength, level and item changes update all relevant derived values withou
  assert.equal(deriveCharacter(c).ac,16);
  c.items[0][1]=0;
  assert.equal(deriveCharacter(c).ac,12);
- assert.equal(deriveCharacter(c).weight,first.weight-61);
+ assert(Math.abs(deriveCharacter(c).weight-(first.weight-61))<1e-8);
  assert.equal(c.hp,15,'derivation never overwrites saved current HP');
 });
 test('magic bonuses activate only with an existing item, equipped and attuned',()=>{
