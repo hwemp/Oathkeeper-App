@@ -41,7 +41,12 @@ const assert=require('node:assert/strict');
         assert(bounds.every(r=>r.width>0&&r.height>0&&r.left>=-1&&r.right<=width+1),`${category} tile boundaries`);
         const images=page.locator('.store-background-tile-art,.store-icon-tile-art');
         if(await images.count()){
-          assert(await images.evaluateAll(nodes=>nodes.every(img=>img.complete&&img.naturalWidth>0)),`${category} has broken art links`);
+          const tested=await images.evaluateAll(async nodes=>Promise.all(nodes.map(async img=>{
+            const probe=new Image();probe.src=img.currentSrc||img.src;
+            try{await probe.decode();return {ok:probe.naturalWidth>0,src:probe.src}}
+            catch{return {ok:false,src:probe.src}}
+          })));
+          assert(tested.every(x=>x.ok),`${category} has broken art links: ${JSON.stringify(tested.filter(x=>!x.ok))}`);
           assert(await images.evaluateAll(nodes=>nodes.every(img=>getComputedStyle(img).transform==='none')),`${category} thumbnails are transformed/cropped`);
         }
         await page.screenshot({path:`preview-output/store-${category}-${width}.png`,fullPage:true});
