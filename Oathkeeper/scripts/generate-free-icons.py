@@ -12,6 +12,8 @@ from pathlib import Path
 import hashlib
 import math
 import shutil
+import subprocess
+import sys
 from PIL import Image, ImageChops, ImageDraw, ImageStat
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -152,6 +154,7 @@ def main():
         raise RuntimeError("Store launcher preview set is incomplete")
     if ART_RATIO * math.sqrt(2) >= VISIBLE_SIDE/LAYER_SIDE:
         raise RuntimeError("The complete square artwork would be clipped by round masks")
+    subprocess.run([sys.executable, str(ROOT / "scripts/export_portable_icons.py")], check=True)
     print("VERIFIED: ten original Store masters, ten centered adaptive icons, "
           "ten same-layer Android-style previews, ten original iOS artworks; default untouched")
 
