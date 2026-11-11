@@ -25,5 +25,6 @@ test('primary navigation shares one vector asset, with readable active labels',a
  const html=await readFile(new URL('../web/app.js',import.meta.url),'utf8');
  assert.match(html,/innerHTML=navigation\.map\(x=>/);
  assert.match(html,/\['Overview','Powers','Inventory','Dice'/);
- assert.match(html,/class="hp-separator" aria-hidden="true">\/<\/span>/);
+ assert.match(html,/class="big hp-value" aria-label="/);
+ assert.match(html,/<span>\$\{c\.hp\}\/\$\{maxhp\(\)\}<\/span>/);
 });
