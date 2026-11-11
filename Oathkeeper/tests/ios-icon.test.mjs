@@ -72,6 +72,7 @@ test('asset generator produces 10 different designs without replacing original l
  assert.match(script,/ICONS = \[/);
  assert.match(script,/len\(digests\) != len\(set\(digests\)\)/);
  assert.match(script,/ADAPTIVE_SIZE = 432/);
- assert.match(script,/SAFE_ART_RATIO = \.665/);
+ assert.match(script,/same_pixels\(ios_path, scaled\(art, 1024\)\)/);
+ assert.doesNotMatch(script,/SAFE_ART_RATIO|CLEAN_CROP_RATIO|GaussianBlur/);
  assert.doesNotMatch(script,/ic_launcher\.png|AppIcon-512@2x\.png/);
 });

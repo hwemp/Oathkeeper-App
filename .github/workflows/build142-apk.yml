@@ -118,11 +118,12 @@ jobs:
             test -s "android/app/src/main/res/mipmap-nodpi/oathkeeper_icon_${number}_foreground.png"
             test -s "android/app/src/main/res/mipmap-nodpi/oathkeeper_icon_${number}_background.png"
             test -s "web/public/art/store-icons/launcher-${number}.webp"
-            # Build 142 ships a frozen web payload: replace its icon previews
-            # so its Store image matches the very same installed native icon.
-            if test -f "dist/art/store-icons/icon-${number}.webp"; then
-              cp "web/public/art/store-icons/launcher-${number}.webp" "dist/art/store-icons/icon-${number}.webp"
-            fi
+            # Build 142 ships a frozen web payload. Overwrite BOTH possible
+            # Store image URLs with the unchanged 1254px approved source.
+            # This prevents its frozen JS from loading older icon previews.
+            mkdir -p dist/art/store-icons
+            cp "web/public/art/store-icons/icon-${number}.webp" "dist/art/store-icons/icon-${number}.webp"
+            cp "web/public/art/store-icons/icon-${number}.webp" "dist/art/store-icons/launcher-${number}.webp"
           done
       - name: Sync Capacitor Android application
         run: npx cap sync android
