@@ -1,16 +1,14 @@
 #!/usr/bin/env python3
-"""Create CENTERED native launcher assets from the ten approved store artworks.
+"""Generate ten matched, individually rendered Store/Android/iOS launcher assets.
 
-The selectable Android aliases use adaptive icons on Android 8+ instead of
-passing full-bleed square bitmaps to a Samsung/Pixel launcher mask. This keeps
-the entire design within the adaptive safe zone. iOS receives the matching
-centered layout, and older Android versions receive padded legacy PNGs.
-The original source artwork remains untouched and the original launcher icon
-is still the default (see repair-default-launcher.py).
+Source artwork is a 1254px square WebP per approved design. Android 8+ has
+separate full-bleed blurred backgrounds and softly feathered inset foregrounds:
+no baked-in gold square rim is masked into a second Samsung/Pixel squircle.
+Original/default Oathkeeper launcher is deliberately untouched.
 """
 from pathlib import Path
 import hashlib
-from PIL import Image, ImageOps, ImageDraw, ImageFilter
+from PIL import Image, ImageDraw, ImageFilter
 
 ROOT = Path(__file__).resolve().parent.parent
 WEB = ROOT / "web/public/art/store-icons"
@@ -18,139 +16,94 @@ RES = ROOT / "android/app/src/main/res"
 ANDROID = RES / "mipmap-nodpi"
 ADAPTIVE = RES / "mipmap-anydpi-v26"
 IOS = ROOT / "ios/App/App/Assets.xcassets"
-MASTER_SIZE = 1024
 ADAPTIVE_SIZE = 432
-# Keep image inside Android's central 72/108dp safe zone, with room for masks.
-SAFE_ART_RATIO = 0.60
+# Android's central circular safe zone is ~72 / 108. Art is inset and feathered.
+SAFE_ART_RATIO = .665
+CLEAN_CROP_RATIO = .085
 ICONS = [(1,"moonlit-citadel"),(2,"ember-dragon"),(4,"lionheart-shield"),
          (5,"shadow-mage"),(6,"arcane-chalice"),(7,"astral-d20"),
          (8,"twin-battleaxes"),(11,"crystal-spires"),(12,"steel-sentinel"),
          (14,"sapphire-worldtree")]
 
-# The original Store assets include fragments of adjacent concept-board cells
-# and, in some designs, cropped caption glyphs. Clean each approved source
-# independently. Values are (left, top, right, bottom), fractions of source.
-# Never derive all ten launcher icons from one shared image or concept sheet.
-SOURCE_CROPS = {
-    1: (0, 0, 1, 1),
-    2: (0, 0, 1, 1),
-    4: (.035, 0, .995, .962),
-    5: (.030, 0, .995, .966),
-    6: (.030, 0, .995, .966),
-    7: (0, 0, 1, 1),
-    8: (.027, 0, .990, .940),
-    11: (.041, 0, .997, .940),
-    12: (.041, 0, .997, .940),
-    14: (.041, 0, .997, .940),
-}
 
-def normalized_art(source, number):
-    width, height = source.size
-    if width < 256 or height < 256:
-        raise ValueError(f"Approved launcher art is too small: {source.size}")
-    if number not in SOURCE_CROPS:
-        raise ValueError(f"Missing dedicated source crop for icon {number}")
-    l, t, r, b = SOURCE_CROPS[number]
-    clean = source.convert("RGB").crop((
-        round(l * width), round(t * height),
-        round(r * width), round(b * height)))
-    # Pad rather than center-crop so neither a sword tip nor a gold border is cut.
-    # Each distinct cleaned image is also the EXACT art used in the Store preview.
-    centered = ImageOps.pad(clean, (MASTER_SIZE, MASTER_SIZE),
-                            method=Image.Resampling.LANCZOS,
-                            color=(8, 13, 27), centering=(.5, .5))
-    # Six concept-board exports put their baked gold frame roughly 20 px
-    # farther right than left on 512px art. Shift each entire tile LEFT,
-    # then replace the uncovered right margin with matching dark backing.
-    # This is optical correction of that ONE item, not shared replacement art.
-    optical_shift = -round(MASTER_SIZE * .020) if number in {4, 5, 6, 11, 12, 14} else 0
-    if optical_shift:
-        aligned = Image.new("RGB", (MASTER_SIZE, MASTER_SIZE), (8, 13, 27))
-        aligned.paste(centered, (optical_shift, 0))
-        return aligned
-    return centered
+def scaled(image, size):
+    return image.resize((size, size), Image.Resampling.LANCZOS)
 
-def backdrop(art, side):
-    # Use color from the center of the matching illustration, not a scaled,
-    # repeated gold border. The latter causes a visible second, off-center rim.
-    inset = round(art.width * .14)
-    interior = art.crop((inset, inset, art.width - inset, art.height - inset))
-    background = interior.resize((side, side), Image.Resampling.LANCZOS)
-    background = background.filter(ImageFilter.GaussianBlur(max(8, side // 7)))
-    return Image.blend(background, Image.new("RGB", (side, side),
-                                            (8, 13, 27)), .78).convert("RGBA")
 
-def centered_overlay(art, canvas_side, fraction):
-    picture_side = round(canvas_side * fraction)
-    picture = art.resize((picture_side, picture_side),
-                         Image.Resampling.LANCZOS).convert("RGBA")
-    # The original Store art already has its OWN rounded gold frame. Applying
-    # another rounded-rectangle alpha mask clips or doubles that gold border.
-    foreground = Image.new("RGBA", (canvas_side, canvas_side), (0, 0, 0, 0))
-    offset = (canvas_side - picture_side) // 2
-    foreground.alpha_composite(picture, (offset, offset))
-    bounds = foreground.getbbox()
-    assert bounds and abs((bounds[0] + bounds[2]) - canvas_side) <= 1
-    assert abs((bounds[1] + bounds[3]) - canvas_side) <= 1
-    return foreground
+def remove_baked_frame(source):
+    # New HD source masters carry exactly one thin gold frame. Do not allow
+    # that square frame to show inside a system-shaped adaptive desktop icon.
+    w, h = source.size
+    if w != h or w < 1024:
+        raise ValueError(f"Expected square HD master >=1024, got {source.size}")
+    margin = round(w * CLEAN_CROP_RATIO)
+    return source.crop((margin, margin, w-margin, h-margin)).convert("RGB")
+
+
+def adaptive_layers(source):
+    art = remove_baked_frame(source)
+    # A full-bleed background that tolerates system launcher masks.
+    base = scaled(art, ADAPTIVE_SIZE).filter(
+        ImageFilter.GaussianBlur(round(ADAPTIVE_SIZE * .12)))
+    # Emphasize readable detail in foreground, with no visible square boundary.
+    picture_size = round(ADAPTIVE_SIZE * SAFE_ART_RATIO)
+    picture = scaled(art, picture_size).convert("RGBA")
+    feather = max(10, round(picture_size * .12))
+    mask = Image.new("L", (picture_size+2*feather, picture_size+2*feather), 0)
+    ImageDraw.Draw(mask).rectangle(
+        (feather, feather, feather+picture_size-1, feather+picture_size-1), fill=255)
+    mask = mask.filter(ImageFilter.GaussianBlur(round(feather * .65)))
+    mask = mask.crop((feather, feather, feather+picture_size, feather+picture_size))
+    picture.putalpha(mask)
+    fg = Image.new("RGBA", (ADAPTIVE_SIZE, ADAPTIVE_SIZE), (0,0,0,0))
+    offset = (ADAPTIVE_SIZE-picture_size)//2
+    fg.alpha_composite(picture, (offset, offset))
+    assert fg.getbbox() is not None, "Adaptive foreground is empty"
+    return base.convert("RGBA"), fg
+
 
 def make_icon(number, slug):
+    src = WEB / f"icon-{number:02d}.webp"
+    if not src.is_file():
+        raise FileNotFoundError(f"Missing unique approved icon {slug}: {src}")
+    with Image.open(src) as original:
+        art = original.convert("RGB")
+    if art.size != (1254, 1254):
+        raise ValueError(f"Expected 1254px individual HD art for {slug}: {art.size}")
     name = f"oathkeeper_icon_{number:02d}"
-    source = WEB / f"icon-{number:02d}.webp"
-    if not source.is_file():
-        raise FileNotFoundError(f"Missing approved art: {slug} ({source})")
-    with Image.open(source) as loaded:
-        art = normalized_art(loaded, number)
-    # Save each dedicated clean preview from exactly this icon source.
-    # Store artwork and matching Android/iOS launcher pixels remain paired.
-    art.resize((512, 512), Image.Resampling.LANCZOS).save(
-        WEB / f"launcher-{number:02d}.webp", "WEBP", quality=96, method=6)
+    WEB.mkdir(parents=True, exist_ok=True)
     ANDROID.mkdir(parents=True, exist_ok=True)
     ADAPTIVE.mkdir(parents=True, exist_ok=True)
-
-    # Android 8+ uses these resources from mipmap-anydpi-v26. The launcher
-    # chooses its shape, not the app; the full illustration stays centered.
-    foreground = centered_overlay(art, ADAPTIVE_SIZE, SAFE_ART_RATIO)
-    foreground.save(ANDROID / f"{name}_foreground.png", "PNG", optimize=True)
-    backdrop(art, ADAPTIVE_SIZE).save(ANDROID / f"{name}_background.png", "PNG", optimize=True)
+    scaled(art, 512).save(WEB / f"launcher-{number:02d}.webp", "WEBP", quality=95, method=5)
+    bg, fg = adaptive_layers(art)
+    bg.save(ANDROID / f"{name}_background.png", "PNG", optimize=True)
+    fg.save(ANDROID / f"{name}_foreground.png", "PNG", optimize=True)
     xml = ('<?xml version="1.0" encoding="utf-8"?>\n'
            '<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">\n'
            f'    <background android:drawable="@mipmap/{name}_background" />\n'
            f'    <foreground android:drawable="@mipmap/{name}_foreground" />\n'
            '</adaptive-icon>\n')
     (ADAPTIVE / f"{name}.xml").write_text(xml, encoding="utf-8")
-
-    # Legacy Android (< API 26): preserve centered artwork and rounded edges.
-    legacy = backdrop(art, 256)
-    legacy.alpha_composite(centered_overlay(art, 256, .80))
-    outer_mask = Image.new("L", (256, 256), 0)
-    ImageDraw.Draw(outer_mask).rounded_rectangle((0, 0, 255, 255),
-                                                radius=46, fill=255)
-    legacy.putalpha(outer_mask)
+    # For older Android, no adaptive mask exists. Retain a single original rim.
+    legacy = scaled(art, 256).convert("RGBA")
+    mask = Image.new("L", (256, 256), 0)
+    ImageDraw.Draw(mask).rounded_rectangle((0, 0, 255, 255), radius=48, fill=255)
+    legacy.putalpha(mask)
     legacy.save(ANDROID / f"{name}.png", "PNG", optimize=True)
-
-    # iOS automatically masks app icons. The picture is centered in a square
-    # canvas with a soft extension of the SAME approved artwork around it.
-    ios_icon = backdrop(art, MASTER_SIZE)
-    ios_icon.alpha_composite(centered_overlay(art, MASTER_SIZE, .78))
-    target = IOS / f"AppIcon-{number:02d}.appiconset"
-    target.mkdir(parents=True, exist_ok=True)
-    ios_icon.convert("RGB").save(target / f"AppIcon-{number:02d}.png", "PNG", optimize=True)
-
-    if foreground.getbbox() is None:
-        raise RuntimeError(f"Empty adaptive foreground: {name}")
+    dest = IOS / f"AppIcon-{number:02d}.appiconset"
+    dest.mkdir(parents=True, exist_ok=True)
+    scaled(art, 1024).save(dest / f"AppIcon-{number:02d}.png", "PNG", optimize=True)
     return hashlib.sha256(art.tobytes()).hexdigest()
 
+
 def main():
-    if set(SOURCE_CROPS) != {number for number, _ in ICONS}:
-        raise RuntimeError("Source crop mapping must cover all approved icon designs")
-    hashes = [make_icon(*item) for item in ICONS]
-    if len(set(hashes)) != len(ICONS):
-        raise RuntimeError("Approved icon art must contain ten distinct designs")
-    generated = list(ADAPTIVE.glob("oathkeeper_icon_*.xml"))
-    if len(generated) < len(ICONS):
-        raise RuntimeError("One or more adaptive launcher icons are missing")
-    print("Prepared 10 distinct cleaned Store previews and matching centered Android/iOS icons; original kept")
+    digests = [make_icon(*item) for item in ICONS]
+    if len(digests) != len(set(digests)):
+        raise RuntimeError("All 10 icon designs must have distinct individual resources")
+    if len(list(ADAPTIVE.glob("oathkeeper_icon_*.xml"))) != len(ICONS):
+        raise RuntimeError("Ten adaptive XML resources must exist")
+    print("Ten individual HD icons regenerated for Store, Android adaptive/legacy and iOS; default launcher preserved")
+
 
 if __name__ == "__main__":
     main()

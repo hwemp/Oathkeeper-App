@@ -18,16 +18,15 @@ test('ten different approved Store icon sources each have their own clean previe
  assert.equal(hashes.size,10);
 });
 
-test('native adaptive/legacy and iOS icons are generated from each matching Store source', async () => {
+test('native Android and iOS icons regenerate independently from each HD Store icon', async () => {
  const script=await readFile(new URL('../scripts/generate-free-icons.py',import.meta.url),'utf8');
- assert.match(script,/source = WEB \/ f"icon-\{number:02d\}\.webp"/);
- assert.match(script,/normalized_art\(loaded, number\)/);
- assert.match(script,/SOURCE_CROPS = \{/);
- assert.match(script,/WEB \/ f"launcher-\{number:02d\}\.webp"/);
- assert.match(script,/SAFE_ART_RATIO = 0\.60/);
- assert.match(script,/centered_overlay\(art, ADAPTIVE_SIZE, SAFE_ART_RATIO\)/);
+ assert.match(script,/src = WEB \/ f"icon-\{number:02d\}\.webp"/);
+ assert.match(script,/CLEAN_CROP_RATIO = \.085/);
+ assert.match(script,/SAFE_ART_RATIO = \.665/);
+ assert.match(script,/remove_baked_frame\(source\)/);
+ assert.match(script,/adaptive_layers\(art\)/);
+ assert.match(script,/picture\.putalpha\(mask\)/);
  assert.match(script,/ADAPTIVE \/ f"\{name\}\.xml"/);
- assert.doesNotMatch(script,/picture\.putalpha\(mask\)/);
- assert.doesNotMatch(script,/def emblem\(|d\.polygon/);
+ assert.match(script,/IOS \/ f"AppIcon-\{number:02d\}\.appiconset"/);
  assert.doesNotMatch(script,/ic_launcher\.png|AppIcon-512@2x\.png/);
 });
