@@ -652,3 +652,56 @@ body .coin-amount{font-family:var(--readable-fantasy)!important;font-weight:400!
 .percentile-single-die{justify-content:center}
 .percentile-single-die .reference-die{display:block;width:auto;height:72px;max-width:100%;aspect-ratio:109/99}
 @media(max-width:350px){.percentile-single-die .reference-die{height:62px}}
+
+/* Store layout correction — all large previews stay centered and fully visible.
+   Crop only thumbnail-edge ornamentation, not the artwork in the previews. */
+.store-page{overflow:visible;grid-template-columns:minmax(0,1fr)}
+.store-preview-pane,.store-background-preview-pane,.store-icon-preview-pane{justify-items:center}
+.store-preview-image,.store-background-preview-media,.store-icon-preview-media{
+  justify-self:center;margin-inline:auto;max-width:100%;
+}
+.store-preview-description,.store-background-preview-details{width:100%}
+.store-icon-preview-image{transform:none!important;object-fit:contain;object-position:center}
+.store-icon-preview-media{padding:0;overflow:hidden;display:grid;place-items:center}
+.store-dice-grid,.store-background-grid,.store-icon-grid,.bundle-picker-grid{justify-content:center;align-items:center}
+.store-background-tile,.store-icon-tile,.bundle-background-pick{overflow:hidden}
+.store-background-tile-art,.store-icon-tile-art,.bundle-background-pick img{
+  object-fit:cover;object-position:center center;transform:scale(1.15);
+  transform-origin:50% 50%;
+}
+/* The original thumbnails contain decorative arcs in their top-right corners.
+   Cropping the small edge margin removes these from the selectable tiles. */
+.store-dice-tile,.bundle-dice-pick{overflow:hidden}
+.store-dice-tile-art,.bundle-dice-art{
+  background-size:565% 226%;background-position:var(--store-atlas-x) var(--store-atlas-y);
+}
+.bundle-offer{justify-content:flex-start;text-align:center;gap:6px}
+.bundle-offer-art{height:clamp(88px,16vw,125px);width:100%;place-items:center}
+.bundle-offer-gem{
+  width:min(100%,190px);height:100%;aspect-ratio:248/175;
+  background-size:500% 200%;background-position:var(--store-atlas-x) var(--store-atlas-y);
+  border:1px solid #cb9e55;border-radius:8px;
+}
+.bundle-offer-title{width:100%;max-width:100%;text-align:center}
+.store-bundle-purchase-actions{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;
+  margin:0;padding:10px 0 4px;border-top:2px solid #976c3a;
+}
+.store-bundle-purchase-actions button{
+  min-width:0;min-height:48px;padding:9px 8px;
+  color:#f8dc9f;font:600 clamp(14px,2.5vw,19px)/1.15 var(--readable-fantasy),Georgia,serif;
+  background:linear-gradient(150deg,#483055,#1b1c32);
+  border:1px solid #b68f61;border-radius:12px;
+}
+.store-bundle-purchase-actions button:disabled{
+  cursor:not-allowed;opacity:.66;color:#c8b7bc;
+}
+.store-bundle-purchase-actions button:focus-visible{outline:2px solid #ffe3a0;outline-offset:3px}
+/* Approved Layout B footer stays reachable on tall store pages. */
+.store-themed-footer{position:sticky;bottom:max(7px,env(safe-area-inset-bottom));z-index:5}
+@media(max-width:440px){
+  .bundle-offer-art{height:78px}
+  .bundle-offer-gem{width:min(100%,150px)}
+  .store-bundle-purchase-actions{gap:7px}
+  .store-icon-preview-media{width:min(100%,350px)}
+}
