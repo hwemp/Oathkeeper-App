@@ -120,7 +120,7 @@ function diceFor(result){
 export function playTabletopRoll(stage,result,onComplete){
  const canvas=stage?.querySelector('canvas');
  const ctx=canvas?.getContext?.('2d');
- if(!ctx||!globalThis.requestAnimationFrame){onComplete();return ()=>{}}
+ if(!ctx||!globalThis.requestAnimationFrame){if(stage)stage.hidden=true;onComplete();return ()=>{}}
  const reduce=globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
  if(reduce){stage.hidden=true;onComplete();return ()=>{}}
  const dice=diceFor(result),duration=1650;
