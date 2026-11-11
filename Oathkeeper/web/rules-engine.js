@@ -65,14 +65,17 @@ export function deriveCharacter(c){
  const damageMultiplier=clamp(apply(1,effects,'damageMultiplier'),0,100);
  const healingMultiplier=clamp(apply(1,effects,'healingMultiplier'),0,100);
  const diceMultiplier=clamp(apply(1,effects,'diceMultiplier'),0,100);
- const armor=safeNumber(c.armor,10)+(c.shield?2:0)+(c.faith?2:0)+apply(0,effects,'ac');
+ const inventoryNames=(c.items||[]).filter(i=>Array.isArray(i)&&Number(i[1])>0).map(i=>cleanName(i[0]));
+ const armorPresent=inventoryNames.some(name=>/\b(chainmail|chain mail|plate armor|breastplate|half plate|leather armor|studded leather|scale mail|ring mail|splint armor|hide armor|padded armor|armor|armour)\b/.test(name));
+ const shieldPresent=inventoryNames.some(name=>name.includes('shield'));
+ const armor=(armorPresent?safeNumber(c.armor,10):10+mods.dex)+(c.shield&&shieldPresent?2:0)+(c.faith?2:0)+apply(0,effects,'ac');
  const speed=Math.max(0,apply(safeNumber(c.speed,30),effects,'speed'));
  const saveBonus=apply(0,effects,'save');
  const spellDC=8+proficiency+mods.cha+apply(0,effects,'spellDC');
  const attunedNames=new Set((c.magicEffects||[]).filter(e=>e?.enabled&&e?.requiresAttunement&&e?.attuned).map(e=>cleanName(e.item)));
  const activeAttunements=[...attunedNames].filter(name=>effects.some(e=>cleanName(e.item)===name));
  const encumbrance=c.variantEncumbrance===true?{encumbered:carried>scores.str*5,heavy:carried>scores.str*10}:null;
- return {level,scores,mods,proficiency,maxHp:hp,weight:carried,capacity,remaining:rounded(capacity-carried),bodyPlusGear:rounded(safeNumber(c.body)+carried),size,attack,damage,healing,damageMultiplier,healingMultiplier,diceMultiplier,ac:armor,speed,saveBonus,spellDC,holyDC:spellDC,extraAttack:isPaladin&&level>=5?2:1,paladinLayOnHandsMax:isPaladin?5*level:0,activeAttunements,attunementExceeded:activeAttunements.length>3,bagPresent,bagContents:rounded(inBag),encumbrance,exceedsCapacity:carried>capacity,effects};
+ return {level,scores,mods,proficiency,maxHp:hp,weight:carried,capacity,remaining:rounded(capacity-carried),bodyPlusGear:rounded(safeNumber(c.body)+carried),size,attack,damage,healing,damageMultiplier,healingMultiplier,diceMultiplier,ac:armor,speed,saveBonus,spellDC,holyDC:spellDC,extraAttack:isPaladin&&level>=5?2:1,armorPresent,shieldPresent,paladinLayOnHandsMax:isPaladin?5*level:0,activeAttunements,attunementExceeded:activeAttunements.length>3,bagPresent,bagContents:rounded(inBag),encumbrance,exceedsCapacity:carried>capacity,effects};
 }
 export function powerAtRank(c,index){
  const base=CUSTOM_POWERS[index];if(!base)return null;
@@ -93,6 +96,7 @@ export function rollAdjustments(c,context='normal',sides=20){
 export function applyRollAdjustments(result,adjustment){
  const original=result.total;
  const add=adjustment.add||0,multiplier=adjustment.multiplier??1;
+ if(adjustment.context==='normal')return {...result,rawTotal:original,context:'normal',derivedAdd:0,derivedMultiplier:1};
  const adjusted=Math.floor(Math.max(0,original+add)*multiplier);
  // Ability tests can have negative totals; damage/healing cannot.
  const total=adjustment.context==='attack'||adjustment.context==='strengthCheck'||adjustment.context==='wisdomSave'
