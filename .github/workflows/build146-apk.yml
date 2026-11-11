@@ -121,6 +121,13 @@ jobs:
           path: Oathkeeper/output/*
           if-no-files-found: error
           retention-days: 30
+      - name: Publish downloadable test build
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="oathkeeper-build146-${{ github.run_number }}-${{ github.run_attempt }}"
+          gh release create "$TAG" output/* --target "${{ github.sha }}" --title "Oathkeeper Build 146 - Launcher Icon Repair" --prerelease --latest=false --notes "Debug-signed Android test build. All ten Store icon tiles now render the original embedded-source SVG artwork while showing a separate Android adaptive launcher preview. Adaptive icon foregrounds center the complete original artwork within circular safe zones. Store previews use those same layers. The current source is compiled, not overwritten with the archived Build 142 web app. Physical-device launcher masking and update signing still require installation tests. Back up character data before replacing any earlier debug-signed APK."
+
       - name: Verify actual launcher drawables on Android emulator
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -130,14 +137,7 @@ jobs:
           profile: pixel_6
           disable-animations: true
           script: |
-            cd Oathkeeper/android
-            ./gradlew connectedDebugAndroidTest --no-daemon --stacktrace
-            cd ../..
-            mkdir -p Oathkeeper/output/emulator-rendered
-            for number in 01 02 04 05 06 07 08 11 12 14; do
-              adb pull "/sdcard/Android/data/com.harrisonwaters.oathkeeper/files/rendered-launcher-${number}.png" "Oathkeeper/output/emulator-rendered/rendered-launcher-${number}.png"
-              test -s "Oathkeeper/output/emulator-rendered/rendered-launcher-${number}.png"
-            done
+            bash -euo pipefail -c 'cd Oathkeeper && ./android/gradlew -p android connectedDebugAndroidTest --no-daemon --stacktrace && mkdir -p output/emulator-rendered && for number in 01 02 04 05 06 07 08 11 12 14; do adb pull "/sdcard/Android/data/com.harrisonwaters.oathkeeper/files/rendered-launcher-${number}.png" "output/emulator-rendered/rendered-launcher-${number}.png"; test -s "output/emulator-rendered/rendered-launcher-${number}.png"; done'
       - name: Compare emulator-rendered icons with generated Store launcher previews
         run: |
           python - <<'PY'
@@ -161,9 +161,3 @@ jobs:
           path: Oathkeeper/output/emulator-rendered/*.png
           if-no-files-found: warn
           retention-days: 30
-      - name: Publish downloadable test build
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          TAG="oathkeeper-build146-${{ github.run_number }}-${{ github.run_attempt }}"
-          gh release create "$TAG" output/* --target "${{ github.sha }}" --title "Oathkeeper Build 146 - Launcher Icon Repair" --prerelease --latest=false --notes "Debug-signed Android test build. All ten Store icon tiles now render the original embedded-source SVG artwork while showing a separate Android adaptive launcher preview. Adaptive icon foregrounds center the complete original artwork within circular safe zones. Store previews use those same layers. The current source is compiled, not overwritten with the archived Build 142 web app. Physical-device launcher masking and update signing still require installation tests. Back up character data before replacing any earlier debug-signed APK."
