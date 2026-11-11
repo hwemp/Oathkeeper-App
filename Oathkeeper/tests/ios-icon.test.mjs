@@ -70,9 +70,9 @@ test('web icon bridge validates free icon IDs and prevents browser launcher chan
 test('asset generator produces 10 different designs without replacing original launcher assets',async()=>{
  const script=await load('../scripts/generate-free-icons.py');
  assert.match(script,/ICONS = \[/);
- assert.match(script,/len\(digests\) != len\(set\(digests\)\)/);
- assert.match(script,/shutil\.copyfile\(src, native_path\)/);
- assert.match(script,/same_pixels\(ios_path, scaled\(art, 1024\)\)/);
+ assert.match(script,/len\(set\(digests\)\) != len\(ICONS\)/);
+ assert.match(script,/shutil\.copyfile\(src, native\)/);
+ assert.match(script,/same_pixels\(ios_path, ios_art\)/);
  assert.doesNotMatch(script,/SAFE_ART_RATIO|CLEAN_CROP_RATIO|GaussianBlur/);
  assert.doesNotMatch(script,/ic_launcher\.png|AppIcon-512@2x\.png/);
 });
