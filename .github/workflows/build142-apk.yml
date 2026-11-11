@@ -1,0 +1,136 @@
+name: Build Oathkeeper 142 Store and Dice APK
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.build142/payload.part*.bin'
+      - '.github/workflows/build142-apk.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: oathkeeper-build142-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: Oathkeeper
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: Oathkeeper/package-lock.json
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies and validate current source
+        run: |
+          npm ci
+          npm run check
+          npm run typecheck
+          npm test
+          npm run catalog
+          npm run build
+      - name: Verify and install exact Build 142 web payload
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib
+          import shutil
+          import stat
+          import zipfile
+
+          root = Path('..').resolve()
+          chunk_dir = root / '.build142'
+          expected = [f'payload.part{i:02d}.bin' for i in range(10)]
+          parts = sorted(chunk_dir.glob('payload.part*.bin'))
+          if [p.name for p in parts] != expected:
+              raise RuntimeError('Missing or unexpected Build 142 payload chunks')
+          archive = Path('/tmp/oathkeeper-build142-web.zip')
+          digest = hashlib.sha256()
+          with archive.open('wb') as output:
+              for part in parts:
+                  with part.open('rb') as reader:
+                      while True:
+                          block = reader.read(1024 * 1024)
+                          if not block:
+                              break
+                          digest.update(block)
+                          output.write(block)
+          expected_digest = 'c83a657ab68b900b724b75c45b6d5d2256e69192a1d62e922279422fb0fb0b05'
+          if digest.hexdigest() != expected_digest:
+              raise RuntimeError('Build 142 payload SHA256 mismatch')
+          dist = Path('dist')
+          if dist.exists():
+              shutil.rmtree(dist)
+          dist.mkdir()
+          with zipfile.ZipFile(archive) as source:
+              for entry in source.infolist():
+                  if not entry.filename.startswith('web-assets/'):
+                      raise RuntimeError(f'Unexpected archive entry: {entry.filename}')
+                  relative = Path(entry.filename).relative_to('web-assets')
+                  if relative.is_absolute() or '..' in relative.parts:
+                      raise RuntimeError(f'Unsafe archive entry: {entry.filename}')
+                  if relative == Path('.'):
+                      continue
+                  mode = entry.external_attr >> 16
+                  if stat.S_ISLNK(mode):
+                      raise RuntimeError(f'Symlink not allowed: {entry.filename}')
+                  destination = dist / relative
+                  if entry.is_dir():
+                      destination.mkdir(parents=True, exist_ok=True)
+                      continue
+                  destination.parent.mkdir(parents=True, exist_ok=True)
+                  with source.open(entry) as reader, destination.open('wb') as writer:
+                      shutil.copyfileobj(reader, writer)
+          must_exist = [
+              'index.html',
+              'art/exact-store/dice.webp',
+              'art/exact-store/backgrounds.webp',
+              'art/exact-store/icons.webp',
+              'art/exact-store/roll/astral.webp',
+              'art/exact-store/roll/dragonfire.webp',
+          ]
+          if any(not (dist / name).is_file() for name in must_exist):
+              raise RuntimeError('Build 142 web assets are incomplete')
+          print('Verified full ZIP SHA256 and installed Build 142 web assets')
+          PY
+      - name: Sync Capacitor Android application
+        run: npx cap sync android
+      - name: Build debug-signed Android APK
+        run: |
+          chmod +x android/gradlew
+          cd android
+          ./gradlew assembleDebug --no-daemon --stacktrace
+      - name: Verify APK contains dice animation and is signed
+        run: |
+          APK=android/app/build/outputs/apk/debug/app-debug.apk
+          unzip -Z1 "$APK" | grep -Fq 'assets/public/art/exact-store/roll/astral.webp'
+          BUILD_TOOLS=$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -n 1)
+          "$BUILD_TOOLS/apksigner" verify --verbose "$APK"
+          mkdir -p output
+          cp "$APK" output/Oathkeeper-Build-142-Store-Dice-Animation.apk
+          cd output
+          sha256sum Oathkeeper-Build-142-Store-Dice-Animation.apk > SHA256SUMS.txt
+      - name: Upload installable test APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Oathkeeper-Build-142-Store-Dice-Animation
+          path: Oathkeeper/output/*
+          if-no-files-found: error
+          retention-days: 30
+      - name: Publish downloadable pre-release APK
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="oathkeeper-build142-${{ github.run_number }}-${{ github.run_attempt }}"
+          gh release create "$TAG" output/* --target "${{ github.sha }}" --title "Oathkeeper Build 142 - Store and Dice Animation" --prerelease --latest=false --notes "Test APK assembled from the user's exact Build 142 web-assets payload (SHA256 c83a657ab68b900b724b75c45b6d5d2256e69192a1d62e922279422fb0fb0b05). Source application files are preserved and are not overwritten. Debug-signed; backup character data before installing."
