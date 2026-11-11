@@ -25,6 +25,13 @@ const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&
 const base={dm:createDM(),rollHistory:[],diceAnimation:false,magicEffects:[],powerRanks:[1,1,1],size:'Medium',variantEncumbrance:false,xp:0,layOnHandsSpent:0,spellSlotsUsed:[0,0,0,0,0],concentration:'',conditions:'',exhaustion:0,notifyEmail:false,notifyText:false,notifyPopup:true,notifyInApp:true,name:'Ecclesyus Ha Kawa',class:'Paladin',level:1,str:18,dex:14,con:20,int:12,wis:20,cha:18,luck:14,hp:15,hpBase:10,temp:0,holy:6,holyMax:6,armor:16,shield:true,aura:false,faith:false,speed:30,body:200,pre:true,lucky:true,oil:5,tapers:5,cp:0,sp:0,ep:0,gp:15,pp:0,notes:'Oath of the Faithful Servant • Lawful Good\nAcolyte — Faithful Servant. Messianic Jewish; follows Yeshua.\n\nTraits: gentle with the frightened, patient with questions, steadfast against cruelty.\nIdeal: repentance expressed through love, truth and service.\nBond: the memory of his wife and children, and the families he now protects.\nFlaw: grief drives him to take others’ burdens upon himself.\n\nHoly oil: blessing uses 1 dose; 1d4 on one non-attack check within 1 hour, once per recipient per long rest. Healing uses 1 dose for 1d4+1 HP, once per recipient per short or long rest. Dedication uses 2 doses, 1 Holy Point and 1 taper. Track recipient eligibility here.\n\nLanguages: Hebrew, Common Tongue, Aramaic, English.',items:[['Chainmail',1,55],['Shield with holy symbol',1,6],['Longsword',1,3],['Backpack',1,5],['Bedroll',1,7],['Mess kit',1,1],['Tinderbox',1,1],['Torches',10,1],['Rations',10,2],['Full waterskin',1,5],['Hemp rope (50 ft)',1,10],['Prayer book',1,5],['Tallit',1,1],['Clothes, boots, belt',1,3],['Belt pouch',1,1],['Purple traveling cloak',1,3],['Helmet',1,4],['Holy water, full flask',3,1],['Empty flask',0,.2]],log:[]};
 let c=structuredClone(base);try{let v=JSON.parse(localStorage.getItem('oathkeeper-v1'));if(v)c={...c,...v}}catch{}let tab=location.hash==='#notifications'?'Notifications':'Overview',pending={},last=null;
 let storeCategory='dice';
+// Preview is a fixed sample for visual review, not a real dice roll or unlock.
+function previewStoreDiceAnimation(){
+ const stage=document.querySelector('#storeDiceTabletop');
+ if(!stage)return;
+ const skin=SELECTED_DICE.find(item=>item.slug===(c.storePreviewDice||'elvenleaf'))||SELECTED_DICE[2];
+ playTabletopRoll(stage,{sides:20,quantity:1,rolls:[{value:12}],total:12},()=>{},skin);
+}
 let billingState={available:false,restoreAvailable:false,ownedIds:[],products:[],reason:'Checkout is not connected yet.'};
 const cosmetics=()=>effectiveCosmetics(c,billingState.ownedIds);
 let billingRefreshVersion=0;
@@ -94,6 +101,7 @@ if(['Community','Posts','Friends','Messages','Groups'].includes(tab))html=(`${['
 if(tab==='Import & backup')html=`<div class="grid"><section class="card wide"><span class="eyebrow">Bring your character</span><h2>Import once. Keep adventuring.</h2><p>Import a character PDF, plain text, or an Oathkeeper JSON backup. Text PDFs are read on your device; scans need OCR before import.</p><button class="primary" data-action="import">Choose character file</button><p class="notice">Your Ecclesyus profile is already loaded from your sheet. This importer recognizes its form fields and common stat labels. Other PDFs may import only some fields. Review every proposed change; inventory and custom rules need manual entry for unfamiliar sheets.</p></section><section class="card"><h2>Take it with you</h2><button data-action="export">Export full backup</button><p>JSON includes your stats, equipment, character notes, DM notes and roll history. It contains DM secrets; review the file before sharing. Import it here on another device.</p><button data-action="install">Phone setup</button><p><small>Data stays on this device and does not sync automatically.</small></p></section></div>`;
 if(['Community','Posts','Friends','Messages','Groups','Account'].includes(tab)&&!canUseCommunity())html='<section class="card"><h2>Community access unavailable</h2><p>'+(currentAgeTier()==='teen'?'Ages 13–17 may use offline character and Dungeon Master tools. Online accounts and contact remain blocked until the age-verification and guardian-consent service is active.':'The online community is not enabled in this testing build. The matching backend must pass age-safety verification before accounts, messaging and uploads can be enabled.')+'</p><button data-tab="Overview">Return to character</button></section>';
 $('#view').innerHTML=html;
+if(tab==='Store'&&storeCategory==='dice')previewStoreDiceAnimation();
 if(tab==='Dice'&&diceState.justRolled&&c.diceAnimation&&diceState.result){
  const stage=document.querySelector('#diceTabletop'),result=diceState.result;
  if(stage)playTabletopRoll(stage,result,()=>{
@@ -121,6 +129,9 @@ if(t.dataset.coinChange!==undefined){
   commit('Adjusted '+key.toUpperCase()+' coins');
   c[key]=after;
   refresh();return;
+}if(t.dataset.storePreviewRoll){
+ if(tab==='Store'&&storeCategory==='dice')previewStoreDiceAnimation();
+ return;
 }if(t.dataset.storeCategory){if(!['dice','backgrounds','icons','bundles'].includes(t.dataset.storeCategory))return;storeCategory=t.dataset.storeCategory;render();if(storeCategory==='icons')void refreshIconState();else if(storeCategory!=='bundles')void refreshBillingState();return}
 if(t.dataset.storeBundleOffer){
  if(!isBundleOffer(t.dataset.storeBundleOffer))return;
