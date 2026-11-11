@@ -132,7 +132,9 @@ def make_icon(number, slug):
     return hashlib.sha256(art.tobytes()).hexdigest()
 
 def main():
-    if set(SOURCE_CROPS) != {number for number, _ in ICONS}:\n        raise RuntimeError("Source crop mapping must cover all approved icon designs")\n    hashes = [make_icon(*item) for item in ICONS]
+    if set(SOURCE_CROPS) != {number for number, _ in ICONS}:
+        raise RuntimeError("Source crop mapping must cover all approved icon designs")
+    hashes = [make_icon(*item) for item in ICONS]
     if len(set(hashes)) != len(ICONS):
         raise RuntimeError("Approved icon art must contain ten distinct designs")
     generated = list(ADAPTIVE.glob("oathkeeper_icon_*.xml"))
