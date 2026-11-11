@@ -88,8 +88,8 @@ test('all ten free icons have distinct previews and native resource IDs',async()
     assert.equal(item.assetReady,true);
     const file=await readFile(new URL('../web/public'+item.imagePath,import.meta.url));
     assert(file.length>5000);
-    assert.equal(file.toString('ascii',0,4),'RIFF');
-    assert.equal(file.toString('ascii',8,12),'WEBP');
+    assert.match(file.toString('utf8',0,250),/<svg\\b/);
+    assert.match(file.toString('utf8'),/data:image\\/webp;base64,/);
     const html=storePage('elvenleaf',{category:'icons',iconSlug:item.slug});
     assertOneTapSelection(html,'icons');
     assert.equal((html.match(/data-store-icon=/g)||[]).length,10);
