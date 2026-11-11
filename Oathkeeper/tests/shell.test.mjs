@@ -120,9 +120,10 @@ test('store category switching and tile taps immediately update the correct prev
   assert.equal(s.saved().storePreviewBackground,'mystic-lake');
   s.click('[data-store-category="icons"]');
   assert.equal(s.q('.store-icon-grid').querySelectorAll('[data-store-icon]').length,10);
-  assert.equal(s.q('.store-icon-preview-image').getAttribute('src'),'/art/store-icons/preview-01.webp');
+  assert.equal(s.q('.store-icon-preview-image').getAttribute('src'),'/art/store-icons/transfer-01.svg');
   s.click('[data-store-icon="icon-14"]');
-  assert.equal(s.q('.store-icon-preview-image').getAttribute('src'),'/art/store-icons/preview-14.webp');
+  assert.equal(s.q('.store-icon-preview-image').getAttribute('src'),'/art/store-icons/transfer-14.svg');
+  assert.equal(s.q('.store-native-launcher-preview img').getAttribute('src'),'/art/store-icons/preview-14.webp');
   assert.equal(s.saved().storePreviewIcon,'icon-14');
   assert.equal(s.q('[data-store-preview]'),null);
   assert.match(s.q('#view').textContent,/FREE/);

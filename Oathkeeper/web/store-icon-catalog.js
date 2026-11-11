@@ -9,8 +9,11 @@ export const APPROVED_FREE_ICON_CONCEPTS = Object.freeze(items.map(([selection,n
  Object.freeze({
   selection,slug:'icon-'+String(selection).padStart(2,'0'),name,
   iosIconName:'AppIcon-'+String(selection).padStart(2,'0'),
-  // Device-style preview is composited from the exact original source by generate-free-icons.py.
-  imagePath:'/art/store-icons/preview-'+String(selection).padStart(2,'0')+'.webp',
+  // Render the user-approved source SVG in the Store. The embedded WebP is
+  // byte-identical to the native Android legacy icon and the iOS source.
+  imagePath:'/art/store-icons/transfer-'+String(selection).padStart(2,'0')+'.svg',
+  // Android masks adaptive foreground/background layers; show that layout separately.
+  launcherPreviewPath:'/art/store-icons/preview-'+String(selection).padStart(2,'0')+'.webp',
   masterImagePath:'/art/store-icons/icon-'+String(selection).padStart(2,'0')+'.webp',
   // Standalone SVG transfer contains the exact original WebP bytes, not vector-traced art.
   portableSvgPath:'/art/store-icons/transfer-'+String(selection).padStart(2,'0')+'.svg',

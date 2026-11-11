@@ -11,7 +11,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 ASSETS = ROOT / "web/public/art/store-icons"
-NAMES = {"11": "Crystal Spires - source file 11", "12": "Steel Sentinel", "14": "Sapphire Worldtree", "01": "Moonlit Citadel", "02": "Ember Dragon", "04": "Lionheart Shield", "05": "Shadow Mage", "06": "Arcane Chalice", "07": "Twin Battleaxes - source file 07", "08": "Astral D20 - source file 08"}
+NAMES = {"11": "Crystal Spires - source file 11", "12": "Steel Sentinel", "14": "Sapphire Worldtree", "01": "Moonlit Citadel", "02": "Ember Dragon", "04": "Lionheart Shield", "05": "Shadow Mage", "06": "Arcane Chalice", "07": "Astral D20", "08": "Twin Battleaxes"}
 EXPECTED_SIZE = (1254, 1254)
 
 

@@ -12,11 +12,16 @@ test('Store icon masters are unchanged, unique, and map to correctly layered lau
  for(const icon of SELECTED_APP_ICONS){
   const n=num(icon);
   assert.equal(icon.masterImagePath,'/art/store-icons/icon-'+n+'.webp');
-  assert.equal(icon.imagePath,'/art/store-icons/preview-'+n+'.webp');
+  assert.equal(icon.imagePath,'/art/store-icons/transfer-'+n+'.svg');
+  assert.equal(icon.launcherPreviewPath,'/art/store-icons/preview-'+n+'.webp');
   assert.equal(icon.iosIconName,'AppIcon-'+n);
   const store=await read('../web/public'+icon.masterImagePath);
   const legacy=await read('../android/app/src/main/res/mipmap-nodpi/oathkeeper_icon_'+n+'.webp');
-  const preview=await read('../web/public'+icon.imagePath);
+  const svg=(await read('../web/public'+icon.imagePath)).toString('utf8');
+  const svgData=svg.match(/href="data:image\/webp;base64,([A-Za-z0-9+/=]+)"/);
+  assert(svgData, 'SVG must contain the actual approved, embedded WebP');
+  assert.deepEqual(Buffer.from(svgData[1],'base64'),store,'Store SVG and Android launcher source differ');
+  const preview=await read('../web/public'+icon.launcherPreviewPath);
   assert.equal(store.toString('ascii',0,4),'RIFF');
   assert.equal(preview.toString('ascii',8,12),'WEBP');
   assert.deepEqual(legacy,store,'Android legacy icon must copy original art byte-for-byte');
