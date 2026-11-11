@@ -271,6 +271,8 @@ test('rules desk derives item effects from the current inventory and reverses th
   assert(effect);
   effect.click();
   assert.equal(s.saved().magicEffects[0].enabled,true);
+  assert.match(s.q('#view').textContent,/270 lb/,'attunement is required before bonus applies');
+  s.q('[data-magic-index="0"][data-magic-key="attuned"]').click();
   assert.match(s.q('#view').textContent,/285 lb/);
   s.click('[data-tab="Inventory"]');
   assert.match(s.q('#view').textContent,/Capacity 285 lb/);
