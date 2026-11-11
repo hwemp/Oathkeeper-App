@@ -8,15 +8,20 @@ import {BUNDLE_OFFERS,normalizeBundleChoices,isBundleOffer} from './store-bundle
 const esc = value => String(value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 const diceArtStyle = index => '--store-atlas-x:' + (index % 5) * 25 + '%;--store-atlas-y:' + Math.floor(index / 5) * 100 + '%';
 
+const STORE_TAB_GLYPHS = {
+  dice:'<svg viewBox="0 0 32 32" aria-hidden="true"><polygon points="16,2 28,9 28,23 16,30 4,23 4,9"/><path d="M4 9 16 16 28 9M16 16V30M16 2V16M4 23 16 16 28 23"/></svg>',
+  backgrounds:'<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M1 27 12 7 23 27ZM15 27 22 13 31 27M5 20h14M10 12l2 4 2-4"/></svg>',
+  icons:'<svg viewBox="0 0 32 32" aria-hidden="true"><path d="m3 12 6 7 7-10 7 10 6-7-3 13H6L3 12ZM6 28h20M4 8h1m11-3h1m10 3h1"/></svg>',
+  bundles:'<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 12h26v15H3zM2 12 6 5h20l4 7M3 17h26M13 12v6h6v-6M8 22h1m14 0h1"/></svg>'
+};
 function categoryRow(current) {
   return '<div class="store-category-row" role="group" aria-label="Store categories">'
-    + [['dice','Dice Sets'],['backgrounds','Backgrounds'],['icons','App Icons']].map(([key,label]) =>
+    + [['dice','Dice Sets'],['backgrounds','Backgrounds'],['icons','App Icons'],['bundles','Bundles']].map(([key,label]) =>
       '<button type="button" data-store-category="' + key + '"'
       + (key === current ? ' class="store-category-current" aria-current="page"' : '')
-      + '>' + label + '</button>').join('')
-    + '<button type="button" data-store-category="bundles"'
-    + (current === 'bundles' ? ' class="store-category-current" aria-current="page"' : '')
-    + '>Bundles</button></div>';
+      + '><span class="store-category-icon" aria-hidden="true">' + STORE_TAB_GLYPHS[key] + '</span>'
+      + '<span class="store-category-label">' + label + '</span></button>').join('')
+    + '</div>';
 }
 
 function selectionFooter(kind, active, category, options={}) {
@@ -120,7 +125,7 @@ function storeBundlePage(options={}){
 
 function storeShell(category, body, note) {
   return '<section class="store-page" aria-label="Oathkeeper in-app store">'
-    + '<div class="store-hero" role="img" aria-label="Oathkeeper in-app store banner"></div>'
+    + '<div class="store-hero" role="img" aria-label="Oathkeeper in-app store"><span class="store-hero-title" aria-hidden="true">Oathkeeper</span><span class="store-hero-subtitle" aria-hidden="true">In-App Store</span></div>'
     + categoryRow(category) + body + '<p class="store-note">' + esc(note) + '</p>' + storeThemeFooter() + '</section>';
 }
 
@@ -160,10 +165,11 @@ function backgroundStorePage(selectedSlug = 'moonlit-citadel', options={}) {
       + '<span class="sr-only">' + esc(item.name) + '</span></button>';
   }).join('');
   const preview = '<section class="store-background-preview-pane" aria-live="polite" aria-label="Selected background preview">'
-    + '<div class="store-background-preview-media"><img class="store-background-preview-image"'
+    + '<div class="store-background-preview-media" style="--store-preview-backdrop:url(&quot;' + esc(active.imagePath) + '&quot;)"><img class="store-background-preview-image"'
     + ' src="' + esc(active.imagePath) + '" alt="' + esc(active.name) + ' fantasy background concept"'
     + ' loading="eager" decoding="async"></div>'
     + '<div class="store-background-preview-details">'
+    + '<div class="store-background-preview-title">' + esc(active.name) + '</div>'
     + '<p>' + esc(active.description) + '</p>'
     + '<p>Preview is free. Applying this background requires verified ownership.</p></div></section>';
   return storeShell('backgrounds',
@@ -207,7 +213,7 @@ function iconStorePage(selectedSlug = 'icon-01', iconStatus = {supported:false,c
     + (!supported || current === 'default' ? ' disabled aria-disabled="true"' : '')
     + ' class="store-restore-button">Restore Original Icon</button></div></div>';
   return storeShell('icons',
-    '<h2 class="store-collection-title">Free App Icons <small>(' + SELECTED_APP_ICONS.length + ')</small></h2>'
+    '<h2 class="store-collection-title">App Icons Collection</h2><p class="store-collection-kicker">10 Alternate Icons · All Free</p>'
     + '<div class="store-icon-grid" role="group" aria-label="Select a free app icon to preview">' + tiles + '</div>'
     + preview + actions,
     'All ten approved alternative icons are free. The existing Oathkeeper launcher icon remains the default until you choose another.');
