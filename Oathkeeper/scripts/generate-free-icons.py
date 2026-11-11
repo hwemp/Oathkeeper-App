@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
-"""Create Store/Android/iOS launcher assets from one unchanged master per icon.
+"""Generate native icons from the exact images displayed in the Store.
 
-NO art cropping, recentering, feathering, blurring or separate image synthesis.
-The preview is the original 1254px source. Each native image is a direct
-high-quality downsample of that same source. Android's launcher can still
-apply its own device-dependent adaptive-icon mask to the outside edges.
-The original Oathkeeper icon is not touched.
+Android's icons are byte-for-byte copies of the Store WebP. No second art
+collection, resize, blur, crop, inset, or overlay is used. Device-specific
+Android launcher masks may still trim the outside corners. iOS needs PNG,
+which is generated only from the same Store image.
+The original Oathkeeper app icon is deliberately untouched.
 """
 from pathlib import Path
 import hashlib
+import shutil
 from PIL import Image, ImageChops
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -17,11 +18,10 @@ RES = ROOT / "android/app/src/main/res"
 ANDROID = RES / "mipmap-nodpi"
 ADAPTIVE = RES / "mipmap-anydpi-v26"
 IOS = ROOT / "ios/App/App/Assets.xcassets"
-ADAPTIVE_SIZE = 432
-ICONS = [(1,"moonlit-citadel"),(2,"ember-dragon"),(4,"lionheart-shield"),
-         (5,"shadow-mage"),(6,"arcane-chalice"),(7,"astral-d20"),
-         (8,"twin-battleaxes"),(11,"crystal-spires"),(12,"steel-sentinel"),
-         (14,"sapphire-worldtree")]
+ICONS = [(1, "moonlit-citadel"), (2, "ember-dragon"), (4, "lionheart-shield"),
+         (5, "shadow-mage"), (6, "arcane-chalice"), (7, "astral-d20"),
+         (8, "twin-battleaxes"), (11, "crystal-spires"),
+         (12, "steel-sentinel"), (14, "sapphire-worldtree")]
 
 
 def scaled(image, size):
@@ -32,71 +32,69 @@ def same_pixels(path, expected):
     with Image.open(path) as opened:
         actual = opened.convert("RGB")
     if actual.size != expected.size or ImageChops.difference(actual, expected).getbbox():
-        raise RuntimeError(f"Native icon no longer matches the approved Store master: {path}")
+        raise RuntimeError(f"Native icon does not match Store master: {path}")
+
+
+def clean_obsolete_alternates():
+    """Delete old alternate-image reservoir; never delete default launcher."""
+    ANDROID.mkdir(parents=True, exist_ok=True)
+    ADAPTIVE.mkdir(parents=True, exist_ok=True)
+    for path in WEB.glob("launcher-*.webp"):
+        path.unlink()
+    for path in ANDROID.glob("oathkeeper_icon_*"):
+        if path.is_file():
+            path.unlink()
+    for path in ADAPTIVE.glob("oathkeeper_icon_*.xml"):
+        path.unlink()
 
 
 def make_icon(number, slug):
     src = WEB / f"icon-{number:02d}.webp"
     if not src.is_file():
-        raise FileNotFoundError(f"Missing unique approved icon {slug}: {src}")
+        raise FileNotFoundError(f"Missing approved Store source for {slug}: {src}")
     with Image.open(src) as original:
+        if original.format != "WEBP":
+            raise ValueError(f"Expected Store WebP artwork for {slug}")
         art = original.convert("RGB")
     if art.size != (1254, 1254):
-        raise ValueError(f"Expected 1254px individual HD art for {slug}: {art.size}")
+        raise ValueError(f"Expected 1254px Store art for {slug}: {art.size}")
 
     name = f"oathkeeper_icon_{number:02d}"
-    ANDROID.mkdir(parents=True, exist_ok=True)
-    ADAPTIVE.mkdir(parents=True, exist_ok=True)
+    native_path = ANDROID / f"{name}.webp"
+    # Android APK resources contain the identical encoded bytes as the Store.
+    shutil.copyfile(src, native_path)
+    if native_path.read_bytes() != src.read_bytes():
+        raise RuntimeError(f"Launcher resource differs from Store art: {slug}")
 
-    # The web store catalog points straight to src, the unmodified master.
-    # The compatibility launcher file is also derived directly from src.
-    scaled(art, 512).save(WEB / f"launcher-{number:02d}.webp",
-                          "WEBP", lossless=True, method=6)
-
-    # Android adaptive icons must have layers. Put the COMPLETE original art
-    # into the background, and make the foreground fully transparent. This
-    # avoids the former 8.5% art crop, soft blur, and 66.5% inset composite.
-    # The OS supplies its standard outer mask; we NEVER impose a second mask.
-    background = scaled(art, ADAPTIVE_SIZE)
-    background_path = ANDROID / f"{name}_background.png"
-    foreground_path = ANDROID / f"{name}_foreground.png"
-    background.save(background_path, "PNG", optimize=True)
-    Image.new("RGBA", (ADAPTIVE_SIZE, ADAPTIVE_SIZE), (0, 0, 0, 0)).save(
-        foreground_path, "PNG", optimize=True)
-
+    # Android OS applies the adaptive mask; no second overlay is permitted.
     xml = ('<?xml version="1.0" encoding="utf-8"?>\n'
            '<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">\n'
-           f'    <background android:drawable="@mipmap/{name}_background" />\n'
-           f'    <foreground android:drawable="@mipmap/{name}_foreground" />\n'
+           f'    <background android:drawable="@mipmap/{name}" />\n'
+           '    <foreground android:drawable="@android:color/transparent" />\n'
            '</adaptive-icon>\n')
     (ADAPTIVE / f"{name}.xml").write_text(xml, encoding="utf-8")
-
-    # Legacy Android icons likewise use complete art without baked-in masks.
-    legacy_path = ANDROID / f"{name}.png"
-    scaled(art, 256).save(legacy_path, "PNG", optimize=True)
 
     dest = IOS / f"AppIcon-{number:02d}.appiconset"
     dest.mkdir(parents=True, exist_ok=True)
     ios_path = dest / f"AppIcon-{number:02d}.png"
     scaled(art, 1024).save(ios_path, "PNG", optimize=True)
-
-    # Fail builds immediately if any pipeline step altered the selected art.
-    same_pixels(background_path, background)
-    same_pixels(legacy_path, scaled(art, 256))
     same_pixels(ios_path, scaled(art, 1024))
-    with Image.open(foreground_path) as foreground:
-        if foreground.size != (ADAPTIVE_SIZE, ADAPTIVE_SIZE) or foreground.getbbox() is not None:
-            raise RuntimeError(f"Unexpected extra foreground image in {foreground_path}")
-    return hashlib.sha256(art.tobytes()).hexdigest()
+    return hashlib.sha256(src.read_bytes()).hexdigest()
 
 
 def main():
+    clean_obsolete_alternates()
     digests = [make_icon(*item) for item in ICONS]
     if len(digests) != len(set(digests)):
-        raise RuntimeError("All ten Store icons must have unique original resources")
-    if len(list(ADAPTIVE.glob("oathkeeper_icon_*.xml"))) != len(ICONS):
-        raise RuntimeError("Expected exactly ten adaptive Android icon declarations")
-    print("VERIFIED: ten distinct original Store masters map pixel-for-pixel after scaling to Android and iOS; original launcher untouched")
+        raise RuntimeError("All ten approved Store icons must be unique")
+    expected = {f"oathkeeper_icon_{n:02d}" for n, _ in ICONS}
+    actual_native = {p.stem for p in ANDROID.glob("oathkeeper_icon_*.webp")}
+    actual_adaptive = {p.stem for p in ADAPTIVE.glob("oathkeeper_icon_*.xml")}
+    if actual_native != expected or actual_adaptive != expected:
+        raise RuntimeError("Native launcher icons do not match Store selections")
+    if list(WEB.glob("launcher-*.webp")):
+        raise RuntimeError("Obsolete secondary icon reservoir reappeared")
+    print("VERIFIED: ten Android icons match Store WebPs byte-for-byte; iOS icons share the same sources; original app icon preserved")
 
 
 if __name__ == "__main__":

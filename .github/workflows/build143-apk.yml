@@ -1,4 +1,4 @@
-name: Build Oathkeeper 142 Store and Dice APK
+name: Build Oathkeeper 143 - Store Icon Parity and Dice APK
 on:
   push:
     branches: [main]
@@ -13,7 +13,7 @@ on:
 permissions:
   contents: write
 concurrency:
-  group: oathkeeper-build142-${{ github.ref }}
+  group: oathkeeper-build143-${{ github.ref }}
   cancel-in-progress: false
 jobs:
   build:
@@ -44,7 +44,7 @@ jobs:
           npm test
           npm run catalog
           npm run build
-      - name: Verify and install exact Build 142 web payload
+      - name: Verify retained approved store and dice web assets
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -59,7 +59,7 @@ jobs:
           parts = sorted(chunk_dir.glob('payload.part*.bin'))
           if [p.name for p in parts] != expected:
               raise RuntimeError('Missing or unexpected Build 142 payload chunks')
-          archive = Path('/tmp/oathkeeper-build142-web.zip')
+          archive = Path('/tmp/oathkeeper-build143-web.zip')
           digest = hashlib.sha256()
           with archive.open('wb') as output:
               for part in parts:
@@ -108,7 +108,7 @@ jobs:
               raise RuntimeError('Build 142 web assets are incomplete')
           print('Verified full ZIP SHA256 and installed Build 142 web assets')
           PY
-      - name: Center all selectable native launcher icons
+      - name: Replace old icon reservoir with exact Store image bytes
         run: |
           python -m pip install --disable-pip-version-check Pillow
           python scripts/repair-default-launcher.py
@@ -116,15 +116,15 @@ jobs:
           test "$(find android/app/src/main/res/mipmap-anydpi-v26 -maxdepth 1 -name 'oathkeeper_icon_*.xml' | wc -l)" -eq 10
           for number in 01 02 04 05 06 07 08 11 12 14; do
             test -s "android/app/src/main/res/mipmap-anydpi-v26/oathkeeper_icon_${number}.xml"
-            test -s "android/app/src/main/res/mipmap-nodpi/oathkeeper_icon_${number}_foreground.png"
-            test -s "android/app/src/main/res/mipmap-nodpi/oathkeeper_icon_${number}_background.png"
-            test -s "web/public/art/store-icons/launcher-${number}.webp"
-            # Build 142 ships a frozen web payload. Overwrite BOTH possible
-            # Store image URLs with the unchanged 1254px approved source.
-            # This prevents its frozen JS from loading older icon previews.
+            test -s "android/app/src/main/res/mipmap-nodpi/oathkeeper_icon_${number}.webp"
+            cmp "web/public/art/store-icons/icon-${number}.webp" "android/app/src/main/res/mipmap-nodpi/oathkeeper_icon_${number}.webp"
+            test ! -e "android/app/src/main/res/mipmap-nodpi/oathkeeper_icon_${number}.png"
+            test ! -e "web/public/art/store-icons/launcher-${number}.webp"
+            # Legacy frozen web code may reference launcher-XX; supply identical bytes.
             mkdir -p dist/art/store-icons
             cp "web/public/art/store-icons/icon-${number}.webp" "dist/art/store-icons/icon-${number}.webp"
             cp "web/public/art/store-icons/icon-${number}.webp" "dist/art/store-icons/launcher-${number}.webp"
+            cmp "dist/art/store-icons/icon-${number}.webp" "dist/art/store-icons/launcher-${number}.webp"
           done
       - name: Sync Capacitor Android application
         run: npx cap sync android
@@ -140,13 +140,13 @@ jobs:
           BUILD_TOOLS=$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -n 1)
           "$BUILD_TOOLS/apksigner" verify --verbose "$APK"
           mkdir -p output
-          cp "$APK" output/Oathkeeper-Build-142-Store-Dice-Animation.apk
+          cp "$APK" output/Oathkeeper-Build-143-Store-Icon-Parity.apk
           cd output
-          sha256sum Oathkeeper-Build-142-Store-Dice-Animation.apk > SHA256SUMS.txt
+          sha256sum Oathkeeper-Build-143-Store-Icon-Parity.apk > SHA256SUMS.txt
       - name: Upload installable test APK
         uses: actions/upload-artifact@v4
         with:
-          name: Oathkeeper-Build-142-Store-Dice-Animation
+          name: Oathkeeper-Build-143-Store-Icon-Parity
           path: Oathkeeper/output/*
           if-no-files-found: error
           retention-days: 30
@@ -154,5 +154,5 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          TAG="oathkeeper-build142-${{ github.run_number }}-${{ github.run_attempt }}"
-          gh release create "$TAG" output/* --target "${{ github.sha }}" --title "Oathkeeper Build 142 - Store and Dice Animation" --prerelease --latest=false --notes "Test APK assembled from the user's exact Build 142 web-assets payload (SHA256 c83a657ab68b900b724b75c45b6d5d2256e69192a1d62e922279422fb0fb0b05). Source application files are preserved and are not overwritten. Debug-signed; backup character data before installing."
+          TAG="oathkeeper-build143-${{ github.run_number }}-${{ github.run_attempt }}"
+          gh release create "$TAG" output/* --target "${{ github.sha }}" --title "Oathkeeper Build 143 - Store Icon Parity and Dice" --prerelease --latest=false --notes "Build 143 retains approved store and dice web assets. Native Android launcher WebPs are byte-for-byte identical to their corresponding Store masters. Old icon derivatives removed. Android launcher masks still apply. Debug-signed testing build; back up character data before installation."

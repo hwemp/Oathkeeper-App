@@ -51,7 +51,7 @@ test('Android defines a default launcher plus ten alternative activity aliases',
  for(const icon of SELECTED_APP_ICONS){
   const n=String(icon.selection).padStart(2,'0');
   assert(manifest.includes('@mipmap/oathkeeper_icon_'+n));
-  const file=await stat(new URL('../android/app/src/main/res/mipmap-nodpi/oathkeeper_icon_'+n+'.png',import.meta.url));
+  const file=await stat(new URL('../android/app/src/main/res/mipmap-nodpi/oathkeeper_icon_'+n+'.webp',import.meta.url));
   assert(file.size>2000);
  }
 });
@@ -71,7 +71,7 @@ test('asset generator produces 10 different designs without replacing original l
  const script=await load('../scripts/generate-free-icons.py');
  assert.match(script,/ICONS = \[/);
  assert.match(script,/len\(digests\) != len\(set\(digests\)\)/);
- assert.match(script,/ADAPTIVE_SIZE = 432/);
+ assert.match(script,/shutil\.copyfile\(src, native_path\)/);
  assert.match(script,/same_pixels\(ios_path, scaled\(art, 1024\)\)/);
  assert.doesNotMatch(script,/SAFE_ART_RATIO|CLEAN_CROP_RATIO|GaussianBlur/);
  assert.doesNotMatch(script,/ic_launcher\.png|AppIcon-512@2x\.png/);

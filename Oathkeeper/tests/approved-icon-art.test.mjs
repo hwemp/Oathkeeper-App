@@ -1,31 +1,39 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {readFile} from 'node:fs/promises';
+import {readFile, readdir} from 'node:fs/promises';
 import {SELECTED_APP_ICONS} from '../web/store-icon-catalog.js';
 
-test('ten different approved Store icon sources each have their own clean preview path', async () => {
- const hashes = new Set();
+test('each native Android launcher is the exact corresponding Store image', async () => {
+ const images=new Set();
  assert.equal(SELECTED_APP_ICONS.length,10);
- for (const item of SELECTED_APP_ICONS) {
-   const n=String(item.selection).padStart(2,'0');
-   assert.equal(item.imagePath,'/art/store-icons/icon-'+n+'.webp');
-   const bytes=await readFile(new URL('../web/public/art/store-icons/icon-'+n+'.webp',import.meta.url));
-   assert.equal(bytes.toString('ascii',0,4),'RIFF');
-   assert.equal(bytes.toString('ascii',8,12),'WEBP');
-   assert(bytes.byteLength>20000);
-   hashes.add(bytes.toString('base64'));
+ for (const icon of SELECTED_APP_ICONS) {
+  const n=String(icon.selection).padStart(2,'0');
+  assert.equal(icon.imagePath,'/art/store-icons/icon-'+n+'.webp');
+  assert.equal(icon.iosIconName,'AppIcon-'+n);
+  const store=await readFile(new URL('../web/public/art/store-icons/icon-'+n+'.webp',import.meta.url));
+  const native=await readFile(new URL('../android/app/src/main/res/mipmap-nodpi/oathkeeper_icon_'+n+'.webp',import.meta.url));
+  assert.equal(store.toString('ascii',0,4),'RIFF');
+  assert.equal(store.toString('ascii',8,12),'WEBP');
+  assert(store.length>20000);
+  assert.deepEqual(native,store,'Native Android WebP must be identical to its Store source');
+  images.add(store.toString('base64'));
+  const xml=await readFile(new URL('../android/app/src/main/res/mipmap-anydpi-v26/oathkeeper_icon_'+n+'.xml',import.meta.url),'utf8');
+  assert(xml.includes('<background android:drawable="@mipmap/oathkeeper_icon_'+n+'" />'));
+  assert(xml.includes('<foreground android:drawable="@android:color/transparent" />'));
  }
- assert.equal(hashes.size,10);
+ assert.equal(images.size,10);
 });
 
-test('Store and native icons must use identical uncropped masters without blur or inset', async () => {
+test('old alternate-image reservoir is removed; generator preserves primary launcher',async()=>{
+ const web=await readdir(new URL('../web/public/art/store-icons/',import.meta.url));
+ const native=await readdir(new URL('../android/app/src/main/res/mipmap-nodpi/',import.meta.url));
+ assert.equal(web.filter(name=>/^launcher-\d+\.webp$/.test(name)).length,0);
+ assert.equal(native.filter(name=>/^oathkeeper_icon_\d{2}(_background|_foreground)?\.png$/.test(name)).length,0);
  const script=await readFile(new URL('../scripts/generate-free-icons.py',import.meta.url),'utf8');
  assert.match(script,/src = WEB \/ f"icon-\{number:02d\}\.webp"/);
- assert.match(script,/scaled\(art, ADAPTIVE_SIZE\)/);
- assert.match(script,/same_pixels\(background_path, background\)/);
- assert.match(script,/same_pixels\(legacy_path, scaled\(art, 256\)\)/);
+ assert.match(script,/shutil\.copyfile\(src, native_path\)/);
+ assert.match(script,/native_path\.read_bytes\(\) != src\.read_bytes\(\)/);
  assert.match(script,/same_pixels\(ios_path, scaled\(art, 1024\)\)/);
- assert.match(script,/Image\.new\("RGBA", \(ADAPTIVE_SIZE, ADAPTIVE_SIZE\), \(0, 0, 0, 0\)\)/);
- assert.doesNotMatch(script,/CLEAN_CROP_RATIO|SAFE_ART_RATIO|remove_baked_frame|GaussianBlur|putalpha/);
+ assert.doesNotMatch(script,/SAFE_ART_RATIO|CLEAN_CROP_RATIO|GaussianBlur|putalpha/);
  assert.doesNotMatch(script,/ic_launcher\.png|AppIcon-512@2x\.png/);
 });
