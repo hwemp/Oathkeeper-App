@@ -1,4 +1,4 @@
-name: Build Oathkeeper 150 - Exact In-Store SVG Icons APK
+name: Build Oathkeeper 151 - Enlarged Store Artwork APK
 on:
   push:
     branches: [build-151]
