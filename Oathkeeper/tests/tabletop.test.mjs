@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {JSDOM} from 'jsdom';
 import {dicePage} from '../web/dice-ui.js';
-import {playTabletopRoll} from '../web/dice-tabletop.js';
+import {playTabletopRoll,diceMeshFaceCount,diceSkinPalette} from '../web/dice-tabletop.js';
 
 const result=(sides,mode='official')=>({
  sides,mode,quantity:1,modifier:0,
@@ -11,9 +11,33 @@ const result=(sides,mode='official')=>({
  total:sides===100&&mode==='official'?100:sides===3&&mode==='official'?2:Math.min(sides,4),
 });
 
+test('D100 is one genuine 100-facet solid and themes stay visually distinct',()=>{
+ assert.equal(diceMeshFaceCount(4),4);
+ assert.equal(diceMeshFaceCount(6),6);
+ assert.equal(diceMeshFaceCount(10),10);
+ assert.equal(diceMeshFaceCount(12),12);
+ assert.equal(diceMeshFaceCount(20),20);
+ assert.equal(diceMeshFaceCount(100),100);
+ const skins=[
+  ['dragonfire','#ec5c25'],['frostborne','#76cffa'],['elvenleaf','#9bdb6c'],
+  ['celestial','#f2d99c'],['abyssal','#24bed5'],['gold-forged','#dba94b'],
+  ['necrotic','#91ce56'],['astral','#a89af9'],['oceanic','#4ad3d4'],['sunfire','#ffc365']
+ ];
+ const colors=new Set();
+ for(const [slug,accent] of skins){
+  const style=diceSkinPalette({slug,accent,bg:'#17122a'});
+  assert.equal(style.slug,slug);
+  assert.equal(style.rgb.length,3);
+  assert.match(style.gold,/^#[0-9a-f]{6}$/i);
+  colors.add(style.rgb.join(','));
+ }
+ assert.equal(colors.size,10);
+});
+
 test('the dice page keeps percentile dice but drops the static percentile example',()=>{
  const idle=dicePage({mode:'official',sides:100,quantity:1,modifier:0,result:null},[],false);
  assert.match(idle,/D100 · Percentile/);
+ assert.match(idle,/<span class="percentile-art percentile-single-die"><span class="die-art reference-die"/);
  assert.doesNotMatch(idle,/Percentile: 00 \+ 0 = 100/);
  assert.doesNotMatch(idle,/id="diceTabletop"/);
  const rolling=dicePage({mode:'official',sides:100,quantity:1,modifier:0,result:result(100),justRolled:true},[],true);
