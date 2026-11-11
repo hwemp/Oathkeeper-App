@@ -18,7 +18,11 @@ test('every free icon preview uses a distinct approved painted asset',async()=>{
 test('native icons are derived from the exact store art without emblem overlays',async()=>{
  const script=await readFile(new URL('../scripts/generate-free-icons.py',import.meta.url),'utf8');
  assert.match(script,/source = WEB \/ f"icon-\{number:02d\}\.webp"/);
- assert.match(script,/icon = loaded\.convert\("RGB"\)/);
- assert.doesNotMatch(script,/def emblem\(|ImageDraw|rounded_rectangle|d\.polygon/);
+ assert.match(script,/normalized_art\(loaded\)/);
+ assert.match(script,/SAFE_ART_RATIO = 0\.60/);
+ assert.match(script,/centered_overlay\(art, ADAPTIVE_SIZE, SAFE_ART_RATIO\)/);
+ assert.match(script,/ADAPTIVE \/ f"\{name\}\.xml"/);
+ assert.match(script,/ImageDraw\.Draw\(mask\)\.rounded_rectangle/);
+ assert.doesNotMatch(script,/def emblem\(|d\.polygon/);
  assert.doesNotMatch(script,/ic_launcher\.png|AppIcon-512@2x\.png/);
 });
