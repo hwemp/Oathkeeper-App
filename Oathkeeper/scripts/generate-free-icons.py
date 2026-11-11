@@ -5,8 +5,8 @@ The only approved artwork is web/public/art/store-icons/icon-NN.webp.
 Android adaptive icons cannot display a complete square image full bleed: the
 launcher masks the central 72dp of the 108dp layers. The previous implementation
 placed the *entire* picture in the background, so its outer third was cropped.
-Keep all original art inside the guaranteed circular mask using a 46%-width
-centered foreground; compose the Store preview from the SAME layers.
+Keep icon artwork at native visual scale within the launcher mask,
+allowing rounded Android icon corners, and preview those SAME layers.
 """
 from pathlib import Path
 import hashlib
@@ -31,9 +31,9 @@ ICONS = [(1, "moonlit-citadel"), (2, "ember-dragon"), (4, "lionheart-shield"),
 
 LAYER_SIDE = 1080
 VISIBLE_SIDE = 720
-# The whole square (including corners) fits inside the conservative round mask.
-# 0.46 * sqrt(2) < 72/108. This avoids clipped artwork on round launchers.
-ART_RATIO = 0.46
+# Fill the central 72dp/108dp visible region. Android masks rounded corners
+# instead of shrinking an entire square into a tiny circle.
+ART_RATIO = 0.66
 
 
 def same_pixels(path, expected):
@@ -152,8 +152,8 @@ def main():
         raise RuntimeError("Adaptive launcher set is incomplete")
     if {p.stem[-2:] for p in WEB.glob("preview-*.webp")} != numbers:
         raise RuntimeError("Store launcher preview set is incomplete")
-    if ART_RATIO * math.sqrt(2) >= VISIBLE_SIDE/LAYER_SIDE:
-        raise RuntimeError("The complete square artwork would be clipped by round masks")
+    if not .60 <= ART_RATIO <= VISIBLE_SIDE / LAYER_SIDE:
+        raise RuntimeError("Adaptive icon must fill the round mask without exceeding its bounding square")
     subprocess.run([sys.executable, str(ROOT / "scripts/export_portable_icons.py")], check=True)
     print("VERIFIED: ten original Store masters, ten centered adaptive icons, "
           "ten same-layer Android-style previews, ten original iOS artworks; default untouched")
