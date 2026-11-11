@@ -805,3 +805,49 @@ body .coin-amount{font-family:var(--readable-fantasy)!important;font-weight:400!
 @media(prefers-reduced-motion:reduce){
  .store-dice-tile,.store-background-tile,.store-icon-tile,.bundle-pick{transition:none}
 }
+
+/* Actual-browser screenshot QA, 11 Nov: store is the full surface, not a panel
+   below the character sheet. Its bottom navigation must flow *after* the image
+   and controls, never cover or obscure the selected preview. */
+body:has(.store-page)>header,
+body:has(.store-page)>main>#nav{display:none!important}
+body:has(.store-page)>main{
+  width:100%;max-width:1200px;
+  margin:0 auto;padding:0 0 max(10px,env(safe-area-inset-bottom,0px));
+}
+body:has(.store-page)>main>#view{width:100%;min-width:0}
+.store-page{border:0;border-radius:0;min-height:100dvh;padding:clamp(8px,2vw,18px)}
+.store-themed-footer{
+  position:static!important;bottom:auto!important;z-index:auto;
+  width:100%;margin-top:clamp(8px,2vw,20px);order:99;
+}
+.store-preview-pane,.store-background-preview-pane,.store-icon-preview-pane{overflow:visible}
+.store-background-preview-media{
+  /* Raster masters are 508x360. Match the source ratio rather than painting
+     blurry empty columns in an arbitrarily wider viewport. */
+  aspect-ratio:508/360!important;
+  max-width:min(100%,780px);
+}
+.store-background-preview-media::before{display:none}
+.store-background-preview-image{object-fit:contain!important}
+.store-selection-footer{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  align-items:stretch;gap:8px;padding-top:10px;
+}
+.store-selection-footer>p:first-child{grid-column:1/-1;text-align:center}
+.store-selection-footer>.store-purchase-disabled{grid-column:1}
+.store-cosmetic-actions{
+  display:contents;
+}
+.store-cosmetic-actions>[data-store-restore-purchases]{grid-column:2}
+.store-cosmetic-actions>button:disabled:not([data-store-restore-purchases]){display:none}
+.store-cosmetic-actions>button:not(:disabled):not([data-store-restore-purchases]){grid-column:1/-1}
+.store-billing-status{grid-column:1/-1;text-align:center;font-size:clamp(11px,1.9vw,14px);margin:0}
+.store-selection-footer button{min-height:48px;font-size:clamp(12px,2.4vw,18px)}
+.store-background-preview-title{margin:3px 0 4px}
+.store-background-preview-details p{margin:2px 0}
+@media(max-width:480px){
+  .store-page{padding:6px 8px 12px}
+  .store-selection-footer{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .store-selection-footer p{grid-column:1/-1}
+}

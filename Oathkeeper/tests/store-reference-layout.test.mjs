@@ -29,3 +29,11 @@ test('approved store reference: category artwork and full-size previews', () => 
   assert.match(icons,/App Icons Collection/);
   assert.match(icons,/10 Alternate Icons · All Free/);
 });
+
+test('store footer is below all artwork rather than obscuring the preview',async()=>{
+ const css=await readFile(new URL('../web/fantasy.css',import.meta.url),'utf8');
+ assert.match(css,/\.store-themed-footer\{[\s\S]*?position:static!important/);
+ assert.match(css,/body:has\(\.store-page\)>header/);
+ assert.match(css,/body:has\(\.store-page\)>main>#nav/);
+ assert.match(css,/\.store-background-preview-media\{[\s\S]*?aspect-ratio:508\/360!important/);
+});

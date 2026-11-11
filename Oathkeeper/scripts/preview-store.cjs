@@ -75,6 +75,25 @@ const assert=require('node:assert/strict');
       assert.equal(await page.locator('.bundle-dice-pick').count(),10);
       assert.equal(await page.locator('.bundle-background-pick').count(),10);
       await page.screenshot({path:`preview-output/store-bundles-${width}.png`,fullPage:true});
+      // The footer must be after, never on top of, the largest artwork.
+      await page.locator('[data-store-category="backgrounds"]').click();
+      const layout=await page.evaluate(()=>{
+        const top=document.querySelector('.store-page').getBoundingClientRect();
+        const hero=document.querySelector('.store-hero').getBoundingClientRect();
+        const footer=document.querySelector('.store-themed-footer').getBoundingClientRect();
+        const preview=document.querySelector('.store-background-preview-media').getBoundingClientRect();
+        const appHeader=document.querySelector('body>header');
+        const appNav=document.querySelector('main>#nav');
+        return {top:top.top,heroTop:hero.top,footerTop:footer.top,previewBottom:preview.bottom,
+          headerVisible:!!appHeader&&getComputedStyle(appHeader).display!=='none',
+          navVisible:!!appNav&&getComputedStyle(appNav).display!=='none'};
+      });
+      assert(!layout.headerVisible&&!layout.navVisible,`Store still showing duplicate character chrome at ${width}px`);
+      assert(layout.footerTop>=layout.previewBottom-1,`Store footer covers background preview at ${width}px`);
+      await page.locator('[data-store-category="dice"]').click();
+      const diceClear=await page.evaluate(()=>document.querySelector('.store-themed-footer').getBoundingClientRect().top>=document.querySelector('.store-preview-image').getBoundingClientRect().bottom-1);
+      assert(diceClear,`Store footer covers dice preview at ${width}px`);
+
       assert.deepEqual(exceptions,[],`No browser exceptions at ${width}px`);
       await page.close();
     }
