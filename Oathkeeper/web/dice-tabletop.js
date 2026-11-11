@@ -67,7 +67,68 @@ export function diceSkinPalette(skin){
  const rgb=[1,3,5].map(i=>parseInt(hex.slice(i,i+2),16));
  const background=typeof skin?.bg==='string'&&/^#[0-9a-f]{6}$/i.test(skin.bg)?skin.bg:'#1d1032';
  const gold=skin?.slug==='frostborne'?'#eaf1f5':skin?.slug==='celestial'?'#f4db9f':'#f0c568';
- return {rgb,background,gold};
+ return {rgb,background,gold,slug:skin?.slug||'default'};
+}
+const blend=(a,b,t)=>a.map((v,i)=>Math.round(v*(1-t)+b[i]*t));
+const rgb=(a,alpha=1)=>'rgba('+a.map(v=>Math.max(0,Math.min(255,Math.round(v)))).join(',')+','+alpha+')';
+function polygon(ctx,coords){
+ ctx.beginPath();ctx.moveTo(coords[0][0],coords[0][1]);
+ for(let j=1;j<coords.length;j++)ctx.lineTo(coords[j][0],coords[j][1]);
+ ctx.closePath();
+}
+function drawGemFace(ctx,coords,normal,size,palette,frontValue,showNumber){
+ const center=coords.reduce((p,q)=>[p[0]+q[0]/coords.length,p[1]+q[1]/coords.length],[0,0]);
+ const bright=Math.max(.18,Math.min(1,.52+normal[0]*.16+normal[1]*.20+normal[2]*.30));
+ const base=palette.rgb;
+ const light=blend(base,[247,199,255],.34);
+ const shadow=blend(base,[10,4,28],.69);
+ const grd=ctx.createLinearGradient(coords[0][0],coords[0][1],coords[Math.floor(coords.length/2)][0],coords[Math.floor(coords.length/2)][1]);
+ grd.addColorStop(0,rgb(blend(shadow,base,.24+bright*.40)));
+ grd.addColorStop(.48,rgb(blend(shadow,light,.24+bright*.46)));
+ grd.addColorStop(1,rgb(blend(shadow,base,.22+bright*.35)));
+ polygon(ctx,coords);ctx.fillStyle=grd;ctx.fill();
+ ctx.save();polygon(ctx,coords);ctx.clip();
+ // Layered crystalline facets, replacing the old flat fill.
+ coords.forEach((a,i)=>{
+  const b=coords[(i+1)%coords.length],tip=[
+   center[0]+(a[0]-center[0])*.21+size*.034*Math.sin(i*3.1),
+   center[1]+(a[1]-center[1])*.21+size*.034*Math.cos(i*2.7)
+  ];
+  ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.lineTo(tip[0],tip[1]);ctx.closePath();
+  ctx.fillStyle=rgb(i%2?light:shadow,i%2?.14:.25);ctx.fill();
+  ctx.strokeStyle=rgb(light,.12);ctx.lineWidth=Math.max(.6,size*.009);ctx.stroke();
+ });
+ const glint=ctx.createRadialGradient(center[0]-size*.25,center[1]-size*.32,size*.01,center[0],center[1],size*1.25);
+ glint.addColorStop(0,'rgba(255,232,255,.17)');glint.addColorStop(.55,'rgba(235,133,255,.035)');glint.addColorStop(1,'rgba(0,0,0,0)');
+ ctx.fillStyle=glint;ctx.fillRect(center[0]-size*1.5,center[1]-size*1.5,size*3,size*3);
+ ctx.restore();
+ // Two different metallic highlights give the beveled gold edge a dimensional look.
+ polygon(ctx,coords);ctx.lineJoin='round';ctx.strokeStyle='rgba(65,20,40,.95)';ctx.lineWidth=Math.max(2,size*.093);ctx.stroke();
+ ctx.strokeStyle=palette.gold;ctx.lineWidth=Math.max(1.8,size*.060);ctx.stroke();
+ ctx.strokeStyle='rgba(255,246,195,.88)';ctx.lineWidth=Math.max(.75,size*.017);ctx.stroke();
+ // Projected filigree at each real corner; every die geometry receives the same ornament treatment.
+ coords.forEach((a,i)=>{
+  const before=coords[(i-1+coords.length)%coords.length],after=coords[(i+1)%coords.length];
+  const p=[a[0]+(before[0]-a[0])*.19,a[1]+(before[1]-a[1])*.19];
+  const q=[a[0]+(after[0]-a[0])*.19,a[1]+(after[1]-a[1])*.19];
+  const m=[a[0]+(center[0]-a[0])*.24,a[1]+(center[1]-a[1])*.24];
+  ctx.strokeStyle=palette.gold;ctx.lineWidth=Math.max(1,size*.026);ctx.lineCap='round';
+  ctx.beginPath();ctx.moveTo(p[0],p[1]);ctx.quadraticCurveTo(m[0],m[1],q[0],q[1]);ctx.stroke();
+  ctx.strokeStyle='rgba(255,236,177,.79)';ctx.lineWidth=Math.max(.65,size*.012);
+  ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(m[0],m[1]);ctx.stroke();
+  ctx.fillStyle=palette.gold;ctx.beginPath();ctx.arc(m[0],m[1],Math.max(.75,size*.018),0,TAU);ctx.fill();
+ });
+ if(showNumber){
+  const length=coords.reduce((v,p,i)=>v+Math.hypot(p[0]-coords[(i+1)%coords.length][0],p[1]-coords[(i+1)%coords.length][1]),0)/coords.length;
+  const font=Math.max(12,Math.min(size*.63,length*.74));
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.font='bold '+Math.round(font)+'px Georgia,serif';
+  ctx.shadowColor='rgba(5,1,18,.86)';ctx.shadowBlur=Math.max(3,size*.10);
+  ctx.lineJoin='round';ctx.lineWidth=Math.max(2,size*.065);ctx.strokeStyle='#260d32';
+  ctx.strokeText(String(frontValue),center[0],center[1]);
+  ctx.shadowBlur=0;ctx.fillStyle='#ffe7a3';ctx.fillText(String(frontValue),center[0],center[1]);
+  ctx.lineWidth=Math.max(.55,size*.01);ctx.strokeStyle='#c39146';ctx.strokeText(String(frontValue),center[0],center[1]);
+ }
 }
 function drawDie(ctx,die,x,y,size,progress,finished,palette){
  const geom=getShape(die.geometry);
@@ -82,33 +143,15 @@ function drawDie(ctx,die,x,y,size,progress,finished,palette){
   return {vertices,normal,z:vertices.reduce((v,p)=>v+p[2],0)/vertices.length};
  }).filter(f=>f.normal[2]>-.06).sort((a,b)=>a.z-b.z);
  ctx.save();
- ctx.fillStyle='rgba(1,0,10,.40)';
- ctx.beginPath();ctx.ellipse(x+3,y+size*.96,size*.85,size*.20,0,0,TAU);ctx.fill();
- const lift=progress<1?Math.abs(Math.sin(progress*TAU*2.2))*Math.pow(1-progress,1.35)*size*.75:0;
+ ctx.fillStyle='rgba(1,0,10,.44)';
+ ctx.beginPath();ctx.ellipse(x+3,y+size*.99,size*.81,size*.17,0,0,TAU);ctx.fill();
+ const lift=progress<1?Math.abs(Math.sin(progress*TAU*2.2))*Math.pow(1-progress,1.35)*size*.69:0;
  const centerY=y-lift;
- let front=null;
+ let best=null;
+ for(const f of polys){if(!best||f.normal[2]>best.normal[2])best=f;}
  for(const f of polys){
-  if(!front||f.normal[2]>front.normal[2])front=f;
   const coords=f.vertices.map(p=>project(p,x,centerY,size));
-  ctx.beginPath();ctx.moveTo(coords[0][0],coords[0][1]);
-  for(let j=1;j<coords.length;j++)ctx.lineTo(coords[j][0],coords[j][1]);
-  ctx.closePath();
-  const lit=Math.max(.12,Math.min(1,.43+f.normal[0]*.19+f.normal[1]*.29+f.normal[2]*.45));
-  ctx.fillStyle='rgb('+palette.rgb.map(v=>Math.min(255,Math.round(v*(.25+lit*.65)))).join(',')+')';
-  ctx.fill();
-  ctx.lineJoin='round';ctx.strokeStyle=palette.gold;ctx.lineWidth=Math.max(1.3,size*.048);ctx.stroke();
-  ctx.strokeStyle='rgba(255,240,178,.56)';ctx.lineWidth=Math.max(.65,size*.015);ctx.stroke();
-  const center=coords.reduce((p,q)=>[p[0]+q[0]/coords.length,p[1]+q[1]/coords.length],[0,0]);
-  ctx.fillStyle='rgba(239,189,102,.75)';
-  ctx.beginPath();ctx.arc(center[0],center[1],Math.max(1.0,size*.037),0,TAU);ctx.fill();
- }
- if(finished&&front){
-  const center=front.vertices.map(p=>project(p,x,centerY,size))
-   .reduce((p,q)=>[p[0]+q[0]/front.vertices.length,p[1]+q[1]/front.vertices.length],[0,0]);
-  ctx.font='600 '+Math.max(13,Math.round(size*.51))+'px Georgia,serif';
-  ctx.textAlign='center';ctx.textBaseline='middle';
-  ctx.lineWidth=3;ctx.strokeStyle='#2c0c3e';ctx.strokeText(die.face,center[0],center[1]);
-  ctx.fillStyle='#ffe2a2';ctx.fillText(die.face,center[0],center[1]);
+  drawGemFace(ctx,coords,f.normal,size,palette,die.face,finished&&best===f);
  }
  ctx.restore();
 }
@@ -161,7 +204,7 @@ export function playTabletopRoll(stage,result,onComplete,skin=null){
   ctx.strokeStyle='rgba(236,204,143,.20)';ctx.lineWidth=1;
   ctx.beginPath();ctx.ellipse(w/2,h*.55,w*.43,h*.34,0,0,TAU);ctx.stroke();
   const count=dice.length,cols=Math.min(count,4),rows=Math.ceil(count/cols);
-  const size=Math.max(13,Math.min(34,w/(cols*3.0),h/(rows*3.2)));
+  const size=Math.max(14,Math.min(count===1?100:62,w/(cols*(count===1?3.4:3.0)),h/(rows*(count===1?2.7:3.3))));
   dice.forEach((die,j)=>{
    const col=j%cols,row=Math.floor(j/cols);
    const targetX=(col+.5)*w/cols,targetY=(row+.55)*h/rows;
