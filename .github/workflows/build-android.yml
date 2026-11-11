@@ -1,7 +1,7 @@
 name: Build Android APK
 on:
   push:
-    branches: [fix-approved-preview, consolidated-work, reference-safety-update, security-account-and-support-2026-11-10]
+    branches: [fix-approved-preview, consolidated-work, reference-safety-update, security-account-and-support-2026-11-10, test/store-resource-alignment-157]
     paths:
       - 'Oathkeeper/**'
       - '!Oathkeeper/docs/**'
