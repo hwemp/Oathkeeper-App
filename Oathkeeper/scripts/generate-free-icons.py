@@ -56,9 +56,19 @@ def normalized_art(source, number):
         round(r * width), round(b * height)))
     # Pad rather than center-crop so neither a sword tip nor a gold border is cut.
     # Each distinct cleaned image is also the EXACT art used in the Store preview.
-    return ImageOps.pad(clean, (MASTER_SIZE, MASTER_SIZE),
-                        method=Image.Resampling.LANCZOS,
-                        color=(8, 13, 27), centering=(.5, .5))
+    centered = ImageOps.pad(clean, (MASTER_SIZE, MASTER_SIZE),
+                            method=Image.Resampling.LANCZOS,
+                            color=(8, 13, 27), centering=(.5, .5))
+    # Six concept-board exports put their baked gold frame roughly 20 px
+    # farther right than left on 512px art. Shift each entire tile LEFT,
+    # then replace the uncovered right margin with matching dark backing.
+    # This is optical correction of that ONE item, not shared replacement art.
+    optical_shift = -round(MASTER_SIZE * .020) if number in {4, 5, 6, 11, 12, 14} else 0
+    if optical_shift:
+        aligned = Image.new("RGB", (MASTER_SIZE, MASTER_SIZE), (8, 13, 27))
+        aligned.paste(centered, (optical_shift, 0))
+        return aligned
+    return centered
 
 def backdrop(art, side):
     # Use color from the center of the matching illustration, not a scaled,
