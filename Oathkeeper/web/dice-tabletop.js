@@ -17,6 +17,22 @@ function ico(){
  const f=[[0,11,5],[0,5,1],[0,1,7],[0,7,10],[0,10,11],[1,5,9],[5,11,4],[11,10,2],[10,7,6],[7,1,8],[3,9,4],[3,4,2],[3,2,6],[3,6,8],[3,8,9],[4,9,5],[2,4,11],[6,2,10],[8,6,7],[9,8,1]];
  return {v,f:orient(v,f)};
 }
+// Closed, convex 100-triangle geodesic solid: twenty icosahedron faces
+// each subdivide into five. Euler check: V=52, E=150, F=100.
+function hundred(){
+ const base=ico(),v=base.v.map(p=>[...p]),f=[];
+ for(const [a,b,c] of base.f){
+  const A=v[a],B=v[b],C=v[c];
+  // One central point leaves two equal outer triangles (one fifth each);
+  // the remaining three triangles also occupy one fifth of the base face.
+  const u=normalized(A.map((x,k)=>.2*x+.2*B[k]+.6*C[k]));
+  const ui=v.push(u)-1;
+  const q=normalized(A.map((x,k)=>(x+B[k]+u[k])/3));
+  const qi=v.push(q)-1;
+  f.push([a,b,qi],[b,ui,qi],[ui,a,qi],[b,c,ui],[c,a,ui]);
+ }
+ return {v,f:orient(v,f)};
+}
 function dodeca(){
  const i=ico();
  const v=i.f.map(ids=>normalized(ids.reduce((acc,id)=>acc.map((x,k)=>x+i.v[id][k]/3),[0,0,0])));
@@ -42,6 +58,7 @@ function shape(sides){
  }
  if(sides===12)return dodeca();
  if(sides===20)return ico();
+ if(sides===100)return hundred();
  // Ten-sided kite-shaped form used for D10 and paired percentile dice.
  const v=[[0,0,1.15],[0,0,-1.15]];
  for(let j=0;j<10;j++)v.push([Math.cos(j*TAU/10),Math.sin(j*TAU/10),j%2?.24:-.24]);
@@ -52,6 +69,7 @@ function shape(sides){
 }
 const shapes=new Map();
 function getShape(n){if(!shapes.has(n))shapes.set(n,shape(n));return shapes.get(n)}
+export const diceMeshFaceCount = sides => getShape(sides).f.length;
 function rotate(p,x,y,z){
  let [a,b,c]=p;let co=Math.cos(x),si=Math.sin(x);
  [b,c]=[b*co-c*si,b*si+c*co];co=Math.cos(y);si=Math.sin(y);
@@ -157,8 +175,8 @@ function drawDie(ctx,die,x,y,size,progress,finished,palette){
 }
 function diceFor(result){
  const out=[],push=(geometry,face,caption)=>out.push({geometry,face:String(face),caption,index:out.length});
- if(result.mode==='official'&&result.sides===100){
-  result.rolls.slice(0,6).forEach((r)=>{push(10,String(r.tens).padStart(2,'0'),'Tens');push(10,r.ones,'Ones')});
+ if(result.sides===100){
+  result.rolls.slice(0,6).forEach(r=>push(100,r.value,'D100'));
  }else{
   result.rolls.slice(0,12).forEach(r=>{
    push(result.mode==='official'&&result.sides===3?6:result.sides,r.d6||r.value,result.mode==='official'&&result.sides===3?'D6 → D3': 'D'+result.sides);
@@ -182,8 +200,8 @@ export function playTabletopRoll(stage,result,onComplete,skin=null){
   const values=stage.querySelector('[data-dice-landed]');
   if(values){
    values.hidden=false;
-   values.textContent=result.quantity>dice.length/(result.sides===100&&result.mode==='official'?2:1)
-    ?'Showing '+(result.sides===100&&result.mode==='official'?Math.floor(dice.length/2):dice.length)+' of '+result.quantity+' rolls · '+result.total+' total'
+   values.textContent=result.quantity>dice.length
+    ?'Showing '+dice.length+' of '+result.quantity+' rolls · '+result.total+' total'
     :dice.map(d=>d.caption+' '+d.face).join(' · ');
   }
   onComplete();
