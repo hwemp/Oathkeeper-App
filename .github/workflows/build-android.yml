@@ -34,9 +34,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Generate ten free launcher icons
+      - name: Prepare high-density store artwork and generate matching launcher icons
         run: |
           python -m pip install --disable-pip-version-check Pillow
+          python scripts/prepare-store-art.py
           python scripts/generate-free-icons.py
       - name: Install dependencies
         run: npm ci

@@ -612,3 +612,42 @@ body .coin-amount{font-family:var(--readable-fantasy)!important;font-weight:400!
 .bundle-preview-status{margin:4px 1px;padding:8px;border:1px solid #7b624a;border-radius:10px;background:#161426c9;color:#e1c79a;text-align:center;font-size:clamp(11px,1.9vw,14px)}
 @media(max-width:440px){.bundle-offer{min-height:178px;padding:7px 4px 9px}.bundle-offer-art,.bundle-offer-gem{height:54px}.bundle-section-heading{align-items:center}.bundle-section-heading span{font-size:10px}.bundle-pick-label{font-size:9px;min-height:33px}}
 @media(prefers-reduced-motion:reduce){.bundle-offer,.bundle-pick{transition:none}}
+
+
+/* Compact image-only store grids. Spoken names remain on accessible buttons. */
+.store-background-tile,.store-icon-tile{justify-content:center;align-items:center}
+.store-background-tile{aspect-ratio:508/360}
+.store-icon-tile{aspect-ratio:1}
+.store-background-tile-art,.store-icon-tile-art{width:100%;height:100%;min-height:0}
+.store-background-tile-art{object-fit:contain;object-position:center}
+.store-icon-tile-art{object-fit:cover;object-position:center}
+.store-preview-description,.store-background-preview-details{align-self:center}
+.store-preview-description p,.store-background-preview-details p{margin:0 0 9px}
+.store-icon-preview-pane{grid-template-columns:minmax(0,1fr) minmax(0,.8fr);align-items:center}
+.store-icon-preview-media{
+ position:relative;width:min(100%,350px);max-width:350px;
+ aspect-ratio:1;overflow:hidden;min-height:0;padding:0;
+ background:#0a1224;
+}
+/* The concept art itself contains a bottom caption: trim it without cutting off the icon center. */
+.store-icon-preview-image{
+ width:100%;height:100%;object-fit:cover;object-position:center;
+ transform:translateY(-5%) scale(1.2);transform-origin:center center;
+ image-rendering:auto;
+}
+.store-background-preview-media{width:min(100%,508px);max-width:508px;aspect-ratio:508/360}
+.store-background-preview-image{image-rendering:auto;object-fit:contain;object-position:center}
+.store-preview-image{image-rendering:auto;max-width:496px}
+@media(max-width:580px){
+ .store-icon-preview-pane{grid-template-columns:minmax(0,1fr)}
+ .store-icon-preview-media{width:min(100%,350px)}
+ .store-background-preview-details,.store-preview-description{padding:2px 6px}
+}
+/* Extra canvas pixels are drawn at runtime; CSS keeps the tabletop at a natural height. */
+.dice-tabletop canvas{image-rendering:auto}
+
+
+/* The D100 is a single one-hundred-face solid, not two percentile D10s. */
+.percentile-single-die{justify-content:center}
+.percentile-single-die .reference-die{display:block;width:auto;height:72px;max-width:100%;aspect-ratio:109/99}
+@media(max-width:350px){.percentile-single-die .reference-die{height:62px}}

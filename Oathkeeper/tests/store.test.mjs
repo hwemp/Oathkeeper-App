@@ -98,6 +98,26 @@ test('all ten free icons have distinct previews and native resource IDs',async()
     assert.match(html,/Restore Original Icon/);
   }
 });
+test('the artwork cards and enlarged previews have no visible names',()=>{
+ for(const item of SELECTED_DICE){
+  const page=storePage(item.slug);
+  assert.doesNotMatch(page,/<h3>[^<]+<\/h3>/);
+  assert.match(page,/class="store-preview-description"/);
+ }
+ for(const item of SELECTED_BACKGROUNDS){
+  const page=storePage('elvenleaf',{category:'backgrounds',backgroundSlug:item.slug});
+  assert.doesNotMatch(page,/class="store-background-name"/);
+  assert.doesNotMatch(page,/<h3>[^<]+<\/h3>/);
+  assert(page.includes('aria-label="Preview '+item.name));
+ }
+ for(const item of SELECTED_APP_ICONS){
+  const page=storePage('elvenleaf',{category:'icons',iconSlug:item.slug});
+  assert.doesNotMatch(page,/class="store-background-name"/);
+  assert.doesNotMatch(page,/<h3>[^<]+<\/h3>/);
+  assert.match(page,/class="store-icon-preview-media"/);
+ }
+});
+
 test('all categories auto-preview the initial selection without a separate preview button',()=>{
   const dice=storePage();
   const backgrounds=storePage('elvenleaf',{category:'backgrounds'});

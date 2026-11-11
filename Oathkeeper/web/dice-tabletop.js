@@ -17,6 +17,22 @@ function ico(){
  const f=[[0,11,5],[0,5,1],[0,1,7],[0,7,10],[0,10,11],[1,5,9],[5,11,4],[11,10,2],[10,7,6],[7,1,8],[3,9,4],[3,4,2],[3,2,6],[3,6,8],[3,8,9],[4,9,5],[2,4,11],[6,2,10],[8,6,7],[9,8,1]];
  return {v,f:orient(v,f)};
 }
+// Closed, convex 100-triangle geodesic solid: twenty icosahedron faces
+// each subdivide into five. Euler check: V=52, E=150, F=100.
+function hundred(){
+ const base=ico(),v=base.v.map(p=>[...p]),f=[];
+ for(const [a,b,c] of base.f){
+  const A=v[a],B=v[b],C=v[c];
+  // One central point leaves two equal outer triangles (one fifth each);
+  // the remaining three triangles also occupy one fifth of the base face.
+  const u=normalized(A.map((x,k)=>.2*x+.2*B[k]+.6*C[k]));
+  const ui=v.push(u)-1;
+  const q=normalized(A.map((x,k)=>(x+B[k]+u[k])/3));
+  const qi=v.push(q)-1;
+  f.push([a,b,qi],[b,ui,qi],[ui,a,qi],[b,c,ui],[c,a,ui]);
+ }
+ return {v,f:orient(v,f)};
+}
 function dodeca(){
  const i=ico();
  const v=i.f.map(ids=>normalized(ids.reduce((acc,id)=>acc.map((x,k)=>x+i.v[id][k]/3),[0,0,0])));
@@ -42,6 +58,7 @@ function shape(sides){
  }
  if(sides===12)return dodeca();
  if(sides===20)return ico();
+ if(sides===100)return hundred();
  // Ten-sided kite-shaped form used for D10 and paired percentile dice.
  const v=[[0,0,1.15],[0,0,-1.15]];
  for(let j=0;j<10;j++)v.push([Math.cos(j*TAU/10),Math.sin(j*TAU/10),j%2?.24:-.24]);
@@ -52,6 +69,7 @@ function shape(sides){
 }
 const shapes=new Map();
 function getShape(n){if(!shapes.has(n))shapes.set(n,shape(n));return shapes.get(n)}
+export const diceMeshFaceCount = sides => getShape(sides).f.length;
 function rotate(p,x,y,z){
  let [a,b,c]=p;let co=Math.cos(x),si=Math.sin(x);
  [b,c]=[b*co-c*si,b*si+c*co];co=Math.cos(y);si=Math.sin(y);
@@ -66,22 +84,67 @@ export function diceSkinPalette(skin){
  const hex=typeof skin?.accent==='string'&&/^#[0-9a-f]{6}$/i.test(skin.accent)?skin.accent:'#8f32c2';
  const rgb=[1,3,5].map(i=>parseInt(hex.slice(i,i+2),16));
  const background=typeof skin?.bg==='string'&&/^#[0-9a-f]{6}$/i.test(skin.bg)?skin.bg:'#1d1032';
- const gold=skin?.slug==='frostborne'?'#eaf1f5':skin?.slug==='celestial'?'#f4db9f':'#f0c568';
- return {rgb,background,gold,slug:skin?.slug||'default'};
+ const trim={dragonfire:'#ffd18c',frostborne:'#e8f8ff',elvenleaf:'#dceb9e',
+  celestial:'#f5e6b6',abyssal:'#8ce8ef','gold-forged':'#ffda76',
+  necrotic:'#b5db8c',astral:'#e4c2ff',oceanic:'#90e5ea',sunfire:'#ffe392'};
+ const slug=skin?.slug||'default';
+ const gold=trim[slug]||'#f0c568';
+ return {rgb,background,gold,ink:slug==='frostborne'?'#ffffff':'#fff1c6',slug};
 }
 const blend=(a,b,t)=>a.map((v,i)=>Math.round(v*(1-t)+b[i]*t));
 const rgb=(a,alpha=1)=>'rgba('+a.map(v=>Math.max(0,Math.min(255,Math.round(v)))).join(',')+','+alpha+')';
+// Each selected cosmetic has a distinct projected ornament as well as its
+// own gem color and metallic trim. The artwork and die outcome are independent.
+function drawSkinOrnament(ctx,[x,y],size,palette){
+ const kind=palette.slug;if(kind==='default')return;
+ const r=size*.20;
+ ctx.strokeStyle=palette.gold;ctx.lineWidth=Math.max(.65,size*.014);
+ ctx.lineCap='round';ctx.lineJoin='round';
+ const line=(a,b)=>{ctx.beginPath();ctx.moveTo(x+a[0]*r,y+a[1]*r);ctx.lineTo(x+b[0]*r,y+b[1]*r);ctx.stroke()};
+ const path=(pts,closed=false)=>{
+  ctx.beginPath();pts.forEach(([a,b],i)=>i?ctx.lineTo(x+a*r,y+b*r):ctx.moveTo(x+a*r,y+b*r));
+  if(closed)ctx.closePath();ctx.stroke();
+ };
+ const polar=(angle,rad=1)=>[Math.cos(angle)*rad,Math.sin(angle)*rad];
+ if(kind==='dragonfire'){
+  path([[-.5,.7],[-.35,-.1],[0,-.9],[.12,-.1],[.5,-.5],[.4,.8]],true);
+  path([[-.16,.55],[0,0],[.22,.52]]);
+ }else if(kind==='frostborne'){
+  for(let a=0;a<6;a++){const n=a*TAU/6;line(polar(n,.1),polar(n,.95));line(polar(n,.65),polar(n+.28,.85));line(polar(n,.65),polar(n-.28,.85))}
+ }else if(kind==='elvenleaf'){
+  path([[0,.9],[-.7,.2],[-.3,-.7],[.62,-.7],[.7,.18],[0,.9]],true);line([0,.85],[.22,-.58]);
+ }else if(kind==='celestial'||kind==='astral'){
+  const n=kind==='astral'?5:8;const pts=[];
+  for(let j=0;j<n*2;j++)pts.push(polar(-Math.PI/2+j*Math.PI/n,j%2?.34:1));
+  path(pts,true);
+ }else if(kind==='abyssal'){
+  path(Array.from({length:16},(_,j)=>polar(j*.68,j/17)));
+ }else if(kind==='gold-forged'){
+  ctx.beginPath();ctx.arc(x,y,r*.65,0,TAU);ctx.stroke();
+  for(let j=0;j<8;j++)line(polar(j*TAU/8,.7),polar(j*TAU/8,1));
+ }else if(kind==='necrotic'){
+  path([[-.8,-.85],[-.2,-.24],[-.4,.14],[.3,.45],[.7,.9]]);
+  path([[-.2,-.24],[.55,-.45],[.9,-.18]]);
+ }else if(kind==='oceanic'){
+  for(let j=-1;j<=1;j++){
+   const p=j*.43;path([[-.9,p],[-.45,p-.22],[0,p],[.45,p+.22],[.9,p]]);
+  }
+ }else if(kind==='sunfire'){
+  ctx.beginPath();ctx.arc(x,y,r*.33,0,TAU);ctx.stroke();
+  for(let j=0;j<10;j++)line(polar(j*TAU/10,.48),polar(j*TAU/10,1));
+ }
+}
 function polygon(ctx,coords){
  ctx.beginPath();ctx.moveTo(coords[0][0],coords[0][1]);
  for(let j=1;j<coords.length;j++)ctx.lineTo(coords[j][0],coords[j][1]);
  ctx.closePath();
 }
-function drawGemFace(ctx,coords,normal,size,palette,frontValue,showNumber){
+function drawGemFace(ctx,coords,normal,size,palette,frontValue,showNumber,dense=false){
  const center=coords.reduce((p,q)=>[p[0]+q[0]/coords.length,p[1]+q[1]/coords.length],[0,0]);
  const bright=Math.max(.18,Math.min(1,.52+normal[0]*.16+normal[1]*.20+normal[2]*.30));
  const base=palette.rgb;
- const light=blend(base,[247,199,255],.34);
- const shadow=blend(base,[10,4,28],.69);
+ const light=blend(base,[255,247,232],.42);
+ const shadow=blend(base,[9,10,23],.69);
  const grd=ctx.createLinearGradient(coords[0][0],coords[0][1],coords[Math.floor(coords.length/2)][0],coords[Math.floor(coords.length/2)][1]);
  grd.addColorStop(0,rgb(blend(shadow,base,.24+bright*.40)));
  grd.addColorStop(.48,rgb(blend(shadow,light,.24+bright*.46)));
@@ -101,13 +164,14 @@ function drawGemFace(ctx,coords,normal,size,palette,frontValue,showNumber){
  const glint=ctx.createRadialGradient(center[0]-size*.25,center[1]-size*.32,size*.01,center[0],center[1],size*1.25);
  glint.addColorStop(0,'rgba(255,232,255,.17)');glint.addColorStop(.55,'rgba(235,133,255,.035)');glint.addColorStop(1,'rgba(0,0,0,0)');
  ctx.fillStyle=glint;ctx.fillRect(center[0]-size*1.5,center[1]-size*1.5,size*3,size*3);
+ if(!dense)drawSkinOrnament(ctx,center,size,palette);
  ctx.restore();
  // Two different metallic highlights give the beveled gold edge a dimensional look.
  polygon(ctx,coords);ctx.lineJoin='round';ctx.strokeStyle='rgba(65,20,40,.95)';ctx.lineWidth=Math.max(2,size*.093);ctx.stroke();
- ctx.strokeStyle=palette.gold;ctx.lineWidth=Math.max(1.8,size*.060);ctx.stroke();
- ctx.strokeStyle='rgba(255,246,195,.88)';ctx.lineWidth=Math.max(.75,size*.017);ctx.stroke();
+ ctx.strokeStyle=palette.gold;ctx.lineWidth=Math.max(dense ? .9 : 1.8,size*(dense ? .022 : .060));ctx.stroke();
+ ctx.strokeStyle='rgba(255,246,195,.88)';ctx.lineWidth=Math.max(dense ? .35 : .75,size*(dense ? .007 : .017));ctx.stroke();
  // Projected filigree at each real corner; every die geometry receives the same ornament treatment.
- coords.forEach((a,i)=>{
+ if(!dense)coords.forEach((a,i)=>{
   const before=coords[(i-1+coords.length)%coords.length],after=coords[(i+1)%coords.length];
   const p=[a[0]+(before[0]-a[0])*.19,a[1]+(before[1]-a[1])*.19];
   const q=[a[0]+(after[0]-a[0])*.19,a[1]+(after[1]-a[1])*.19];
@@ -120,14 +184,14 @@ function drawGemFace(ctx,coords,normal,size,palette,frontValue,showNumber){
  });
  if(showNumber){
   const length=coords.reduce((v,p,i)=>v+Math.hypot(p[0]-coords[(i+1)%coords.length][0],p[1]-coords[(i+1)%coords.length][1]),0)/coords.length;
-  const font=Math.max(12,Math.min(size*.63,length*.74));
+  const font=dense?Math.max(6,Math.min(12,length*.72)):Math.max(12,Math.min(size*.63,length*.74));
   ctx.textAlign='center';ctx.textBaseline='middle';
   ctx.font='bold '+Math.round(font)+'px Georgia,serif';
-  ctx.shadowColor='rgba(5,1,18,.86)';ctx.shadowBlur=Math.max(3,size*.10);
-  ctx.lineJoin='round';ctx.lineWidth=Math.max(2,size*.065);ctx.strokeStyle='#260d32';
+  ctx.shadowColor='rgba(5,1,18,.86)';ctx.shadowBlur=dense?1.5:Math.max(3,size*.10);
+  ctx.lineJoin='round';ctx.lineWidth=dense?1:Math.max(2,size*.065);ctx.strokeStyle='#260d32';
   ctx.strokeText(String(frontValue),center[0],center[1]);
-  ctx.shadowBlur=0;ctx.fillStyle='#ffe7a3';ctx.fillText(String(frontValue),center[0],center[1]);
-  ctx.lineWidth=Math.max(.55,size*.01);ctx.strokeStyle='#c39146';ctx.strokeText(String(frontValue),center[0],center[1]);
+  ctx.shadowBlur=0;ctx.fillStyle=palette.ink;ctx.fillText(String(frontValue),center[0],center[1]);
+  if(!dense){ctx.lineWidth=Math.max(.55,size*.01);ctx.strokeStyle='#c39146';ctx.strokeText(String(frontValue),center[0],center[1]);}
  }
 }
 function drawDie(ctx,die,x,y,size,progress,finished,palette){
@@ -137,10 +201,10 @@ function drawDie(ctx,die,x,y,size,progress,finished,palette){
  const ry=(1-ease)*TAU*(2.2+die.index*.23)+.58;
  const rz=(1-ease)*TAU*(1.4+die.index*.13)+die.index*.38;
  const points=geom.v.map(p=>rotate(p,rx,ry,rz));
- const polys=geom.f.map(ids=>{
+ const polys=geom.f.map((ids,faceIndex)=>{
   const vertices=ids.map(i=>points[i]);
   const normal=normalized(cross(minus(vertices[1],vertices[0]),minus(vertices[2],vertices[0])));
-  return {vertices,normal,z:vertices.reduce((v,p)=>v+p[2],0)/vertices.length};
+  return {vertices,normal,faceIndex,z:vertices.reduce((v,p)=>v+p[2],0)/vertices.length};
  }).filter(f=>f.normal[2]>-.06).sort((a,b)=>a.z-b.z);
  ctx.save();
  ctx.fillStyle='rgba(1,0,10,.44)';
@@ -149,16 +213,22 @@ function drawDie(ctx,die,x,y,size,progress,finished,palette){
  const centerY=y-lift;
  let best=null;
  for(const f of polys){if(!best||f.normal[2]>best.normal[2])best=f;}
+ const dense=die.geometry===100;
+ // Rotate the numbered face assignment with the outcome, so the most
+ // front-facing facet has the exact result and each facet remains unique.
+ const offset=dense&&best?(Number(die.face)-1-best.faceIndex+100)%100:0;
  for(const f of polys){
   const coords=f.vertices.map(p=>project(p,x,centerY,size));
-  drawGemFace(ctx,coords,f.normal,size,palette,die.face,finished&&best===f);
+  const label=dense?1+(f.faceIndex+offset)%100:die.face;
+  const showNumber=finished&&(dense?f.normal[2]>.67:best===f);
+  drawGemFace(ctx,coords,f.normal,size,palette,label,showNumber,dense);
  }
  ctx.restore();
 }
 function diceFor(result){
  const out=[],push=(geometry,face,caption)=>out.push({geometry,face:String(face),caption,index:out.length});
- if(result.mode==='official'&&result.sides===100){
-  result.rolls.slice(0,6).forEach((r)=>{push(10,String(r.tens).padStart(2,'0'),'Tens');push(10,r.ones,'Ones')});
+ if(result.sides===100){
+  result.rolls.slice(0,6).forEach(r=>push(100,r.value,'D100'));
  }else{
   result.rolls.slice(0,12).forEach(r=>{
    push(result.mode==='official'&&result.sides===3?6:result.sides,r.d6||r.value,result.mode==='official'&&result.sides===3?'D6 → D3': 'D'+result.sides);
@@ -182,8 +252,8 @@ export function playTabletopRoll(stage,result,onComplete,skin=null){
   const values=stage.querySelector('[data-dice-landed]');
   if(values){
    values.hidden=false;
-   values.textContent=result.quantity>dice.length/(result.sides===100&&result.mode==='official'?2:1)
-    ?'Showing '+(result.sides===100&&result.mode==='official'?Math.floor(dice.length/2):dice.length)+' of '+result.quantity+' rolls · '+result.total+' total'
+   values.textContent=result.quantity>dice.length
+    ?'Showing '+dice.length+' of '+result.quantity+' rolls · '+result.total+' total'
     :dice.map(d=>d.caption+' '+d.face).join(' · ');
   }
   onComplete();
@@ -193,7 +263,7 @@ export function playTabletopRoll(stage,result,onComplete,skin=null){
   if(start===null)start=now;
   const t=Math.min(1,(now-start)/duration),finished=t>=1;
   const bounds=canvas.getBoundingClientRect(),w=Math.max(1,bounds.width),h=Math.max(1,bounds.height);
-  const ratio=Math.min(2,globalThis.devicePixelRatio||1),pxW=Math.round(w*ratio),pxH=Math.round(h*ratio);
+  const ratio=Math.min(3,globalThis.devicePixelRatio||1),pxW=Math.round(w*ratio),pxH=Math.round(h*ratio);
   if(canvas.width!==pxW||canvas.height!==pxH){canvas.width=pxW;canvas.height=pxH}
   ctx.setTransform(ratio,0,0,ratio,0,0);ctx.clearRect(0,0,w,h);
   const sky=ctx.createLinearGradient(0,0,0,h);
