@@ -44,6 +44,24 @@ function dodeca(){
  return {v,f:orient(v,f)};
 }
 function shape(sides){
+ if(sides===3){
+  // Three numbered rectangular sides; the end caps are unnumbered.
+  const v=[];
+  for(const z of [-.9,.9])for(let i=0;i<3;i++){
+   const a=Math.PI/6+i*TAU/3;
+   v.push([Math.cos(a)*.83,Math.sin(a)*.83,z]);
+  }
+  return {v:v.map(normalized),f:orient(v,[[0,1,4,3],[1,2,5,4],[2,0,3,5],[0,2,1],[3,4,5]])};
+ }
+ if(sides===50){
+  // A real 50-face geometry rather than substituting a ten-sided mesh.
+  const n=25,v=[[0,0,1],[0,0,-1]];
+  for(let i=0;i<n;i++){const a=(i+.5)*TAU/n;v.push([Math.cos(a)*.91,Math.sin(a)*.91,.055*Math.cos(a*2)]);}
+  const f=[];for(let i=0;i<n;i++){
+   f.push([0,2+i,2+(i+1)%n],[1,2+(i+1)%n,2+i]);
+  }
+  return {v:v.map(normalized),f:orient(v,f)};
+ }
  if(sides===4){
   const v=[[1,1,1],[-1,-1,1],[-1,1,-1],[1,-1,-1]].map(normalized);
   return {v,f:orient(v,[[0,1,2],[0,3,1],[0,2,3],[1,3,2]])};
@@ -143,14 +161,21 @@ function drawGemFace(ctx,coords,normal,size,palette,frontValue,showNumber,dense=
  const center=coords.reduce((p,q)=>[p[0]+q[0]/coords.length,p[1]+q[1]/coords.length],[0,0]);
  const bright=Math.max(.18,Math.min(1,.52+normal[0]*.16+normal[1]*.20+normal[2]*.30));
  const base=palette.rgb;
- const light=blend(base,[255,247,232],.42);
- const shadow=blend(base,[9,10,23],.69);
+ const light=blend(base,[255,235,248],.50);
+ const shadow=blend(base,[8,4,22],.77);
  const grd=ctx.createLinearGradient(coords[0][0],coords[0][1],coords[Math.floor(coords.length/2)][0],coords[Math.floor(coords.length/2)][1]);
  grd.addColorStop(0,rgb(blend(shadow,base,.24+bright*.40)));
  grd.addColorStop(.48,rgb(blend(shadow,light,.24+bright*.46)));
  grd.addColorStop(1,rgb(blend(shadow,base,.22+bright*.35)));
  polygon(ctx,coords);ctx.fillStyle=grd;ctx.fill();
  ctx.save();polygon(ctx,coords);ctx.clip();
+ // Crystal-core highlight remains anchored to the die face as it turns.
+ const sheen=ctx.createLinearGradient(center[0]-size*.7,center[1]-size*.9,center[0]+size*.55,center[1]+size*.75);
+ sheen.addColorStop(0,'rgba(255,233,255,.46)');
+ sheen.addColorStop(.25,'rgba(255,210,255,.12)');
+ sheen.addColorStop(.55,'rgba(43,0,71,.03)');
+ sheen.addColorStop(1,'rgba(4,0,16,.32)');
+ ctx.fillStyle=sheen;ctx.fillRect(center[0]-size*1.5,center[1]-size*1.5,size*3,size*3);
  // Layered crystalline facets, replacing the old flat fill.
  coords.forEach((a,i)=>{
   const b=coords[(i+1)%coords.length],tip=[
@@ -168,8 +193,10 @@ function drawGemFace(ctx,coords,normal,size,palette,frontValue,showNumber,dense=
  ctx.restore();
  // Two different metallic highlights give the beveled gold edge a dimensional look.
  polygon(ctx,coords);ctx.lineJoin='round';ctx.strokeStyle='rgba(65,20,40,.95)';ctx.lineWidth=Math.max(2,size*.093);ctx.stroke();
- ctx.strokeStyle=palette.gold;ctx.lineWidth=Math.max(dense ? .9 : 1.8,size*(dense ? .022 : .060));ctx.stroke();
- ctx.strokeStyle='rgba(255,246,195,.88)';ctx.lineWidth=Math.max(dense ? .35 : .75,size*(dense ? .007 : .017));ctx.stroke();
+ ctx.shadowColor='rgba(255,202,84,.42)';ctx.shadowBlur=dense?1.2:Math.max(2,size*.035);
+ ctx.strokeStyle=palette.gold;ctx.lineWidth=Math.max(dense ? .8 : 1.6,size*(dense ? .016 : .046));ctx.stroke();
+ ctx.shadowBlur=0;
+ ctx.strokeStyle='rgba(255,246,194,.92)';ctx.lineWidth=Math.max(dense ? .32 : .7,size*(dense ? .006 : .011));ctx.stroke();
  // Projected filigree at each real corner; every die geometry receives the same ornament treatment.
  if(!dense)coords.forEach((a,i)=>{
   const before=coords[(i-1+coords.length)%coords.length],after=coords[(i+1)%coords.length];
@@ -184,7 +211,7 @@ function drawGemFace(ctx,coords,normal,size,palette,frontValue,showNumber,dense=
  });
  if(showNumber){
   const length=coords.reduce((v,p,i)=>v+Math.hypot(p[0]-coords[(i+1)%coords.length][0],p[1]-coords[(i+1)%coords.length][1]),0)/coords.length;
-  const font=dense?Math.max(6,Math.min(12,length*.72)):Math.max(12,Math.min(size*.63,length*.74));
+  const font=dense?Math.max(6,Math.min(15,length*.66)):Math.max(10,Math.min(size*.57,length*.64));
   ctx.textAlign='center';ctx.textBaseline='middle';
   ctx.font='bold '+Math.round(font)+'px Georgia,serif';
   ctx.shadowColor='rgba(5,1,18,.86)';ctx.shadowBlur=dense?1.5:Math.max(3,size*.10);
@@ -193,6 +220,17 @@ function drawGemFace(ctx,coords,normal,size,palette,frontValue,showNumber,dense=
   ctx.shadowBlur=0;ctx.fillStyle=palette.ink;ctx.fillText(String(frontValue),center[0],center[1]);
   if(!dense){ctx.lineWidth=Math.max(.55,size*.01);ctx.strokeStyle='#c39146';ctx.strokeText(String(frontValue),center[0],center[1]);}
  }
+}
+function winningFace(geom,index,geometry){
+ const vertices=geom.v.map(p=>rotate(p,.35,.58,index*.38));
+ let face=-1,max=-Infinity;
+ geom.f.forEach((ids,i)=>{
+  if(geometry===3&&i>=3)return; // D3 barrel: caps are not numbered.
+  const a=vertices[ids[0]],b=vertices[ids[1]],c=vertices[ids[2]];
+  const normal=normalized(cross(minus(b,a),minus(c,a)));
+  if(normal[2]>max){max=normal[2];face=i}
+ });
+ return face;
 }
 function drawDie(ctx,die,x,y,size,progress,finished,palette){
  const geom=getShape(die.geometry);
@@ -213,14 +251,17 @@ function drawDie(ctx,die,x,y,size,progress,finished,palette){
  const centerY=y-lift;
  let best=null;
  for(const f of polys){if(!best||f.normal[2]>best.normal[2])best=f;}
- const dense=die.geometry===100;
- // Rotate the numbered face assignment with the outcome, so the most
- // front-facing facet has the exact result and each facet remains unique.
- const offset=dense&&best?(Number(die.face)-1-best.faceIndex+100)%100:0;
+ const dense=die.geometry===100||die.geometry===50;
+ // Face numbering is fixed on the solid throughout rotation. The face that
+ // lands toward the player shows the actual independently sampled result.
+ const faces=die.geometry===3?3:geom.f.length;
+ const finalIndex=winningFace(geom,die.index,die.geometry);
+ const offset=((Number(die.face)-1-finalIndex)%faces+faces)%faces;
  for(const f of polys){
   const coords=f.vertices.map(p=>project(p,x,centerY,size));
-  const label=dense?1+(f.faceIndex+offset)%100:die.face;
-  const showNumber=finished&&(dense?f.normal[2]>.67:best===f);
+  const numbered=die.geometry!==3||f.faceIndex<3;
+  const label=1+(f.faceIndex+offset)%faces;
+  const showNumber=numbered&&f.normal[2]>(dense?.40:.18)&&progress>.03;
   drawGemFace(ctx,coords,f.normal,size,palette,label,showNumber,dense);
  }
  ctx.restore();
@@ -231,7 +272,7 @@ function diceFor(result){
   result.rolls.slice(0,6).forEach(r=>push(100,r.value,'D100'));
  }else{
   result.rolls.slice(0,12).forEach(r=>{
-   push(result.mode==='official'&&result.sides===3?6:result.sides,r.d6||r.value,result.mode==='official'&&result.sides===3?'D6 → D3': 'D'+result.sides);
+   push(result.sides,r.value,'D'+result.sides);
   });
  }
  return out;
@@ -263,9 +304,10 @@ export function playTabletopRoll(stage,result,onComplete,skin=null){
   if(start===null)start=now;
   const t=Math.min(1,(now-start)/duration),finished=t>=1;
   const bounds=canvas.getBoundingClientRect(),w=Math.max(1,bounds.width),h=Math.max(1,bounds.height);
-  const ratio=Math.min(3,globalThis.devicePixelRatio||1),pxW=Math.round(w*ratio),pxH=Math.round(h*ratio);
+  // High-density backing buffer: crisp strokes/text on modern displays.
+  const ratio=Math.min(4,Math.max(2,globalThis.devicePixelRatio||1)),pxW=Math.round(w*ratio),pxH=Math.round(h*ratio);
   if(canvas.width!==pxW||canvas.height!==pxH){canvas.width=pxW;canvas.height=pxH}
-  ctx.setTransform(ratio,0,0,ratio,0,0);ctx.clearRect(0,0,w,h);
+  ctx.setTransform(ratio,0,0,ratio,0,0);ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.clearRect(0,0,w,h);
   const sky=ctx.createLinearGradient(0,0,0,h);
   sky.addColorStop(0,palette.background);sky.addColorStop(.5,'#27203d');sky.addColorStop(1,'#100e1d');
   ctx.fillStyle=sky;ctx.fillRect(0,0,w,h);
