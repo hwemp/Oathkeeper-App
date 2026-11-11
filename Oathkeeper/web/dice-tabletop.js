@@ -1,3 +1,4 @@
+import {liveD20Texture} from './d20-face-textures.js';
 // Offline canvas-based three-dimensional tabletop dice. Visuals never generate or alter a result.
 const PHI=(1+Math.sqrt(5))/2;
 const TAU=Math.PI*2;
@@ -284,13 +285,42 @@ function winningFace(geom,index,geometry){
  });
  return face;
 }
+
+function d20AlignedVertices(mesh,faceValue){
+ const f=mesh.f[Math.max(0,Math.min(19,(Math.trunc(Number(faceValue))||1)-1))];
+ const A=mesh.v[f[0]],B=mesh.v[f[1]],C=mesh.v[f[2]];
+ const normal=normalized(cross(minus(B,A),minus(C,A))),target=[0,0,1];
+ const axis=cross(normal,target),cos=Math.max(-1,Math.min(1,dot(normal,target)));
+ const n=normalized(Math.hypot(...axis)>.00001?axis:[1,0,0]),angle=Math.acos(cos);
+ const turn=p=>{const q=cross(n,p),k=dot(n,p),c=Math.cos(angle),si=Math.sin(angle);return p.map((v,j)=>v*c+q[j]*si+n[j]*k*(1-c))};
+ const moved=mesh.v.map(turn),center=f.reduce((a,i)=>a.map((v,j)=>v+moved[i][j]/3),[0,0,0]);
+ const apex=minus(moved[f[0]],center);
+ return moved.map(p=>rotate(p,0,0,Math.PI/2-Math.atan2(apex[1],apex[0])));
+}
+function drawD20TexturedFace(ctx,coords,texture,faceIndex,size,palette){
+ const cell=texture.naturalWidth/5;
+ const U=[[.5*cell,.06*cell],[.07*cell,.9*cell],[.93*cell,.9*cell]];
+ const P=coords;
+ const den=(U[1][0]-U[0][0])*(U[2][1]-U[0][1])-(U[2][0]-U[0][0])*(U[1][1]-U[0][1]);
+ if(Math.abs(den)<1e-6)return;
+ const a=((P[1][0]-P[0][0])*(U[2][1]-U[0][1])-(P[2][0]-P[0][0])*(U[1][1]-U[0][1]))/den;
+ const c=((P[2][0]-P[0][0])*(U[1][0]-U[0][0])-(P[1][0]-P[0][0])*(U[2][0]-U[0][0]))/den;
+ const b=((P[1][1]-P[0][1])*(U[2][1]-U[0][1])-(P[2][1]-P[0][1])*(U[1][1]-U[0][1]))/den;
+ const d=((P[2][1]-P[0][1])*(U[1][0]-U[0][0])-(P[1][1]-P[0][1])*(U[2][0]-U[0][0]))/den;
+ const e=P[0][0]-a*U[0][0]-c*U[0][1],f=P[0][1]-b*U[0][0]-d*U[0][1];
+ ctx.save();polygon(ctx,coords);ctx.clip();ctx.transform(a,b,c,d,e,f);
+ ctx.drawImage(texture,(faceIndex%5)*cell,Math.floor(faceIndex/5)*cell,cell,cell,0,0,cell,cell);
+ ctx.restore();polygon(ctx,coords);ctx.lineJoin='round';
+ ctx.strokeStyle='rgba(52,20,42,.96)';ctx.lineWidth=Math.max(1.2,size*.038);ctx.stroke();
+ ctx.strokeStyle=palette.gold;ctx.lineWidth=Math.max(.8,size*.018);ctx.stroke();
+}
 function drawDie(ctx,die,x,y,size,progress,finished,palette,artwork){
  const geom=getShape(die.geometry);
  const ease=1-Math.pow(1-progress,4);
  const rx=(1-ease)*TAU*(2.8+die.index*.19)+.35;
  const ry=(1-ease)*TAU*(2.2+die.index*.23)+.58;
  const rz=(1-ease)*TAU*(1.4+die.index*.13)+die.index*.38;
- const points=geom.v.map(p=>rotate(p,rx,ry,rz));
+ const points=die.geometry===20?d20AlignedVertices(geom,die.face).map(p=>rotate(p,(1-ease)*TAU*(2.8+die.index*.19),(1-ease)*TAU*(2.2+die.index*.23),(1-ease)*TAU*(1.4+die.index*.13))):geom.v.map(p=>rotate(p,rx,ry,rz));
  const polys=geom.f.map((ids,faceIndex)=>{
   const vertices=ids.map(i=>points[i]);
   const normal=normalized(cross(minus(vertices[1],vertices[0]),minus(vertices[2],vertices[0])));
@@ -308,13 +338,15 @@ function drawDie(ctx,die,x,y,size,progress,finished,palette,artwork){
  // lands toward the player shows the actual independently sampled result.
  const faces=die.geometry===3?3:geom.f.length;
  const finalIndex=winningFace(geom,die.index,die.geometry);
- const offset=((Number(die.face)-1-finalIndex)%faces+faces)%faces;
+ const offset=die.geometry===20?0:((Number(die.face)-1-finalIndex)%faces+faces)%faces;
+ const uvTexture=die.geometry===20?liveD20Texture({slug:palette.slug}):null;
  for(const f of polys){
   const coords=f.vertices.map(p=>project(p,x,centerY,size));
   const numbered=die.geometry!==3||f.faceIndex<3;
   const label=1+(f.faceIndex+offset)%faces;
   const showNumber=numbered&&f.normal[2]>(dense?.40:.18)&&progress>.03;
-  drawGemFace(ctx,coords,f.normal,size,palette,label,showNumber,dense,artwork);
+  if(uvTexture)drawD20TexturedFace(ctx,coords,uvTexture,f.faceIndex,size,palette);
+  else drawGemFace(ctx,coords,f.normal,size,palette,label,showNumber,dense,artwork);
  }
  ctx.restore();
 }
