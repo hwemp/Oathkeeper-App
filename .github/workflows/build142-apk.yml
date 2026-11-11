@@ -110,6 +110,11 @@ jobs:
           python scripts/repair-default-launcher.py
           python scripts/generate-free-icons.py
           test "$(find android/app/src/main/res/mipmap-anydpi-v26 -maxdepth 1 -name 'oathkeeper_icon_*.xml' | wc -l)" -eq 10
+          for number in 01 02 04 05 06 07 08 11 12 14; do
+            test -s "android/app/src/main/res/mipmap-anydpi-v26/oathkeeper_icon_${number}.xml"
+            test -s "android/app/src/main/res/mipmap-nodpi/oathkeeper_icon_${number}_foreground.png"
+            test -s "android/app/src/main/res/mipmap-nodpi/oathkeeper_icon_${number}_background.png"
+          done
       - name: Sync Capacitor Android application
         run: npx cap sync android
       - name: Build debug-signed Android APK
