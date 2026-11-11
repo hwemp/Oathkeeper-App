@@ -5,7 +5,7 @@ The selectable Android aliases use adaptive icons on Android 8+ instead of
 passing full-bleed square bitmaps to a Samsung/Pixel launcher mask. This keeps
 the entire design within the adaptive safe zone. iOS receives the matching
 centered layout, and older Android versions receive padded legacy PNGs.
-The original store previews remain untouched and the original launcher icon
+The original source artwork remains untouched and the original launcher icon
 is still the default (see repair-default-launcher.py).
 """
 from pathlib import Path
@@ -91,7 +91,11 @@ def make_icon(number, slug):
         raise FileNotFoundError(f"Missing approved art: {slug} ({source})")
     with Image.open(source) as loaded:
         art = normalized_art(loaded, number)
-    # Save an individual cleaned Store mockup from precisely this same source.\n    # Both native launcher and Store preview use these pixels, never a shared icon.\n    art.resize((512, 512), Image.Resampling.LANCZOS).save(\n        WEB / f"launcher-{number:02d}.webp", "WEBP", quality=96, method=6)\n    ANDROID.mkdir(parents=True, exist_ok=True)
+    # Save each dedicated clean preview from exactly this icon source.
+    # Store artwork and matching Android/iOS launcher pixels remain paired.
+    art.resize((512, 512), Image.Resampling.LANCZOS).save(
+        WEB / f"launcher-{number:02d}.webp", "WEBP", quality=96, method=6)
+    ANDROID.mkdir(parents=True, exist_ok=True)
     ADAPTIVE.mkdir(parents=True, exist_ok=True)
 
     # Android 8+ uses these resources from mipmap-anydpi-v26. The launcher
