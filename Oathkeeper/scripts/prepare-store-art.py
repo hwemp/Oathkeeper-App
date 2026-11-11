@@ -7,6 +7,7 @@ would still be needed to reproduce fine details absent from the source.
 """
 from pathlib import Path
 import hashlib
+import base64
 from PIL import Image, ImageFilter
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -20,6 +21,21 @@ def enhanced_display(image):
     image = image.resize((image.width * 3, image.height * 3), Image.Resampling.LANCZOS)
     return image.filter(ImageFilter.UnsharpMask(radius=1, percent=65, threshold=3))
 
+
+def svg_frame(source, destination):
+    """Standalone SVG containing the exact approved raster-painted art.
+    SVG viewBox preserves proportion; embedded WebP is not vector-traced detail.
+    """
+    with Image.open(source) as original:
+        width, height = original.size
+    encoded = base64.b64encode(source.read_bytes()).decode("ascii")
+    destination.write_text(
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" '
+        f'viewBox="0 0 {width} {height}" preserveAspectRatio="xMidYMid meet">'
+        f'<image x="0" y="0" width="{width}" height="{height}" '
+        f'preserveAspectRatio="xMidYMid meet" href="data:image/webp;base64,{encoded}"/>'
+        '</svg>\n', encoding="utf-8"
+    )
 
 def main():
     dice_dir = ART / "store-dice"
@@ -42,8 +58,10 @@ def main():
         if signature in hashes:
             raise RuntimeError(f"Duplicate dice artwork: {slug}")
         hashes.add(signature)
-        enhanced_display(cell).save(dice_dir / f"{slug}.webp", "WEBP", quality=95, method=6)
-    if len(list(dice_dir.glob("*.webp"))) != 10:
+        display = dice_dir / f"{slug}.webp"
+        enhanced_display(cell).save(display, "WEBP", quality=95, method=6)
+        svg_frame(display, dice_dir / f"{slug}.svg")
+    if len(list(dice_dir.glob("*.svg"))) != 10 or len(list(dice_dir.glob("*.webp"))) != 10:
         raise RuntimeError("All ten independent dice images must exist")
 
     sources = sorted((ART / "store-backgrounds").glob("*.webp"))
@@ -52,11 +70,13 @@ def main():
     for path in sources:
         with Image.open(path) as opened:
             master = opened.convert("RGB")
-        enhanced_display(master).save(bg_dir / path.name, "WEBP", quality=95, method=6)
+        display = bg_dir / path.name
+        enhanced_display(master).save(display, "WEBP", quality=95, method=6)
+        svg_frame(display, bg_dir / (path.stem + ".svg"))
         if master.width < 1024:
             print(f"Original resolution limit: {path.name} {master.width}x{master.height} "
                   "(display derivative is not a new true-HD source)")
-    if len(list(bg_dir.glob("*.webp"))) != 10:
+    if len(list(bg_dir.glob("*.svg"))) != 10 or len(list(bg_dir.glob("*.webp"))) != 10:
         raise RuntimeError("All ten display background images must exist")
     print("Verified: 10 isolated dice images, 10 enhanced display backgrounds, "
           "and no source atlas modification")

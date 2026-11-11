@@ -37,8 +37,8 @@ test('all ten Store items still display their own approved source images', () =>
 
 test('both bundle offers use existing high-resolution independent art, never the atlas', () => {
   const html = storePage('elvenleaf', {category:'bundles'});
-  assert.match(html, /class="bundle-offer-gem" src="\/art\/store-dice\/celestial.webp"/);
-  assert.match(html, /class="bundle-offer-gem" src="\/art\/store-dice\/astral.webp"/);
+  assert.match(html, /class="bundle-offer-gem" src="\/art\/store-dice\/celestial.svg"/);
+  assert.match(html, /class="bundle-offer-gem" src="\/art\/store-dice\/astral.svg"/);
   assert.equal((html.match(/class="bundle-offer-gem"/g) || []).length, 2);
   assert.equal((html.match(/class="bundle-dice-art"/g) || []).length, 10);
   assert.equal((html.match(/class="bundle-background-pick/g) || []).length, 0); // class names include bundle-pick first

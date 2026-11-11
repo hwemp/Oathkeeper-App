@@ -54,7 +54,7 @@ const assert=require('node:assert/strict');
         await page.screenshot({path:`preview-output/store-${category}-${width}.png`,fullPage:true});
       };
       await visual('dice','.store-dice-tile');
-      assert.equal(await page.locator('.store-dice-tile-art').first().getAttribute('src'),'/art/store-dice/dragonfire.webp','Dice tile must use independent approved artwork');
+      assert.equal(await page.locator('.store-dice-tile-art').first().getAttribute('src'),'/art/store-dice/dragonfire.svg','Dice tile must use independent approved artwork');
       await page.locator('[data-store-dice="frostborne"]').click();
       assert.match(await page.locator('.store-preview-image').getAttribute('aria-label'),/Frostborne/);
       await page.locator('[data-store-category="backgrounds"]').click();

@@ -55,3 +55,25 @@ export function liveD20Texture(skin){
  const image=CACHE.get(slug);
  return image?.complete&&image?.naturalWidth===2000?image:null;
 }
+
+/* Animation-only SVG die surface; no static Store preview artwork on 3D faces. */
+export function dieSurfaceSvg(slug='royal-purple'){
+ const [base,highlight,trim,shadow,motif]=THEMES[slug]||THEMES['royal-purple'];
+ return `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512"><defs>
+ <radialGradient id="material" cx="37%" cy="28%" r="85%"><stop stop-color="${highlight}"/><stop offset=".43" stop-color="${base}"/><stop offset="1" stop-color="${shadow}"/></radialGradient></defs>
+ <rect width="512" height="512" fill="url(#material)"/>
+ <path d="M0 0L512 512M512 0L0 512M256 0V512M0 256H512" stroke="${trim}" stroke-opacity=".22" stroke-width="9"/>
+ <path d="M24 24H488V488H24Z M64 64L448 448M448 64L64 448" stroke="${trim}" stroke-opacity=".34" stroke-width="6" fill="none"/>
+ <g transform="translate(16 118) scale(1.2)" stroke="${trim}" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none">${ORNAMENTS[motif]}</g></svg>`;
+}
+const DIE_FACE_CACHE=new Map();
+export function liveDieFaceTexture(skin){
+ const slug=skin?.slug&&THEMES[skin.slug]?skin.slug:'royal-purple';
+ if(!DIE_FACE_CACHE.has(slug)&&typeof globalThis.Image==='function'){
+  const image=new globalThis.Image();image.decoding='async';
+  image.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(dieSurfaceSvg(slug));
+  DIE_FACE_CACHE.set(slug,image);
+ }
+ const image=DIE_FACE_CACHE.get(slug);
+ return image?.complete&&image?.naturalWidth===512?image:null;
+}

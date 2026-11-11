@@ -1,4 +1,4 @@
-import {liveD20Texture} from './d20-face-textures.js';
+import {liveD20Texture,liveDieFaceTexture} from './d20-face-textures.js';
 // Offline canvas-based three-dimensional tabletop dice. Visuals never generate or alter a result.
 const PHI=(1+Math.sqrt(5))/2;
 const TAU=Math.PI*2;
@@ -125,6 +125,12 @@ const referenceCrops=Object.freeze({
   20:[880,653,109,100],50:[1037,653,103,99],100:[1183,654,109,99]
 });
 function getArtwork(skin,sides){
+ // For every purchased skin, project its own SVG animated face material,
+ // never the Store thumbnail containing a static group of dice.
+ if(skin?.slug){
+  const image=liveDieFaceTexture(skin);
+  return image?{image,rectangle:[0,0,512,512]}:null;
+ }
  const selected=skin && Number.isInteger(skin.atlasIndex)&&skin.atlasIndex>=0&&skin.atlasIndex<10;
  const src=selected?(skin.imagePath||'/art/oathkeeper-dice-store-atlas.webp'):'/art/dice-reference.png';
  if(!diceArtImages.has(src) && typeof globalThis.Image==='function'){
