@@ -1,16 +1,16 @@
-name: Build Oathkeeper 155 - Approved Fantasy Backgrounds APK
+name: Build Oathkeeper 156 - Approved Fantasy Backgrounds APK
 on:
   push:
     branches: [main]
     paths:
       - 'Oathkeeper/**'
       - '.build142/payload.part*.bin'
-      - '.github/workflows/build155-backgrounds-apk.yml'
+      - '.github/workflows/build156-backgrounds-apk.yml'
   workflow_dispatch:
 permissions:
   contents: write
 concurrency:
-  group: oathkeeper-build155-${{ github.ref }}
+  group: oathkeeper-build156-${{ github.ref }}
   cancel-in-progress: false
 jobs:
   build:
@@ -69,7 +69,7 @@ jobs:
           expected = [f'payload.part{i:02d}.bin' for i in range(10)]
           if [p.name for p in chunks] != expected:
               raise RuntimeError('Approved illustration archive chunks are incomplete')
-          archive = Path('/tmp/oathkeeper-reference-art-155.zip')
+          archive = Path('/tmp/oathkeeper-reference-art-156.zip')
           digest = hashlib.sha256()
           with archive.open('wb') as dest:
               for part in chunks:
@@ -106,7 +106,7 @@ jobs:
           chmod +x android/gradlew
           cd android
           ./gradlew assembleDebug --no-daemon --stacktrace
-      - name: Verify compiled APK and prepare Build 155 file
+      - name: Verify compiled APK and prepare Build 156 file
         run: |
           APK=android/app/build/outputs/apk/debug/app-debug.apk
           unzip -Z1 "$APK" | grep -F 'assets/public/art/store-icons/preview-01.webp'
@@ -121,12 +121,12 @@ jobs:
           "$BUILD_TOOLS/aapt" dump resources "$APK" | grep -F 'oathkeeper_icon_fg_01'
           "$BUILD_TOOLS/aapt" dump badging "$APK" | sed -n '1,8p'
           mkdir -p output
-          cp "$APK" output/Oathkeeper-Build-155-Backgrounds.apk
-          (cd output && sha256sum Oathkeeper-Build-155-Backgrounds.apk > SHA256SUMS.txt)
+          cp "$APK" output/Oathkeeper-Build-156-Backgrounds.apk
+          (cd output && sha256sum Oathkeeper-Build-156-Backgrounds.apk > SHA256SUMS.txt)
       - name: Upload Android test build
         uses: actions/upload-artifact@v4
         with:
-          name: Oathkeeper-Build-155-Backgrounds
+          name: Oathkeeper-Build-156-Backgrounds
           path: Oathkeeper/output/*
           if-no-files-found: error
           retention-days: 30
@@ -134,6 +134,6 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          TAG="oathkeeper-build155-${{ github.run_number }}-${{ github.run_attempt }}"
-          gh release create "$TAG" output/* --target "${{ github.sha }}" --title "Oathkeeper Build 155 - Scalable Backgrounds" --prerelease --latest=false --notes "Debug-signed Android testing build generated from latest main. Contains ten individual 1600x1125 scalable fantasy SVG Store background scenes, including only one castle. Background selection thumbnails and previews share source assets and fitted proportions; dice sets, launcher icons, bundle pricing, and payment logic are unchanged. Backup character data before installing a different debug-signed APK."
+          TAG="oathkeeper-build156-${{ github.run_number }}-${{ github.run_attempt }}"
+          gh release create "$TAG" output/* --target "${{ github.sha }}" --title "Oathkeeper Build 156 - Scalable Backgrounds" --prerelease --latest=false --notes "Debug-signed Android testing build generated from latest main. Contains ten individual 1600x1125 scalable fantasy SVG Store background scenes, including only one castle. Background selection thumbnails and previews share source assets and fitted proportions; dice sets, launcher icons, bundle pricing, and payment logic are unchanged. Backup character data before installing a different debug-signed APK."
 
