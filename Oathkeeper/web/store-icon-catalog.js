@@ -9,9 +9,9 @@ export const APPROVED_FREE_ICON_CONCEPTS = Object.freeze(items.map(([selection,n
  Object.freeze({
   selection,slug:'icon-'+String(selection).padStart(2,'0'),name,
   iosIconName:'AppIcon-'+String(selection).padStart(2,'0'),
-  // Render the user-approved source SVG in the Store. The embedded WebP is
-  // byte-identical to the native Android legacy icon and the iOS source.
-  imagePath:'/art/store-icons/transfer-'+String(selection).padStart(2,'0')+'.svg',
+  // App Store display uses the exact SVG files in Oathkeeper-10-SVG-Icons.zip.
+  // Only Store thumbnails/previews change; installed launcher resources do not.
+  imagePath:'/art/store-icons/store-'+String(selection).padStart(2,'0')+'.svg',
   // Android masks adaptive foreground/background layers; show that layout separately.
   launcherPreviewPath:'/art/store-icons/preview-'+String(selection).padStart(2,'0')+'.webp',
   masterImagePath:'/art/store-icons/icon-'+String(selection).padStart(2,'0')+'.webp',
