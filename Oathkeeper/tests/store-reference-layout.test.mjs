@@ -8,7 +8,7 @@ test('approved store reference: exact atlas grid, without overscale/crop transfo
   const approved = css.slice(css.indexOf('/* Approved 10 Nov 2026 Oathkeeper store references.'));
   assert(approved.includes('background-size:500% 200%!important'));
   assert.doesNotMatch(approved,/565% 226%|scale\(1\.15\)|translateY\(-5%\)/);
-  assert.match(approved,/\.store-background-preview-image\{[\s\S]*?object-fit:contain!important/);
+  assert.match(approved,/\.store-background-preview-image\{[\s\S]*?object-fit:cover!important/);
   assert.match(approved,/\.store-icon-preview-image\{[\s\S]*?object-fit:contain!important/);
   assert.match(approved,/\.store-preview-pane,\.store-background-preview-pane,\.store-icon-preview-pane\{[\s\S]*?grid-template-columns:minmax\(0,1fr\)/);
 });
@@ -23,7 +23,7 @@ test('approved store reference: category artwork and full-size previews', () => 
     assert.match(page,/class="store-themed-footer"/);
   }
   const backgrounds=storePage('elvenleaf',{category:'backgrounds'});
-  assert.match(backgrounds,/style="--store-preview-backdrop:url\(&quot;\/art\/store-backgrounds\/moonlit-citadel.webp&quot;\)"/);
+  assert.match(backgrounds,/style="--store-preview-backdrop:url\(&quot;\/art\/store-backgrounds\/moonlit-citadel.svg&quot;\)"/);
   assert.match(backgrounds,/class="store-background-preview-title">Moonlit Citadel</);
   const icons=storePage('elvenleaf',{category:'icons'});
   assert.match(icons,/App Icons Collection/);
@@ -35,5 +35,5 @@ test('store footer is below all artwork rather than obscuring the preview',async
  assert.match(css,/\.store-themed-footer\{[\s\S]*?position:static!important/);
  assert.match(css,/body:has\(\.store-page\)>header/);
  assert.match(css,/body:has\(\.store-page\)>main>#nav/);
- assert.match(css,/\.store-background-preview-media\{[\s\S]*?aspect-ratio:508\/360!important/);
+ assert.match(css,/\.store-background-preview-media\{[\s\S]*?aspect-ratio:64\/45!important/);
 });

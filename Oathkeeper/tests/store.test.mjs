@@ -61,8 +61,10 @@ test('background catalog has ten distinct bundled images with one-tap previews',
   for(const item of SELECTED_BACKGROUNDS){
     const image=await readFile(new URL('../web/public'+item.imagePath,import.meta.url));
     assert(image.length>10000);
-    assert.equal(image.toString('ascii',0,4),'RIFF');
-    assert.equal(image.toString('ascii',8,12),'WEBP');
+    const artwork=image.toString('utf8');
+    assert.match(artwork,/^<\?xml version="1\.0"/);
+    assert.match(artwork,/<svg[^>]+viewBox="0 0 1600 1125"/);
+    assert.match(artwork,/<\/svg>$/);
     const html=storePage('elvenleaf',{category:'backgrounds',backgroundSlug:item.slug});
     assertOneTapSelection(html,'backgrounds');
     assert.equal((html.match(/data-store-background=/g)||[]).length,10);
@@ -151,7 +153,7 @@ test('preview sizing remains centered and selections do not alter dice or purcha
   const css=await readFile(new URL('../web/fantasy.css',import.meta.url),'utf8');
   assert.match(css,/grid-template-columns:repeat\(5,minmax\(0,1fr\)\)/);
   assert.match(css,/oathkeeper-dice-store-atlas\.webp/);
-  assert.match(css,/\.store-background-preview-image\{[^}]*object-fit:contain;object-position:center;/);
+  assert.match(css,/\.store-background-preview-image\{[^}]*object-fit:cover;object-position:center;/);
   assert.match(css,/\.store-icon-preview-image\{[^}]*object-fit:contain;object-position:center/);
   const app=await readFile(new URL('../web/app.js',import.meta.url),'utf8');
   assert.match(app,/c\.storePreviewBackground=selected;save\(\);render\(\);return/);
