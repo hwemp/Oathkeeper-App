@@ -1,0 +1,155 @@
+name: Build Oathkeeper 150 - Exact In-Store SVG Icons APK
+on:
+  push:
+    branches: [build-150]
+    paths:
+      - 'Oathkeeper/**'
+      - '.build142/payload.part*.bin'
+      - '.github/workflows/build150-apk.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: oathkeeper-build150-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: Oathkeeper
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: Oathkeeper/package-lock.json
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify original launcher generation and exact Store SVG artwork
+        run: |
+          python -m pip install --disable-pip-version-check Pillow
+          python scripts/repair-default-launcher.py
+          python scripts/generate-free-icons.py
+          python scripts/prepare-store-art.py
+          test "$(git hash-object web/public/art/store-icons/store-01.svg)" = "ddb08dfe6c2b5ccf245a3e491cb95d987292d365"
+          test "$(git hash-object web/public/art/store-icons/store-02.svg)" = "87dfea3f4ac61a495317e68cf1d2baddf9b42673"
+          test "$(git hash-object web/public/art/store-icons/store-04.svg)" = "c657ebcf672a95e382a94e3e0985c1147c2b5915"
+          test "$(git hash-object web/public/art/store-icons/store-05.svg)" = "2a131634475c34230742548a008b4c126f900b12"
+          test "$(git hash-object web/public/art/store-icons/store-06.svg)" = "6852be64b8a167dbd11c1ddb15fc51f248efa310"
+          test "$(git hash-object web/public/art/store-icons/store-07.svg)" = "987e0f3ac7dfd57106e200d351851e8ed381025c"
+          test "$(git hash-object web/public/art/store-icons/store-08.svg)" = "901bd844117036aaf9a9c57cdb5320c677a68b3a"
+          test "$(git hash-object web/public/art/store-icons/store-11.svg)" = "c1d1d2a241618d345f5678e100d89fb2d553fb7b"
+          test "$(git hash-object web/public/art/store-icons/store-12.svg)" = "66223513680c9fc9508c1efd1b00492a85925ce7"
+          test "$(git hash-object web/public/art/store-icons/store-14.svg)" = "6e6da60498111728da52fd89dc214bd9d730ed1d"
+          for number in 01 02 04 05 06 07 08 11 12 14; do
+            cmp "web/public/art/store-icons/icon-${number}.webp" "android/app/src/main/res/mipmap-nodpi/oathkeeper_icon_${number}.webp"
+            grep -Fq "@drawable/oathkeeper_icon_fg_${number}" "android/app/src/main/res/mipmap-anydpi-v26/oathkeeper_icon_${number}.xml"
+            grep -Fq "@drawable/oathkeeper_icon_bg_${number}" "android/app/src/main/res/mipmap-anydpi-v26/oathkeeper_icon_${number}.xml"
+            test -s "web/public/art/store-icons/preview-${number}.webp"
+            test -s "web/public/art/store-icons/transfer-${number}.svg"
+            test -s "android/app/src/main/res/drawable-nodpi/oathkeeper_icon_fg_${number}.png"
+          done
+      - name: Build and test CURRENT web source (never replace with old compiled app)
+        run: |
+          npm ci
+          npm run check
+          npm run typecheck
+          npm test
+          npm run catalog
+          npm run build
+          grep -R -Fq 'data-store-build' dist/assets
+          grep -R -Fq 'storeDiceTabletop' dist/assets
+          grep -R -Fq 'art/store-icons/store-' dist/assets
+          for slug in dragonfire frostborne elvenleaf celestial abyssal gold-forged necrotic astral oceanic sunfire; do
+            test -s "dist/art/store-dice/${slug}.webp"
+          done
+          test "$(find dist/art/store-backgrounds-hd -name '*.webp' | wc -l)" -eq 10
+      - name: Retain only missing approved illustration files from archived Build 142
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib, shutil, stat, zipfile
+
+          root = Path('..').resolve()
+          chunks = sorted((root / '.build142').glob('payload.part*.bin'))
+          expected = [f'payload.part{i:02d}.bin' for i in range(10)]
+          if [p.name for p in chunks] != expected:
+              raise RuntimeError('Approved illustration archive chunks are incomplete')
+          archive = Path('/tmp/oathkeeper-reference-art-150.zip')
+          digest = hashlib.sha256()
+          with archive.open('wb') as dest:
+              for part in chunks:
+                  with part.open('rb') as file:
+                      while chunk := file.read(1024 * 1024):
+                          digest.update(chunk)
+                          dest.write(chunk)
+          if digest.hexdigest() != 'c83a657ab68b900b724b75c45b6d5d2256e69192a1d62e922279422fb0fb0b05':
+              raise RuntimeError('Artwork archive checksum differs from approved payload')
+          restored = []
+          with zipfile.ZipFile(archive) as source:
+              for item in source.infolist():
+                  # Never replace the up-to-date index.html, CSS, or JS with Build 142.
+                  if not item.filename.startswith('web-assets/art/exact-store/'):
+                      continue
+                  path = Path(item.filename).relative_to('web-assets')
+                  if path.is_absolute() or '..' in path.parts or stat.S_ISLNK(item.external_attr >> 16):
+                      raise RuntimeError('Unsafe archive entry')
+                  output = Path('dist') / path
+                  if item.is_dir() or output.exists():
+                      continue
+                  output.parent.mkdir(parents=True,exist_ok=True)
+                  with source.open(item) as reader, output.open('wb') as writer:
+                      shutil.copyfileobj(reader,writer)
+                  restored.append(str(path))
+          for n in ('01','02','04','05','06','07','08','11','12','14'):
+              if not (Path('dist/art/store-icons') / ('preview-'+n+'.webp')).is_file():
+                  raise RuntimeError('Built Store is missing launcher preview '+n)
+          print('Kept latest compiled web application; restored only absent exact-store illustrations:',len(restored))
+          PY
+      - name: Sync Android and assemble debug-signed APK
+        run: |
+          npx cap sync android
+          chmod +x android/gradlew
+          cd android
+          ./gradlew assembleDebug --no-daemon --stacktrace
+      - name: Verify compiled APK and prepare Build 150 file
+        run: |
+          APK=android/app/build/outputs/apk/debug/app-debug.apk
+          unzip -Z1 "$APK" | grep -F 'assets/public/art/store-icons/preview-01.webp'
+          for id in 01 02 04 05 06 07 08 11 12 14; do
+            unzip -Z1 "$APK" | grep -F "assets/public/art/store-icons/store-${id}.svg"
+          done
+          unzip -Z1 "$APK" | grep -F 'assets/public/art/store-dice/elvenleaf.webp'
+          unzip -Z1 "$APK" | grep -F 'assets/public/art/store-backgrounds-hd/moonlit-citadel.webp'
+          for n in 01 02 04 05 06 07 08 11 12 14; do
+            unzip -Z1 "$APK" | grep -F "assets/public/art/store-icons/transfer-${n}.svg"
+          done
+          BUILD_TOOLS=$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -n 1)
+          "$BUILD_TOOLS/apksigner" verify --verbose "$APK"
+          "$BUILD_TOOLS/aapt" dump resources "$APK" | grep -F 'oathkeeper_icon_fg_01'
+          "$BUILD_TOOLS/aapt" dump badging "$APK" | sed -n '1,8p'
+          mkdir -p output
+          cp "$APK" output/Oathkeeper-Build-150-Icon-Repair.apk
+          (cd output && sha256sum Oathkeeper-Build-150-Icon-Repair.apk > SHA256SUMS.txt)
+      - name: Upload Android test build
+        uses: actions/upload-artifact@v4
+        with:
+          name: Oathkeeper-Build-150-Icon-Repair
+          path: Oathkeeper/output/*
+          if-no-files-found: error
+          retention-days: 30
+      - name: Publish downloadable test build
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="oathkeeper-build150-${{ github.run_number }}-${{ github.run_attempt }}"
+          gh release create "$TAG" output/* --target "${{ github.sha }}" --title "Oathkeeper Build 150 - Full Updated SVG Icon Test APK" --prerelease --latest=false --notes "Debug-signed Android test build. This incremental build changes only the ten in-app App Icons gallery images to their byte-exact user-provided SVGs, using full-image contain fitting. Existing launcher icons, dice, backgrounds, payment logic, and other UI are unchanged from Build 149. SVG documents embed the original WebP artwork; they are not vector-traced artwork. The current source is compiled, not overwritten with the archived Build 142 web app. Physical-device launcher masking and update signing still require installation tests. Back up character data before replacing any earlier debug-signed APK."
+
