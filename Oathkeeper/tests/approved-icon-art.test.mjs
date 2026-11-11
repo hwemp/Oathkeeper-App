@@ -44,7 +44,7 @@ test('One Store source feeds centered adaptive foreground, Android preview and i
  const script=(await read('../scripts/generate-free-icons.py')).toString('utf8');
  assert.match(script,/src = WEB \/ f"icon-\{number:02d\}\.webp"/);
  assert.match(script,/shutil\.copyfile\(src, native\)/);
- assert.match(script,/ART_RATIO = 0\.46/);
+ assert.match(script,/ART_RATIO = 0\.66/);
  assert.match(script,/foreground\.paste\(centered, position\)/);
  assert.match(script,/scene\.alpha_composite\(foreground\)/);
  assert.match(script,/preview_path = WEB \/ f"preview-\{number:02d\}\.webp"/);
