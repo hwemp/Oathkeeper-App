@@ -1,0 +1,132 @@
+name: Build Oathkeeper 147 - Native Icon Parity APK
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'Oathkeeper/**'
+      - '.build142/payload.part*.bin'
+      - '.github/workflows/build147-apk.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: oathkeeper-build147-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: Oathkeeper
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: Oathkeeper/package-lock.json
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Generate Android-safe launcher layers and exact derived previews
+        run: |
+          python -m pip install --disable-pip-version-check Pillow
+          python scripts/repair-default-launcher.py
+          python scripts/generate-free-icons.py
+          for number in 01 02 04 05 06 07 08 11 12 14; do
+            cmp "web/public/art/store-icons/icon-${number}.webp" "android/app/src/main/res/mipmap-nodpi/oathkeeper_icon_${number}.webp"
+            grep -Fq "@drawable/oathkeeper_icon_fg_${number}" "android/app/src/main/res/mipmap-anydpi-v26/oathkeeper_icon_${number}.xml"
+            grep -Fq "@drawable/oathkeeper_icon_bg_${number}" "android/app/src/main/res/mipmap-anydpi-v26/oathkeeper_icon_${number}.xml"
+            test -s "web/public/art/store-icons/preview-${number}.webp"
+            test -s "web/public/art/store-icons/transfer-${number}.svg"
+            test -s "android/app/src/main/res/drawable-nodpi/oathkeeper_icon_fg_${number}.png"
+          done
+      - name: Build and test CURRENT web source (never replace with old compiled app)
+        run: |
+          npm ci
+          npm run check
+          npm run typecheck
+          npm test
+          npm run catalog
+          npm run build
+      - name: Retain only missing approved illustration files from archived Build 142
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib, shutil, stat, zipfile
+
+          root = Path('..').resolve()
+          chunks = sorted((root / '.build142').glob('payload.part*.bin'))
+          expected = [f'payload.part{i:02d}.bin' for i in range(10)]
+          if [p.name for p in chunks] != expected:
+              raise RuntimeError('Approved illustration archive chunks are incomplete')
+          archive = Path('/tmp/oathkeeper-reference-art-147.zip')
+          digest = hashlib.sha256()
+          with archive.open('wb') as dest:
+              for part in chunks:
+                  with part.open('rb') as file:
+                      while chunk := file.read(1024 * 1024):
+                          digest.update(chunk)
+                          dest.write(chunk)
+          if digest.hexdigest() != 'c83a657ab68b900b724b75c45b6d5d2256e69192a1d62e922279422fb0fb0b05':
+              raise RuntimeError('Artwork archive checksum differs from approved payload')
+          restored = []
+          with zipfile.ZipFile(archive) as source:
+              for item in source.infolist():
+                  # Never replace the up-to-date index.html, CSS, or JS with Build 142.
+                  if not item.filename.startswith('web-assets/art/exact-store/'):
+                      continue
+                  path = Path(item.filename).relative_to('web-assets')
+                  if path.is_absolute() or '..' in path.parts or stat.S_ISLNK(item.external_attr >> 16):
+                      raise RuntimeError('Unsafe archive entry')
+                  output = Path('dist') / path
+                  if item.is_dir() or output.exists():
+                      continue
+                  output.parent.mkdir(parents=True,exist_ok=True)
+                  with source.open(item) as reader, output.open('wb') as writer:
+                      shutil.copyfileobj(reader,writer)
+                  restored.append(str(path))
+          for n in ('01','02','04','05','06','07','08','11','12','14'):
+              if not (Path('dist/art/store-icons') / ('preview-'+n+'.webp')).is_file():
+                  raise RuntimeError('Built Store is missing launcher preview '+n)
+          print('Kept latest compiled web application; restored only absent exact-store illustrations:',len(restored))
+          PY
+      - name: Sync Android and assemble debug-signed APK
+        run: |
+          npx cap sync android
+          chmod +x android/gradlew
+          cd android
+          ./gradlew assembleDebug --no-daemon --stacktrace
+      - name: Verify compiled APK and prepare Build 147 file
+        run: |
+          APK=android/app/build/outputs/apk/debug/app-debug.apk
+          unzip -Z1 "$APK" | grep -F 'assets/public/art/store-icons/preview-01.webp'
+          for n in 01 02 04 05 06 07 08 11 12 14; do
+            unzip -Z1 "$APK" | grep -F "assets/public/art/store-icons/transfer-${n}.svg"
+          done
+          BUILD_TOOLS=$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -n 1)
+          "$BUILD_TOOLS/apksigner" verify --verbose "$APK"
+          "$BUILD_TOOLS/aapt" dump resources "$APK" | grep -F 'oathkeeper_icon_fg_01'
+          "$BUILD_TOOLS/aapt" dump badging "$APK" | sed -n '1,8p'
+          mkdir -p output
+          cp "$APK" output/Oathkeeper-Build-147-Icon-Repair.apk
+          (cd output && sha256sum Oathkeeper-Build-147-Icon-Repair.apk > SHA256SUMS.txt)
+      - name: Upload Android test build
+        uses: actions/upload-artifact@v4
+        with:
+          name: Oathkeeper-Build-147-Icon-Repair
+          path: Oathkeeper/output/*
+          if-no-files-found: error
+          retention-days: 30
+      - name: Publish downloadable test build
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="oathkeeper-build147-${{ github.run_number }}-${{ github.run_attempt }}"
+          gh release create "$TAG" output/* --target "${{ github.sha }}" --title "Oathkeeper Build 147 - Launcher Icon Repair" --prerelease --latest=false --notes "Debug-signed Android test build. All ten Store icon tiles now render the original embedded-source SVG artwork while showing a separate Android adaptive launcher preview. Adaptive icon foregrounds center the complete original artwork within circular safe zones. Store previews use those same layers. The current source is compiled, not overwritten with the archived Build 142 web app. Physical-device launcher masking and update signing still require installation tests. Back up character data before replacing any earlier debug-signed APK."
+

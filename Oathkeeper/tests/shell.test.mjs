@@ -151,7 +151,7 @@ test('icon selection persists across store visits without charging the user',asy
   sh.click('[data-tab="Store"]');
   sh.click('[data-store-category="icons"]');
   assert.equal(sh.q('.store-icon-tile.selected').dataset.storeIcon,'icon-07');
-  assert.equal(sh.q('.store-icon-preview-image').getAttribute('src'),'/art/store-icons/preview-07.webp');
+  assert.equal(sh.q('.store-icon-preview-image').getAttribute('src'),'/art/store-icons/transfer-07.svg');
  }finally{await sh.close()}
 });
 
