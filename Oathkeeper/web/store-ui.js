@@ -84,7 +84,7 @@ function storeBundlePage(options={}){
    +' data-store-bundle-dice="'+esc(item.slug)+'" aria-label="'+(all?'Included: ':'Select ')+esc(item.name)+' dice set"'
    +' aria-pressed="'+selected+'"'+(all?' disabled aria-disabled="true"':'')
    +' style="'+diceArtStyle(item.atlasIndex)+'"><span class="bundle-dice-art" aria-hidden="true"></span>'
-   +'<span class="bundle-pick-label">'+esc(item.name)+'</span></button>';
+   +'<span class="sr-only">'+esc(item.name)+'</span></button>';
  }).join('');
  const backgrounds=SELECTED_BACKGROUNDS.map(item=>{
   const selected=all||bgChoice.includes(item.slug);
@@ -92,7 +92,7 @@ function storeBundlePage(options={}){
    +' data-store-bundle-background="'+esc(item.slug)+'" aria-label="'+(all?'Included: ':'Select ')+esc(item.name)+' background"'
    +' aria-pressed="'+selected+'"'+(all?' disabled aria-disabled="true"':'')+'>'
    +'<img src="'+esc(item.imagePath)+'" alt="" loading="lazy" decoding="async">'
-   +'<span class="bundle-pick-label">'+esc(item.name)+'</span></button>';
+   +'<span class="sr-only">'+esc(item.name)+'</span></button>';
  }).join('');
  const heading=all?'Everything in the collection is included automatically.':'Choose five of each to build your Golden Coffer.';
  const tally=all?'All 10 included':'Selected '+diceChoice.length+' of 5';
@@ -137,7 +137,7 @@ export function storePage(selectedSlug = 'elvenleaf', options = {}) {
   const preview = '<section class="store-preview-pane" aria-live="polite" aria-label="Selected dice preview">'
     + '<div class="store-preview-image" role="img" aria-label="Larger preview of ' + esc(active.name)
     + ' dice" data-store-atlas-index="' + active.atlasIndex + '" style="' + diceArtStyle(active.atlasIndex) + '"></div>'
-    + '<div><h3>' + esc(active.name) + '</h3><p>Selected dice design. This is a visual preview only; rolling results and odds are unchanged.</p></div></section>';
+    + '<div class="store-preview-description"><p>Selected dice design. This is a visual preview only; rolling results and odds are unchanged.</p></div></section>';
   return storeShell('dice',
     '<h2 class="store-collection-title">Dice Collection <small>(' + SELECTED_DICE.length + ')</small></h2>'
     + '<div class="store-dice-grid" role="group" aria-label="Select a dice set to preview">' + tiles + '</div>'
@@ -154,13 +154,13 @@ function backgroundStorePage(selectedSlug = 'moonlit-citadel', options={}) {
       + ' aria-label="Preview ' + esc(item.name) + ' background">'
       + '<img class="store-background-tile-art" src="' + esc(item.imagePath) + '"'
       + ' alt="" loading="lazy" decoding="async">'
-      + '<span class="store-background-name">' + esc(item.name) + '</span></button>';
+      + '<span class="sr-only">' + esc(item.name) + '</span></button>';
   }).join('');
   const preview = '<section class="store-background-preview-pane" aria-live="polite" aria-label="Selected background preview">'
     + '<div class="store-background-preview-media"><img class="store-background-preview-image"'
     + ' src="' + esc(active.imagePath) + '" alt="' + esc(active.name) + ' fantasy background concept"'
     + ' loading="eager" decoding="async"></div>'
-    + '<div class="store-background-preview-details"><h3>' + esc(active.name) + '</h3>'
+    + '<div class="store-background-preview-details">'
     + '<p>' + esc(active.description) + '</p>'
     + '<p>Preview is free. Applying this background requires verified ownership.</p></div></section>';
   return storeShell('backgrounds',
@@ -182,15 +182,14 @@ function iconStorePage(selectedSlug = 'icon-01', iconStatus = {supported:false,c
       + ' aria-label="Preview free ' + esc(item.name) + ' app icon">'
       + '<img class="store-icon-tile-art" src="' + esc(item.imagePath) + '"'
       + ' alt="" loading="lazy" decoding="async">'
-      + '<span class="store-background-name">' + esc(item.name)
+      + '<span class="sr-only">' + esc(item.name)
       + (item.iosIconName === current ? ' · Applied' : '') + '</span></button>';
   }).join('');
   const preview = '<section class="store-icon-preview-pane" aria-live="polite" aria-label="Selected app icon preview">'
     + '<div class="store-icon-preview-media"><img class="store-icon-preview-image"'
     + ' src="' + esc(active.imagePath) + '" alt="' + esc(active.name) + ' free app icon"'
     + ' loading="eager" decoding="async"></div>'
-    + '<div class="store-background-preview-details"><h3>' + esc(active.name) + '</h3>'
-    + '<p>' + esc(active.description) + '</p>'
+    + '<div class="store-background-preview-details"><p>Free fantasy launcher icon design.</p>'
     + '<p>' + (applied ? 'This icon is currently applied.' : 'Apply this free design as your home-screen app icon.') + '</p></div></section>';
   const actions = '<div class="store-selection-footer store-icon-actions">'
     + '<p>All ten alternate app icons are <strong>FREE</strong>, and the original stays available. '
