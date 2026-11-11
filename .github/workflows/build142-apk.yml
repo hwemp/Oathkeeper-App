@@ -6,6 +6,7 @@ on:
       - '.build142/payload.part*.bin'
       - 'Oathkeeper/scripts/generate-free-icons.py'
       - 'Oathkeeper/web/store-icon-catalog.js'
+      - 'Oathkeeper/tests/**'
       - 'Oathkeeper/web/public/art/store-icons/icon-*.webp'
       - '.github/workflows/build142-apk.yml'
   workflow_dispatch:
