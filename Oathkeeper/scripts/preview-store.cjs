@@ -39,7 +39,9 @@ const assert=require('node:assert/strict');
           const r=node.getBoundingClientRect();return {left:r.left,right:r.right,width:r.width,height:r.height};
         }));
         assert(bounds.every(r=>r.width>0&&r.height>0&&r.left>=-1&&r.right<=width+1),`${category} tile boundaries`);
-        const images=page.locator('.store-background-tile-art,.store-icon-tile-art');
+        const minimum=width<=360?120:width<=430?100:width<=800?180:50;
+        assert(bounds.every(r=>r.width>=minimum),`${category} art is tiny at ${width}px: ${JSON.stringify(bounds)}`);
+        const images=page.locator('.store-dice-tile-art,.store-background-tile-art,.store-icon-tile-art');
         if(await images.count()){
           const tested=await images.evaluateAll(async nodes=>Promise.all(nodes.map(async img=>{
             const probe=new Image();probe.src=img.currentSrc||img.src;
@@ -52,7 +54,7 @@ const assert=require('node:assert/strict');
         await page.screenshot({path:`preview-output/store-${category}-${width}.png`,fullPage:true});
       };
       await visual('dice','.store-dice-tile');
-      assert.equal(await page.locator('.store-dice-tile-art').first().evaluate(node=>getComputedStyle(node).backgroundSize),'500% 200%','Dice atlas must retain native cell alignment');
+      assert.equal(await page.locator('.store-dice-tile-art').first().getAttribute('src'),'/art/store-dice/dragonfire.webp','Dice tile must use independent approved artwork');
       await page.locator('[data-store-dice="frostborne"]').click();
       assert.match(await page.locator('.store-preview-image').getAttribute('aria-label'),/Frostborne/);
       await page.locator('[data-store-category="backgrounds"]').click();
@@ -74,6 +76,15 @@ const assert=require('node:assert/strict');
       assert.equal(await page.locator('.bundle-offer').count(),2,'Both approved bundle offers visible');
       assert.equal(await page.locator('.bundle-dice-pick').count(),10);
       assert.equal(await page.locator('.bundle-background-pick').count(),10);
+      const bundleArt=await page.locator('.bundle-offer-gem').evaluateAll(nodes=>nodes.map(img=>({
+        src:img.getAttribute('src'),loaded:img.complete&&img.naturalWidth>0,fit:getComputedStyle(img).objectFit,
+        width:img.getBoundingClientRect().width,height:img.getBoundingClientRect().height
+      })));
+      assert.equal(bundleArt.length,2,'Both offers need distinct artwork');
+      assert(bundleArt.every(x=>x.loaded&&x.fit==='contain'&&x.height>=100),`Bundle artwork is undersized or missing: ${JSON.stringify(bundleArt)}`);
+      assert.notEqual(bundleArt[0].src,bundleArt[1].src,'Bundle offers must have different images');
+      const pickBounds=await page.locator('.bundle-pick').evaluateAll(nodes=>nodes.map(n=>n.getBoundingClientRect().width));
+      assert(pickBounds.every(w=>w>=(width<=360?120:width<=430?100:180)),`Bundle picks are too small at ${width}px`);
       await page.screenshot({path:`preview-output/store-bundles-${width}.png`,fullPage:true});
       // The footer must be after, never on top of, the largest artwork.
       await page.locator('[data-store-category="backgrounds"]').click();
