@@ -46,7 +46,9 @@ test('every dice tile automatically shows its own enlarged atlas cell on selecti
     assert(html.includes('data-store-atlas-index="'+item.atlasIndex+'" style="'+style+'"'));
     uniquePositions.add(style);
     assert.match(html,/class="store-preview-pane" aria-live="polite"/);
-    assert.doesNotMatch(html,/<canvas/);
+    assert.match(html,/data-store-dice-demo=/);
+    assert.match(html,/data-store-preview-roll=/);
+    assert.match(html,/<canvas/);
   }
   assert.equal(uniquePositions.size,10);
 });
