@@ -1,0 +1,63 @@
+name: Oathkeeper - Consolidate APK build queue
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/keep-one-oathkeeper-apk.yml'
+  workflow_dispatch:
+
+permissions:
+  actions: write
+  contents: read
+
+concurrency:
+  group: oathkeeper-apk-queue-consolidation
+  cancel-in-progress: false
+
+jobs:
+  consolidate:
+    name: Cancel obsolete APK builds and retain Build 156
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Keep the latest approved-background APK build
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          KEEPER_RUN: '43097529045'
+        shell: bash
+        run: |
+          set -euo pipefail
+          keeper_status="$(gh api "/repos/${GH_REPO}/actions/runs/${KEEPER_RUN}" --jq '.status' 2>/dev/null || echo unavailable)"
+          preserve=''
+          if [[ "${keeper_status}" == 'queued' || "${keeper_status}" == 'in_progress' || "${keeper_status}" == 'waiting' || "${keeper_status}" == 'pending' ]]; then
+            preserve="${KEEPER_RUN}"
+          fi
+          echo "Selected Build 156 run: ${KEEPER_RUN} (${keeper_status})"
+          mapfile -t other_build_runs < <(
+            for status in queued in_progress; do
+              gh api --paginate "/repos/${GH_REPO}/actions/runs?status=${status}&per_page=100" \
+                --jq '.workflow_runs[] | select(.name | startswith("Build Oathkeeper")) | .id'
+            done | sort -u
+          )
+          cancelled=0
+          for run_id in "${other_build_runs[@]}"; do
+            if [[ -n "${preserve}" && "${run_id}" == "${preserve}" ]]; then
+              echo "Keeping approved Build 156 run ${run_id}"
+              continue
+            fi
+            if gh api -X POST "/repos/${GH_REPO}/actions/runs/${run_id}/cancel" >/dev/null 2>&1; then
+              echo "Requested cancellation of obsolete APK build ${run_id}"
+              cancelled=$((cancelled + 1))
+            else
+              echo "Could not cancel ${run_id}; it may already have finished or permissions may block cancellation"
+            fi
+          done
+          if [[ -z "${preserve}" ]]; then
+            echo "Approved Build 156 run is no longer active; requesting one replacement"
+            gh workflow run build156-backgrounds-apk.yml --ref main
+          else
+            echo "Existing approved Build 156 run is already requested; no duplicate started"
+          fi
+          echo "Cancellation requests submitted: ${cancelled}"
+          echo "GitHub scheduling and successful cancellations still require runner execution and permissions."
