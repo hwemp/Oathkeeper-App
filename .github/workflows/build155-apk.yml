@@ -1,0 +1,159 @@
+name: Build Oathkeeper 155 - Build 144 Base, Fixed Frames and Themed Dice APK
+on:
+  push:
+    branches: [build-155]
+    paths:
+      - 'Oathkeeper/**'
+      - '.build142/payload.part*.bin'
+      - '.github/workflows/build155-apk.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: oathkeeper-build155-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: Oathkeeper
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: Oathkeeper/package-lock.json
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Prepare independent dice SVG files from Build 144's approved atlas
+        run: |
+          python -m pip install --disable-pip-version-check Pillow
+          python scripts/prepare-store-art.py
+          for slug in dragonfire frostborne elvenleaf celestial abyssal gold-forged necrotic astral oceanic sunfire; do
+            test -s "web/public/art/store-dice/$slug.svg"
+          done
+          for number in 01 02 04 05 06 07 08 11 12 14; do
+            test -s "web/public/art/store-icons/store-$number.svg"
+          done
+      - name: Install dependencies and validate current source
+        run: |
+          npm ci
+          npm run check
+          npm run typecheck
+          npm test
+          npm run catalog
+          npm run build
+      - name: Retain missing Build 144 reference art without overwriting updated Store
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib, shutil, stat, zipfile
+          root=Path('..').resolve()
+          chunks=sorted((root/'.build142').glob('payload.part*.bin'))
+          expected=[f'payload.part{i:02d}.bin' for i in range(10)]
+          if [p.name for p in chunks]!=expected:
+              raise RuntimeError('Build 144 reference asset parts are incomplete')
+          archive=Path('/tmp/oathkeeper-build144-reference-155.zip')
+          digest=hashlib.sha256()
+          with archive.open('wb') as output:
+              for part in chunks:
+                  with part.open('rb') as source:
+                      while block:=source.read(1024*1024):
+                          digest.update(block); output.write(block)
+          if digest.hexdigest()!='c83a657ab68b900b724b75c45b6d5d2256e69192a1d62e922279422fb0fb0b05':
+              raise RuntimeError('Original Build 144 reference archive checksum mismatch')
+          copied=0
+          with zipfile.ZipFile(archive) as source:
+              for member in source.infolist():
+                  if not member.filename.startswith('web-assets/art/exact-store/'):
+                      continue
+                  rel=Path(member.filename).relative_to('web-assets')
+                  if rel.is_absolute() or '..' in rel.parts or stat.S_ISLNK(member.external_attr >> 16):
+                      raise RuntimeError('Unsafe reference archive member')
+                  output=Path('dist')/rel
+                  if member.is_dir() or output.exists():
+                      continue
+                  output.parent.mkdir(parents=True,exist_ok=True)
+                  with source.open(member) as a, output.open('wb') as b:
+                      shutil.copyfileobj(a,b)
+                  copied+=1
+          print('Kept current Build 155 application source, restored only missing Build 144 art:',copied)
+          PY
+          test -s dist/art/store-icons/store-01.svg
+          test -s dist/art/store-dice/elvenleaf.svg
+          grep -R -Fq 'data-store-preview-roll' dist/assets
+      - name: Replace old icon reservoir with exact Store image bytes
+        run: |
+          python -m pip install --disable-pip-version-check Pillow
+          python scripts/repair-default-launcher.py
+          python scripts/generate-free-icons.py
+          test "$(find android/app/src/main/res/mipmap-anydpi-v26 -maxdepth 1 -name 'oathkeeper_icon_*.xml' | wc -l)" -eq 10
+          for number in 01 02 04 05 06 07 08 11 12 14; do
+            test -s "android/app/src/main/res/mipmap-anydpi-v26/oathkeeper_icon_${number}.xml"
+            test -s "android/app/src/main/res/mipmap-nodpi/oathkeeper_icon_${number}.webp"
+            cmp "web/public/art/store-icons/icon-${number}.webp" "android/app/src/main/res/mipmap-nodpi/oathkeeper_icon_${number}.webp"
+            cmp "web/public/art/store-icons/icon-${number}.webp" "android/app/src/main/res/drawable-nodpi/oathkeeper_icon_art_${number}.webp"
+            grep -Fq "@drawable/oathkeeper_icon_art_${number}" "android/app/src/main/res/mipmap-anydpi-v26/oathkeeper_icon_${number}.xml"
+            test ! -e "android/app/src/main/res/mipmap-nodpi/oathkeeper_icon_${number}.png"
+            test ! -e "web/public/art/store-icons/launcher-${number}.webp"
+            # Legacy frozen web code may reference launcher-XX; supply identical bytes.
+            mkdir -p dist/art/store-icons
+            cp "web/public/art/store-icons/icon-${number}.webp" "dist/art/store-icons/icon-${number}.webp"
+            cp "web/public/art/store-icons/icon-${number}.webp" "dist/art/store-icons/launcher-${number}.webp"
+            cmp "dist/art/store-icons/icon-${number}.webp" "dist/art/store-icons/launcher-${number}.webp"
+          done
+      - name: Browser-test full-frame artwork and theme-matched store dice previews
+        run: |
+          npm install --no-save --package-lock=false playwright@1.56.1
+          npx playwright install --with-deps chromium
+          node scripts/preview-store.cjs
+      - name: Upload Build 155 Store screenshot checks
+        uses: actions/upload-artifact@v4
+        with:
+          name: Oathkeeper-Build-155-Store-Screenshots
+          path: Oathkeeper/preview-output/store-*.png
+          if-no-files-found: error
+          retention-days: 30
+      - name: Sync Capacitor Android application
+        run: npx cap sync android
+      - name: Build debug-signed Android APK
+        run: |
+          chmod +x android/gradlew
+          cd android
+          ./gradlew assembleDebug --no-daemon --stacktrace
+      - name: Verify Build 155 APK contains individual icon and dice art and is signed
+        run: |
+          APK=android/app/build/outputs/apk/debug/app-debug.apk
+          unzip -Z1 "$APK" | grep -Fq 'assets/public/art/exact-store/roll/astral.webp'
+          unzip -Z1 "$APK" | grep -Fq 'assets/public/art/store-dice/astral.svg'
+          unzip -Z1 "$APK" | grep -Fq 'assets/public/art/store-icons/store-01.svg'
+          for slug in dragonfire frostborne elvenleaf celestial abyssal gold-forged necrotic astral oceanic sunfire; do
+            unzip -Z1 "$APK" | grep -Fq "assets/public/art/store-dice/$slug.svg"
+          done
+          BUILD_TOOLS=$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -n 1)
+          "$BUILD_TOOLS/apksigner" verify --verbose "$APK"
+          mkdir -p output
+          cp "$APK" output/Oathkeeper-Build-155-144-Base-Frame-Fit-Dice.apk
+          cd output
+          sha256sum Oathkeeper-Build-155-144-Base-Frame-Fit-Dice.apk > SHA256SUMS.txt
+      - name: Upload installable test APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Oathkeeper-Build-155-144-Base-Frame-Fit-Dice
+          path: Oathkeeper/output/*
+          if-no-files-found: error
+          retention-days: 30
+      - name: Publish downloadable pre-release APK
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="oathkeeper-build155-${{ github.run_number }}-${{ github.run_attempt }}"
+          gh release create "$TAG" output/* --target "${{ github.sha }}" --title "Oathkeeper Build 155 - Build 144 Base with Icon and Dice Frame Fixes" --prerelease --latest=false --notes "Build 155 is built from original Build 144 source, with only its Store icon and dice frame fit, isolated full-frame dice illustrations, and selected-theme D20 animation previews ported from Build 154. All ten launcher WebPs and original Build 144 bundles, background catalog, and gameplay logic remain as in Build 144. The original Build 144 supplemental archive art is preserved without replacing current updated web code. Debug-signed test build; back up character data before installation."
