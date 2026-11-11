@@ -1,0 +1,24 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import {SELECTED_APP_ICONS} from '../web/store-icon-catalog.js';
+
+test('every free icon preview uses a distinct approved painted asset',async()=>{
+ const digests=new Set();
+ for(const item of SELECTED_APP_ICONS){
+  const bytes=await readFile(new URL('../web/public'+item.imagePath,import.meta.url));
+  assert.equal(bytes.toString('ascii',0,4),'RIFF');
+  assert.equal(bytes.toString('ascii',8,12),'WEBP');
+  assert(bytes.byteLength>20000);
+  digests.add(Buffer.from(bytes).toString('base64'));
+ }
+ assert.equal(digests.size,10);
+});
+
+test('native icons are derived from the exact store art without emblem overlays',async()=>{
+ const script=await readFile(new URL('../scripts/generate-free-icons.py',import.meta.url),'utf8');
+ assert.match(script,/source = WEB \/ f"icon-\{number:02d\}\.webp"/);
+ assert.match(script,/icon = loaded\.convert\("RGB"\)/);
+ assert.doesNotMatch(script,/def emblem\(|ImageDraw|rounded_rectangle|d\.polygon/);
+ assert.doesNotMatch(script,/ic_launcher\.png|AppIcon-512@2x\.png/);
+});
