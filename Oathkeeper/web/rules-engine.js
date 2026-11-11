@@ -29,7 +29,10 @@ export function validateEffects(value){
 export function activeEffects(c){
  const items=new Set((c.items||[]).filter(i=>Array.isArray(i)&&Number(i[1])>0).map(i=>cleanName(i[0])));
  const effects=Array.isArray(c.magicEffects)?c.magicEffects:[];
- return effects.filter(e=>e&&e.enabled&&(!e.requiresAttunement||e.attuned)&&items.has(cleanName(e.item))&&EFFECT_TARGETS.includes(e.target)&&EFFECT_OPS.includes(e.op)&&Number.isFinite(e.value));
+ const eligible=effects.filter(e=>e&&e.enabled&&items.has(cleanName(e.item))&&EFFECT_TARGETS.includes(e.target)&&EFFECT_OPS.includes(e.op)&&Number.isFinite(e.value));
+ // At most three distinct attuned items grant effects in the SRD baseline.
+ const allowed=new Set([...new Set(eligible.filter(e=>e.requiresAttunement&&e.attuned).map(e=>cleanName(e.item)))].slice(0,3));
+ return eligible.filter(e=>!e.requiresAttunement||(e.attuned&&allowed.has(cleanName(e.item))));
 }
 const apply=(start,effects,target)=>{
  const chosen=effects.filter(e=>e.target===target);
@@ -73,8 +76,9 @@ export function deriveCharacter(c){
  const speed=Math.max(0,apply(safeNumber(c.speed,30),effects,'speed')-5*exhaustion);
  const saveBonus=apply(0,effects,'save');
  const spellDC=8+proficiency+mods.cha+apply(0,effects,'spellDC');
- const attunedNames=new Set((Array.isArray(c.magicEffects)?c.magicEffects:[]).filter(e=>e?.enabled&&e?.requiresAttunement&&e?.attuned).map(e=>cleanName(e.item)));
- const activeAttunements=[...attunedNames].filter(name=>effects.some(e=>cleanName(e.item)===name));
+ const inventoryNamesSet=new Set((c.items||[]).filter(i=>Array.isArray(i)&&Number(i[1])>0).map(i=>cleanName(i[0])));
+ const requested=(Array.isArray(c.magicEffects)?c.magicEffects:[]).filter(e=>e?.enabled&&e?.requiresAttunement&&e?.attuned&&inventoryNamesSet.has(cleanName(e.item)));
+ const activeAttunements=[...new Set(requested.map(e=>cleanName(e.item)))];
  const encumbrance=c.variantEncumbrance===true?{encumbered:carried>scores.str*5,heavy:carried>scores.str*10}:null;
  return {level,scores,mods,proficiency,exhaustion,d20Penalty,maxHp:hp,weight:carried,capacity,remaining:rounded(capacity-carried),bodyPlusGear:rounded(safeNumber(c.body)+carried),size,attack,damage,healing,damageMultiplier,healingMultiplier,diceMultiplier,ac:armor,speed,saveBonus,spellDC,holyDC:spellDC,extraAttack:isPaladin&&level>=5?2:1,armorPresent,shieldPresent,paladinLayOnHandsMax:isPaladin?5*level:0,activeAttunements,attunementExceeded:activeAttunements.length>3,bagPresent,bagContents:rounded(inBag),bagOverfilled:inBag>500,encumbrance,exceedsCapacity:carried>capacity,effects};
 }
