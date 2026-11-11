@@ -11,7 +11,7 @@ permissions:
   contents: write
 concurrency:
   group: oathkeeper-build155-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 jobs:
   build:
     runs-on: ubuntu-latest
