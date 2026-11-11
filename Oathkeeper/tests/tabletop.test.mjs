@@ -12,11 +12,13 @@ const result=(sides,mode='official')=>({
 });
 
 test('D100 is one genuine 100-facet solid and themes stay visually distinct',()=>{
+ assert.equal(diceMeshFaceCount(3),5); // Three numbered sides and two end caps.
  assert.equal(diceMeshFaceCount(4),4);
  assert.equal(diceMeshFaceCount(6),6);
  assert.equal(diceMeshFaceCount(10),10);
  assert.equal(diceMeshFaceCount(12),12);
  assert.equal(diceMeshFaceCount(20),20);
+ assert.equal(diceMeshFaceCount(50),50);
  assert.equal(diceMeshFaceCount(100),100);
  const skins=[
   ['dragonfire','#ec5c25'],['frostborne','#76cffa'],['elvenleaf','#9bdb6c'],
