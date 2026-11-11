@@ -47,6 +47,7 @@ export function deriveCharacter(c){
  for(const key of ABILITIES)scores[key]=clamp(Math.floor(apply(safeNumber(c[key],10),effects,key)),1,30);
  const mods=Object.fromEntries(ABILITIES.map(k=>[k,Math.floor((scores[k]-10)/2)]));
  const proficiency=2+Math.floor((level-1)/4);
+ const exhaustion=clamp(Math.floor(safeNumber(c.exhaustion,0)),0,6),d20Penalty=2*exhaustion;
  const isPaladin=String(c.class||'').toLowerCase().trim()==='paladin';
  const baseHp=safeNumber(c.hpBase,10);
  const hp=Math.max(1,Math.floor(apply(baseHp+mods.con*level,effects,'hp')));
@@ -59,7 +60,7 @@ export function deriveCharacter(c){
  const carried=rounded(Math.max(0,apply(packed,effects,'load')));
  const size=SIZE_MULTIPLIERS[c.size]===undefined?'Medium':c.size;
  const capacity=rounded(Math.max(0,apply(scores.str*15*SIZE_MULTIPLIERS[size],effects,'carry')));
- const attack=mods.str+proficiency+apply(0,effects,'attack');
+ const attack=mods.str+proficiency+apply(0,effects,'attack')-d20Penalty;
  const damage=mods.str+apply(0,effects,'damage');
  const healing=mods.cha+apply(0,effects,'healing');
  const damageMultiplier=clamp(apply(1,effects,'damageMultiplier'),0,100);
@@ -69,13 +70,13 @@ export function deriveCharacter(c){
  const armorPresent=inventoryNames.some(name=>/\b(chainmail|chain mail|plate armor|breastplate|half plate|leather armor|studded leather|scale mail|ring mail|splint armor|hide armor|padded armor|armor|armour)\b/.test(name));
  const shieldPresent=inventoryNames.some(name=>name.includes('shield'));
  const armor=(armorPresent?safeNumber(c.armor,10):10+mods.dex)+(c.shield&&shieldPresent?2:0)+(c.faith?2:0)+apply(0,effects,'ac');
- const speed=Math.max(0,apply(safeNumber(c.speed,30),effects,'speed'));
+ const speed=Math.max(0,apply(safeNumber(c.speed,30),effects,'speed')-5*exhaustion);
  const saveBonus=apply(0,effects,'save');
  const spellDC=8+proficiency+mods.cha+apply(0,effects,'spellDC');
  const attunedNames=new Set((Array.isArray(c.magicEffects)?c.magicEffects:[]).filter(e=>e?.enabled&&e?.requiresAttunement&&e?.attuned).map(e=>cleanName(e.item)));
  const activeAttunements=[...attunedNames].filter(name=>effects.some(e=>cleanName(e.item)===name));
  const encumbrance=c.variantEncumbrance===true?{encumbered:carried>scores.str*5,heavy:carried>scores.str*10}:null;
- return {level,scores,mods,proficiency,maxHp:hp,weight:carried,capacity,remaining:rounded(capacity-carried),bodyPlusGear:rounded(safeNumber(c.body)+carried),size,attack,damage,healing,damageMultiplier,healingMultiplier,diceMultiplier,ac:armor,speed,saveBonus,spellDC,holyDC:spellDC,extraAttack:isPaladin&&level>=5?2:1,armorPresent,shieldPresent,paladinLayOnHandsMax:isPaladin?5*level:0,activeAttunements,attunementExceeded:activeAttunements.length>3,bagPresent,bagContents:rounded(inBag),bagOverfilled:inBag>500,encumbrance,exceedsCapacity:carried>capacity,effects};
+ return {level,scores,mods,proficiency,exhaustion,d20Penalty,maxHp:hp,weight:carried,capacity,remaining:rounded(capacity-carried),bodyPlusGear:rounded(safeNumber(c.body)+carried),size,attack,damage,healing,damageMultiplier,healingMultiplier,diceMultiplier,ac:armor,speed,saveBonus,spellDC,holyDC:spellDC,extraAttack:isPaladin&&level>=5?2:1,armorPresent,shieldPresent,paladinLayOnHandsMax:isPaladin?5*level:0,activeAttunements,attunementExceeded:activeAttunements.length>3,bagPresent,bagContents:rounded(inBag),bagOverfilled:inBag>500,encumbrance,exceedsCapacity:carried>capacity,effects};
 }
 export function powerAtRank(c,index){
  const base=CUSTOM_POWERS[index];if(!base)return null;
@@ -88,8 +89,8 @@ export function rollAdjustments(c,context='normal',sides=20){
  const modes=['attack','damage','healing','strengthCheck','wisdomSave','holyPower0','holyPower1','holyPower2'];
  if(!modes.includes(context))return {add:0,multiplier:1,context:'normal'};
  if(context==='attack')return {add:d.attack,multiplier:1,context};
- if(context==='strengthCheck')return {add:d.mods.str,multiplier:1,context};
- if(context==='wisdomSave')return {add:d.mods.wis+d.proficiency+d.saveBonus+(c.aura?2:0),multiplier:1,context};
+ if(context==='strengthCheck')return {add:d.mods.str-d.d20Penalty,multiplier:1,context};
+ if(context==='wisdomSave')return {add:d.mods.wis+d.proficiency+d.saveBonus+(c.aura&&c.hp>0?2:0)-d.d20Penalty,multiplier:1,context};
  if(context==='healing'||context==='holyPower2')return {add:d.healing,multiplier:d.healingMultiplier*d.diceMultiplier,context};
  return {add:context==='damage'?d.damage:0,multiplier:d.damageMultiplier*d.diceMultiplier,context};
 }
