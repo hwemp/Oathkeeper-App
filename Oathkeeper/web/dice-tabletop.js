@@ -126,7 +126,7 @@ const referenceCrops=Object.freeze({
 });
 function getArtwork(skin,sides){
  const selected=skin && Number.isInteger(skin.atlasIndex)&&skin.atlasIndex>=0&&skin.atlasIndex<10;
- const src=selected?'/art/oathkeeper-dice-store-atlas.webp':'/art/dice-reference.png';
+ const src=selected?(skin.imagePath||'/art/oathkeeper-dice-store-atlas.webp'):'/art/dice-reference.png';
  if(!diceArtImages.has(src) && typeof globalThis.Image==='function'){
    const image=new globalThis.Image();
    image.decoding='async';
@@ -135,6 +135,12 @@ function getArtwork(skin,sides){
  }
  const image=diceArtImages.get(src);
  if(!image||!image.complete||!image.naturalWidth||!image.naturalHeight)return null;
+ if(selected && skin.imagePath){
+   return {image,rectangle:[
+     .18*image.naturalWidth,.07*image.naturalHeight,
+     .64*image.naturalWidth,.73*image.naturalHeight
+   ]};
+ }
  if(selected){
    const cellWidth=image.naturalWidth/5,cellHeight=image.naturalHeight/2;
    const col=skin.atlasIndex%5,row=Math.floor(skin.atlasIndex/5);
