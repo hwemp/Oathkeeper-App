@@ -8,10 +8,11 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 import java.nio.ByteBuffer;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.security.MessageDigest;
 import java.util.HashSet;
 import java.util.Set;
@@ -39,6 +40,10 @@ public class LauncherIconParityTest {
             Canvas canvas = new Canvas(bitmap);
             rendered.setBounds(0, 0, 256, 256);
             rendered.draw(canvas);
+            File dest = new File(context.getExternalFilesDir(null), "rendered-launcher-" + id + ".png");
+            try (FileOutputStream file = new FileOutputStream(dest)) {
+                assertTrue(bitmap.compress(Bitmap.CompressFormat.PNG, 100, file));
+            }
             int opaquePixels = 0;
             ByteBuffer buffer = ByteBuffer.allocate(256 * 256 * Integer.BYTES);
             for (int y = 0; y < 256; y++) {
