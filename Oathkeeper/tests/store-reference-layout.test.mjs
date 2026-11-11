@@ -15,13 +15,13 @@ test('approved store reference: exact atlas grid, without overscale/crop transfo
 test('approved store reference: category artwork and full-size previews', () => {
   for (const category of ['dice','backgrounds','icons','bundles']) {
     const page = storePage('elvenleaf', { category });
-    assert.match(page,/class="store-hero-title"/);
+    if(category!=='bundles')assert.match(page,/class="store-hero-title"/);else assert.match(page,/bundle-reference-art/);
     assert.match(page,/data-store-category="dice"/);
     assert.match(page,/data-store-category="backgrounds"/);
     assert.match(page,/data-store-category="icons"/);
     assert.match(page,/data-store-category="bundles"/);
-    assert.match(page,/class="store-themed-footer"/);
-    assert.match(page,/data-store-build="149"/);
+    assert.match(page,/class="store-themed-footer/);
+    assert.match(page,new RegExp('data-store-build="'+(category==='bundles'?'153':'149')+'"'));
   }
   const backgrounds=storePage('elvenleaf',{category:'backgrounds'});
   assert.match(backgrounds,/style="--store-preview-backdrop:url\(&quot;\/art\/store-backgrounds-hd\/moonlit-citadel.svg&quot;\)"/);

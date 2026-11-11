@@ -35,14 +35,11 @@ test('all ten Store items still display their own approved source images', () =>
   }
 });
 
-test('both bundle offers use existing high-resolution independent art, never the atlas', () => {
-  const html = storePage('elvenleaf', {category:'bundles'});
-  assert.match(html, /class="bundle-offer-gem" src="\/art\/store-dice\/celestial.svg"/);
-  assert.match(html, /class="bundle-offer-gem" src="\/art\/store-dice\/astral.svg"/);
-  assert.equal((html.match(/class="bundle-offer-gem"/g) || []).length, 2);
-  assert.equal((html.match(/class="bundle-dice-art"/g) || []).length, 10);
-  assert.equal((html.match(/class="bundle-background-pick/g) || []).length, 0); // class names include bundle-pick first
-  assert.equal((html.match(/class="bundle-pick bundle-background-pick/g) || []).length, 10);
-  assert.doesNotMatch(html, /<span class="bundle-offer-gem"/);
-  assert.doesNotMatch(html, /type="checkbox"|selection-circle/i);
+test('Bundles use the exact approved image rather than composited dice thumbnails',()=>{
+ const html=storePage('elvenleaf',{category:'bundles'});
+ assert.match(html,/class="bundle-reference-art" src="\/art\/bundles\/approved-bundles-reference.jpg"/);
+ assert.doesNotMatch(html,/class="bundle-offer-gem"|class="bundle-dice-art"/);
+ assert.equal((html.match(/class="bundle-reference-hotspot bundle-reference-offer/g)||[]).length,2);
+ assert.equal((html.match(/class="bundle-reference-hotspot bundle-reference-pick/g)||[]).length,10);
+ assert.match(html,/data-store-restore-purchases="true"/);
 });

@@ -23,34 +23,31 @@ test('selection allows exactly five unique valid dice and five valid backgrounds
  assert.deepEqual(toggleBundleChoice(d.slice(0,4),'dice',d[4]),d.slice(0,5));
  assert.deepEqual(toggleBundleChoice(d.slice(0,4),'dice','bad'),d.slice(0,4));
 });
-test('approved Layout B has live gold-border selections, bottom navigation, no checkbox marks and no purchase activation',()=>{
- const html=storePage('elvenleaf',{category:'bundles',bundleDeal:'golden-coffer',bundleDice:SELECTED_DICE.slice(0,5).map(x=>x.slug),bundleBackgrounds:SELECTED_BACKGROUNDS.slice(0,5).map(x=>x.slug)});
- assert.match(html,/data-store-category="bundles" class="store-category-current"/);
- assert.match(html,/Golden Coffer/);
- assert.match(html,/Dragon&#39;s Treasure/);
+test('exact reference has two interactive offers, the original picture, gold-only selections and purchase controls',()=>{
+ const html=storePage('elvenleaf',{category:'bundles',bundleDeal:'golden-coffer',bundleDice:['dragonfire'],bundleBackgrounds:['moonlit-citadel']});
+ assert.match(html,/data-store-build="153"/);
+ assert.match(html,/approved-bundles-reference\.jpg/);
+ assert.match(html,/data-store-category="bundles"/);
  assert.match(html,/data-store-bundle-offer="golden-coffer"/);
  assert.match(html,/data-store-bundle-offer="dragons-treasure"/);
- assert.equal((html.match(/data-store-bundle-dice=/g)||[]).length,10);
- assert.equal((html.match(/data-store-bundle-background=/g)||[]).length,10);
- assert.equal((html.match(/class="bundle-pick bundle-dice-pick selected"/g)||[]).length,5);
- assert.equal((html.match(/class="bundle-pick bundle-background-pick selected"/g)||[]).length,5);
- assert.doesNotMatch(html,/type="checkbox"|checkmark|selection-circle|data-store-buy-id=/i);
- assert.match(html,/class="store-bundle-purchase-actions"/);
+ assert.equal((html.match(/class="bundle-reference-hotspot bundle-reference-offer/g)||[]).length,2);
+ assert.equal((html.match(/class="bundle-reference-hotspot bundle-reference-pick/g)||[]).length,10);
+ assert.match(html,/data-store-bundle-open="dice"/);
+ assert.match(html,/data-store-bundle-open="backgrounds"/);
+ assert.match(html,/class="store-themed-footer bundle-reference-nav"/);
  assert.match(html,/>Purchase<\/button>/);
  assert.match(html,/data-store-restore-purchases="true" disabled aria-disabled="true"/);
- assert.doesNotMatch(html,/bundle-treasure-decoration/);
- assert.match(html,/class="store-themed-footer"/);
+ assert.doesNotMatch(html,/type="checkbox"|checkmark|selection-circle|data-store-buy-id=/i);
  for(const tab of ['Overview','My profile','Community','Messages','Store'])assert.match(html,new RegExp('data-tab="'+tab+'"'));
 });
-test('full Dragon treasure includes all existing sets without changing the five-pick draft',()=>{
- const html=storePage('dragonfire',{category:'bundles',bundleDeal:'dragons-treasure',bundleDice:['dragonfire'],bundleBackgrounds:['moonlit-citadel']});
- assert.match(html,/All 10 included/);
- assert.equal((html.match(/class="bundle-pick bundle-dice-pick selected"/g)||[]).length,10);
- assert.equal((html.match(/class="bundle-pick bundle-background-pick selected"/g)||[]).length,10);
- assert.equal((html.match(/disabled aria-disabled="true"/g)||[]).length,22);
- assert.doesNotMatch(html,/>Purchase Bundle|>Add to Cart/i);
+test('Dragon treasure contains all ten designs and offers an accessible gallery without altering reference art',()=>{
+ const html=storePage('dragonfire',{category:'bundles',bundleDeal:'dragons-treasure',bundlePickerOpen:'dice'});
+ assert.match(html,/data-store-bundle-offer="dragons-treasure" aria-pressed="true"/);
+ assert.equal((html.match(/class="bundle-reference-picker-option selected"/g)||[]).length,10);
+ assert.match(html,/data-store-bundle-close="true"/);
+ assert.match(html,/All ten are included in Dragon/);
+ assert.match(html,/approved-bundles-reference\.jpg/);
 });
-
 test('bundle restore can become available independently of payment checkout',()=>{
  const html=storePage('elvenleaf',{category:'bundles',restoreAvailable:true});
  assert.match(html,/data-store-restore-purchases="true">Restore Purchases<\/button>/);

@@ -70,57 +70,58 @@ function storeThemeFooter(){
 function storeBundlePage(options={}){
  const deal=isBundleOffer(options.bundleDeal)?options.bundleDeal:'golden-coffer';
  const all=deal==='dragons-treasure';
- const diceChoice=normalizeBundleChoices(options.bundleDice,'dice');
- const bgChoice=normalizeBundleChoices(options.bundleBackgrounds,'backgrounds');
- const promo=BUNDLE_OFFERS.map(offer=>{
-  const current=deal===offer.id;
-  const isFull=offer.id==='dragons-treasure';
-  return '<button type="button" class="bundle-offer '+(isFull?'bundle-offer-treasure':'bundle-offer-coffer')+(current?' selected':'')+'"'
-   +' data-store-bundle-offer="'+esc(offer.id)+'" aria-pressed="'+current+'" aria-label="Select '+esc(offer.name)+' bundle for '+formatStorePrice(offer.priceCents)+'">'
-   +'<span class="bundle-offer-art" aria-hidden="true"><img class="bundle-offer-gem" src="'+esc((isFull?SELECTED_DICE[7]:SELECTED_DICE[3]).imagePath)+'" alt="" loading="lazy" decoding="async"></span>'
-   +'<span class="bundle-offer-title">'+esc(offer.name)+'</span>'
-   +'<span class="bundle-offer-price">'+formatStorePrice(offer.priceCents)+'</span>'
-   +'<span class="bundle-offer-description">'+(isFull?'All 10 dice sets and all 10 backgrounds':'Pick any five dice sets and five backgrounds')+'</span>'
-   +'</button>';
- }).join('');
- const diceTiles=SELECTED_DICE.map(item=>{
-  const selected=all||diceChoice.includes(item.slug);
-  return '<button type="button" class="bundle-pick bundle-dice-pick'+(selected?' selected':'')+'"'
-   +' data-store-bundle-dice="'+esc(item.slug)+'" aria-label="'+(all?'Included: ':'Select ')+esc(item.name)+' dice set"'
-   +' aria-pressed="'+selected+'"'+(all?' disabled aria-disabled="true"':'')
-   +' style="'+diceArtStyle(item.atlasIndex)+'"><img class="bundle-dice-art" src="'+esc(item.imagePath)+'" alt="" loading="lazy" decoding="async">'
-   +'<span class="sr-only">'+esc(item.name)+'</span></button>';
- }).join('');
- const backgrounds=SELECTED_BACKGROUNDS.map(item=>{
-  const selected=all||bgChoice.includes(item.slug);
-  return '<button type="button" class="bundle-pick bundle-background-pick'+(selected?' selected':'')+'"'
-   +' data-store-bundle-background="'+esc(item.slug)+'" aria-label="'+(all?'Included: ':'Select ')+esc(item.name)+' background"'
-   +' aria-pressed="'+selected+'"'+(all?' disabled aria-disabled="true"':'')+'>'
-   +'<img src="'+esc(item.imagePath)+'" alt="" loading="lazy" decoding="async">'
-   +'<span class="sr-only">'+esc(item.name)+'</span></button>';
- }).join('');
- const heading=all?'Everything in the collection is included automatically.':'Choose five of each to build your Golden Coffer.';
- const tally=all?'All 10 included':'Selected '+diceChoice.length+' of 5';
- const bgTally=all?'All 10 included':'Selected '+bgChoice.length+' of 5';
- const complete=all||(diceChoice.length===5&&bgChoice.length===5);
- const content='<div class="bundle-offers" role="group" aria-label="Choose a bundle">'+promo+'</div>'
-  +'<p class="bundle-instructions" role="status">'+esc(heading)+'</p>'
-  +'<section class="bundle-selection-section" aria-label="Dice bundle choices">'
-  +'<div class="bundle-section-heading"><h2>Choose your dice sets</h2><span>'+tally+'</span></div>'
-  +'<div class="bundle-picker-grid">'+diceTiles+'</div></section>'
-  +'<section class="bundle-selection-section" aria-label="Background bundle choices">'
-  +'<div class="bundle-section-heading"><h2>Choose your backgrounds</h2><span>'+bgTally+'</span></div>'
-  +'<div class="bundle-picker-grid">'+backgrounds+'</div></section>'
-  +'<p class="bundle-preview-status" role="status">'+(complete
-    ?'Bundle selection ready for review. Checkout will be enabled only after secure billing is configured.'
-    :'Choose '+(5-diceChoice.length)+' more dice sets and '+(5-bgChoice.length)+' more backgrounds. Checkout is not yet enabled.')
-  +'</p>'
-  +'<div class="store-bundle-purchase-actions" role="group" aria-label="Bundle purchase controls">'
-  +'<button type="button" class="store-purchase-disabled" disabled aria-disabled="true" title="Checkout is not connected yet">Purchase</button>'
-  +'<button type="button" data-store-restore-purchases="true"'+(!options.restoreAvailable?' disabled aria-disabled="true"':'')+'>Restore Purchases</button>'
-  +'</div>';
- return storeShell('bundles',content,
-  "Bundle pricing is planned: Golden Coffer $5.00 (5 dice sets and 5 backgrounds), Dragon's Treasure $10.00 (all 10 of each). App icons stay free. No purchases are charged or unlocked in this preview.");
+ const chosenDice=normalizeBundleChoices(options.bundleDice,'dice');
+ const chosenBackgrounds=normalizeBundleChoices(options.bundleBackgrounds,'backgrounds');
+ const hit=(attrs,label,x,y,w,h,classes,extra='')=>
+  '<button type="button" class="'+classes+'" '+attrs+
+  ' aria-label="'+esc(label)+'" style="--hot-x:'+x+'%;--hot-y:'+y+
+  '%;--hot-w:'+w+'%;--hot-h:'+h+'%"'+extra+
+  '><span class="sr-only">'+esc(label)+'</span></button>';
+ const categories=[['dice','Dice Sets',4.2,12.7,22.5,4],['backgrounds','Backgrounds',27.3,12.7,24,4],['icons','App Icons',52,12.7,22.5,4],['bundles','Bundles',75.1,12.7,21.1,4]]
+  .map(([key,title,x,y,w,h])=>hit('data-store-category="'+key+'"'+(key==='bundles'?' aria-current="page"':''),
+     'Open '+title,x,y,w,h,'bundle-reference-hotspot bundle-reference-category'+(key==='bundles'?' store-category-current':''))).join('');
+ const offers=[
+  ['golden-coffer','Golden Coffer, five dice sets and five backgrounds for $5.00',4.9,17.9,44.3,28.6],
+  ['dragons-treasure',"Dragon's Treasure, full collection for $10.00",50.9,17.9,44.4,28.6]
+ ].map(([id,label,x,y,w,h])=>hit('data-store-bundle-offer="'+id+'" aria-pressed="'+(deal===id)+'"',
+ label,x,y,w,h,'bundle-reference-hotspot bundle-reference-offer'+(deal===id?' selected':''))).join('');
+ const visibleDice=[['dragonfire',7.4,51.4,16.6,8.8],['frostborne',25.6,51.4,16.3,8.8],
+   ['astral',42.8,51.4,16.3,8.8],['elvenleaf',59.9,51.4,16.3,8.8],['celestial',77,51.4,15.8,8.8]]
+  .map(([slug,x,y,w,h])=>hit('data-store-bundle-dice="'+slug+'" aria-pressed="'+(all||chosenDice.includes(slug))+'"'+(all?' disabled aria-disabled="true"':''),
+  'Select '+slug+' dice set',x,y,w,h,'bundle-reference-hotspot bundle-reference-pick bundle-reference-dice'+(all||chosenDice.includes(slug)?' selected':''))).join('');
+ const visibleBg=[['moonlit-citadel',5.2,65.4,17.1,7.2],['dragons-crag',24.0,65.4,17.3,7.2],
+  ['crystal-caverns',42.3,65.4,17.2,7.2],['ancient-ruins',60.8,65.4,17.1,7.2],['shadow-marsh',79.2,65.4,16.7,7.2]]
+  .map(([slug,x,y,w,h])=>hit('data-store-bundle-background="'+slug+'" aria-pressed="'+(all||chosenBackgrounds.includes(slug))+'"'+(all?' disabled aria-disabled="true"':''),
+  'Select '+slug+' background',x,y,w,h,'bundle-reference-hotspot bundle-reference-pick bundle-reference-background'+(all||chosenBackgrounds.includes(slug)?' selected':''))).join('');
+ const tabnames=[['Overview','Home'],['My profile','Character'],['Community','Community'],['Messages','Messages'],['Store','Store']];
+ const tabs='<nav class="store-themed-footer bundle-reference-nav" aria-label="Oathkeeper main navigation">'+
+  tabnames.map(([tab,name])=>'<button type="button" data-tab="'+esc(tab)+'" aria-label="'+esc(name)+'"'+(tab==='Store'?' aria-current="page"':'')+'><span class="sr-only">'+esc(name)+'</span></button>').join('')+'</nav>';
+ const editor=options.bundlePickerOpen==='dice'||options.bundlePickerOpen==='backgrounds'?options.bundlePickerOpen:null;
+ const choices=editor==='dice'?SELECTED_DICE:SELECTED_BACKGROUNDS;
+ const selection=editor==='dice'?chosenDice:chosenBackgrounds;
+ const choiceHTML=editor?
+  '<section class="bundle-reference-picker-dialog" aria-label="Choose your '+(editor==='dice'?'dice sets':'backgrounds')+'">'+
+  '<div class="bundle-reference-picker-head"><h2>Choose your '+(editor==='dice'?'dice sets':'backgrounds')+'</h2>'+
+  '<button type="button" data-store-bundle-close="true" aria-label="Close collection choices">Back to Bundles</button></div>'+
+  '<p>'+(all?'All ten are included in Dragon\u2019s Treasure.':'Select five of the ten designs. '+selection.length+' of 5 selected.')+'</p>'+
+  '<div class="bundle-reference-picker-grid">'+choices.map(item=>
+   '<button type="button" class="bundle-reference-picker-option'+(all||selection.includes(item.slug)?' selected':'')+'"'+
+   ' data-store-bundle-'+(editor==='dice'?'dice':'background')+'="'+esc(item.slug)+'" aria-pressed="'+(all||selection.includes(item.slug))+'"'+
+   (all?' disabled aria-disabled="true"':'')+'><img src="'+esc(item.imagePath)+'" alt="" loading="lazy" decoding="async">'+
+   '<span>'+esc(item.name)+'</span></button>').join('')+'</div></section>':'';
+ const complete=all||(chosenDice.length===5&&chosenBackgrounds.length===5);
+ const buttons='<div class="store-bundle-purchase-actions bundle-reference-purchase" role="group" aria-label="Bundle payment actions">'+
+   '<button type="button" class="store-purchase-disabled" disabled aria-disabled="true" title="'+(complete?'Purchases are not connected yet':'Choose five dice sets and five backgrounds first')+'">Purchase</button>'+
+   '<button type="button" data-store-restore-purchases="true"'+(!options.restoreAvailable?' disabled aria-disabled="true"':'')+'>Restore Purchases</button></div>';
+ return '<section class="store-page store-bundle-reference-page" data-store-build="153" aria-label="Oathkeeper Bundles">'+
+  '<div class="bundle-reference-canvas"><img class="bundle-reference-art" src="/art/bundles/approved-bundles-reference.jpg" width="1024" height="1536"'+
+   ' alt="Oathkeeper store with Golden Coffer, Dragon\u2019s Treasure, dice and background choices, ornate gold navigation and purple gemstones" loading="eager" decoding="async">'+
+   categories+offers+visibleDice+visibleBg+
+   hit('data-store-bundle-open="dice"','View all ten dice sets',24.2,47.6,51.0,3.1,'bundle-reference-hotspot bundle-reference-open')+
+   hit('data-store-bundle-open="backgrounds"','View all ten backgrounds',24.7,61.6,52.2,3.1,'bundle-reference-hotspot bundle-reference-open')+
+   tabs+'</div>'+buttons+choiceHTML+
+   '<p class="sr-only" role="status">Selected '+chosenDice.length+' of five dice sets and '+chosenBackgrounds.length+' of five backgrounds. '+(all?'The full collection is included.':'')+
+   ' Paid checkout is unavailable until verified billing is configured.</p></section>';
 }
 
 function storeShell(category, body, note) {

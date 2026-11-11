@@ -73,18 +73,18 @@ const assert=require('node:assert/strict');
       await page.waitForFunction(()=>{const img=document.querySelector('.store-icon-preview-image');return img&&img.complete&&img.naturalWidth>0});
       await page.locator('[data-store-category="bundles"]').click();
       await noOverflow('bundles');
-      assert.equal(await page.locator('.bundle-offer').count(),2,'Both approved bundle offers visible');
-      assert.equal(await page.locator('.bundle-dice-pick').count(),10);
-      assert.equal(await page.locator('.bundle-background-pick').count(),10);
-      const bundleArt=await page.locator('.bundle-offer-gem').evaluateAll(nodes=>nodes.map(img=>({
-        src:img.getAttribute('src'),loaded:img.complete&&img.naturalWidth>0,fit:getComputedStyle(img).objectFit,
-        width:img.getBoundingClientRect().width,height:img.getBoundingClientRect().height
-      })));
-      assert.equal(bundleArt.length,2,'Both offers need distinct artwork');
-      assert(bundleArt.every(x=>x.loaded&&x.fit==='contain'&&x.height>=100),`Bundle artwork is undersized or missing: ${JSON.stringify(bundleArt)}`);
-      assert.notEqual(bundleArt[0].src,bundleArt[1].src,'Bundle offers must have different images');
-      const pickBounds=await page.locator('.bundle-pick').evaluateAll(nodes=>nodes.map(n=>n.getBoundingClientRect().width));
-      assert(pickBounds.every(w=>w>=(width<=360?120:width<=430?100:180)),`Bundle picks are too small at ${width}px`);
+      assert.equal(await page.locator('.bundle-reference-offer').count(),2,'Original offers receive accurate invisible selection hotspots');
+      assert.equal(await page.locator('.bundle-reference-pick').count(),10,'Five pictured dice and five backgrounds remain selectable');
+      const reference=page.locator('.bundle-reference-art');
+      const referenceData=await reference.evaluate(img=>({loaded:img.complete&&img.naturalWidth>0,w:img.naturalWidth,h:img.naturalHeight,fit:getComputedStyle(img).objectFit}));
+      assert.deepEqual(referenceData,{loaded:true,w:1024,h:1536,fit:'contain'},'Exact approved image was not loaded as a whole, un-cropped reference');
+      assert.equal(await page.locator('.store-bundle-purchase-actions button').count(),2);
+      assert.equal(await page.locator('.store-bundle-purchase-actions button').first().innerText(),'Purchase');
+      assert.equal(await page.locator('.store-bundle-purchase-actions button').last().innerText(),'Restore Purchases');
+      assert(await page.locator('.store-bundle-purchase-actions button').first().isDisabled(),'Unconfigured billing must not accept purchases');
+      await page.locator('[data-store-bundle-open="dice"]').click();
+      assert.equal(await page.locator('.bundle-reference-picker-option').count(),10,'All ten choices must remain accessible without modifying the screenshot');
+      await page.locator('[data-store-bundle-close]').click();
       await page.screenshot({path:`preview-output/store-bundles-${width}.png`,fullPage:true});
       // The footer must be after, never on top of, the largest artwork.
       await page.locator('[data-store-category="backgrounds"]').click();
