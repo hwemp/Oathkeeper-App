@@ -19,7 +19,7 @@ test('each animated die has its own textured vector surface',async()=>{
  assert.equal(new Set(SELECTED_DICE.map(x=>dieSurfaceSvg(x.slug))).size,10);
  assert(SELECTED_DICE.every(x=>d20FaceSvg(x.slug).includes('width="2000"')));
  const source=await readFile(new URL('../web/dice-tabletop.js',import.meta.url),'utf8');
- assert(source.includes('liveDieFaceTexture(skin)'));
+ assert(source.includes("liveDieFaceTexture(skin||{slug:'royal-purple'})"));
 });
 test('all Store selections remain accessible buttons, without circle overlays',async()=>{
  const css=await readFile(new URL('../web/fantasy.css',import.meta.url),'utf8');
