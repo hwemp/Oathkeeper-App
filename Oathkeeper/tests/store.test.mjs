@@ -85,7 +85,8 @@ test('all ten free icons have distinct previews and native resource IDs',async()
     assert.equal(item.price,0);
     assert.equal(item.status,'free');
     assert.equal(item.assetReady,true);
-    const file=await readFile(new URL('../web/public'+item.imagePath,import.meta.url));
+    assert.equal(item.imagePath,item.launcherPreviewPath,'Store thumbnails must use the launcher-derived preview');
+    const file=await readFile(new URL('../web/public'+item.portableSvgPath,import.meta.url));
     assert(file.length>5000);
     const svg=file.toString('utf8');
     assert(svg.startsWith('<?xml version="1.0"'));
@@ -96,12 +97,16 @@ test('all ten free icons have distinct previews and native resource IDs',async()
     const encoded=tail.slice(0,tail.indexOf('"'));
     const master=await readFile(new URL('../web/public'+item.masterImagePath,import.meta.url));
     assert.deepEqual(Buffer.from(encoded,'base64'),master,'Store SVG must contain the exact native icon master');
-    const preview=await readFile(new URL('../web/public'+item.launcherPreviewPath,import.meta.url));
+    const preview=await readFile(new URL('../web/public'+item.imagePath,import.meta.url));
     assert.equal(preview.toString('ascii',0,4),'RIFF');
+    assert.equal(preview.toString('ascii',8,12),'WEBP');
     const html=storePage('elvenleaf',{category:'icons',iconSlug:item.slug});
     assertOneTapSelection(html,'icons');
     assert.equal((html.match(/data-store-icon=/g)||[]).length,10);
     assert(html.includes('<img class="store-icon-preview-image" src="'+item.imagePath+'"'));
+    assert(html.includes('<img class="store-icon-tile-art" src="'+item.imagePath+'"'));
+    assert(!html.includes(item.portableSvgPath),'The original full-bleed SVG must not appear in Store image elements');
+    assert.doesNotMatch(html,/store-native-launcher-preview/);
     assert(html.includes('data-store-icon="'+item.slug+'"'));
     assert(html.includes('data-store-apply-icon="'+item.slug+'"'));
     assert.match(html,/Restore Original Icon/);

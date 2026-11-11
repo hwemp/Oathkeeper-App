@@ -9,10 +9,10 @@ export const APPROVED_FREE_ICON_CONCEPTS = Object.freeze(items.map(([selection,n
  Object.freeze({
   selection,slug:'icon-'+String(selection).padStart(2,'0'),name,
   iosIconName:'AppIcon-'+String(selection).padStart(2,'0'),
-  // Render the user-approved source SVG in the Store. The embedded WebP is
-  // byte-identical to the native Android legacy icon and the iOS source.
-  imagePath:'/art/store-icons/transfer-'+String(selection).padStart(2,'0')+'.svg',
-  // Android masks adaptive foreground/background layers; show that layout separately.
+  // Store thumbnails and enlarged selection now show the actual Android launcher
+  // composition generated from its native adaptive foreground/background layers.
+  // Do not show the separate, full-bleed SVG master as the selectable thumbnail.
+  imagePath:'/art/store-icons/preview-'+String(selection).padStart(2,'0')+'.webp',
   launcherPreviewPath:'/art/store-icons/preview-'+String(selection).padStart(2,'0')+'.webp',
   masterImagePath:'/art/store-icons/icon-'+String(selection).padStart(2,'0')+'.webp',
   // Standalone SVG transfer contains the exact original WebP bytes, not vector-traced art.

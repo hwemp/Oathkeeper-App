@@ -198,10 +198,7 @@ function iconStorePage(selectedSlug = 'icon-01', iconStatus = {supported:false,c
     + '<div class="store-icon-preview-media"><img class="store-icon-preview-image"'
     + ' src="' + esc(active.imagePath) + '" alt="' + esc(active.name) + ' free app icon"'
     + ' loading="eager" decoding="async"></div>'
-    + '<div class="store-background-preview-details"><p>Original SVG design — exact source artwork for your chosen launcher icon.</p>'
-    + '<div class="store-native-launcher-preview"><img src="' + esc(active.launcherPreviewPath) + '"'
-    + ' alt="Android circular launcher rendering of ' + esc(active.name) + '" loading="eager" decoding="async">'
-    + '<span>Android launcher preview. Your phone may apply a different adaptive icon mask.</span></div>'
+    + '<div class="store-background-preview-details"><p>Launcher-based icon preview, generated from the same Android adaptive icon layers used on your home screen. Your phone may apply a different icon mask.</p>'
     + '<p>' + (applied ? 'This icon is currently applied.' : 'Apply this free design as your home-screen app icon.') + '</p></div></section>';
   const actions = '<div class="store-selection-footer store-icon-actions">'
     + '<p>All ten alternate app icons are <strong>FREE</strong>, and the original stays available. '
