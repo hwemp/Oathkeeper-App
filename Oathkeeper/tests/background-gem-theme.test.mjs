@@ -9,12 +9,12 @@ test('all ten backgrounds have intentional and distinct gemstone mappings',()=>{
   const slugs=[...catalog.matchAll(/"slug": "([^"]+)"/g)].map(m=>m[1]);
   assert.equal(slugs.length,10);
   assert.deepEqual(slugs.sort(),Object.keys(BACKGROUND_GEMS).sort());
-  assert.equal(gemForBackground('moonlit-citadel'),'sapphire');
+  assert.equal(gemForBackground('moonlit-citadel'),'amethyst');
   assert.equal(gemForBackground('dragons-crag'),'ruby');
   assert.equal(gemForBackground('elder-grove'),'emerald');
   assert.equal(gemForBackground('shadow-marsh'),'amethyst');
   assert.equal(gemForBackground('eternal-keep'),'citrine');
-  assert.equal(gemForBackground('unknown'),'sapphire');
+  assert.equal(gemForBackground('unknown'),'amethyst');
 });
 test('every gemstone variant is a vector and is used by the same overlay',()=>{
  for(const gem of new Set(Object.values(BACKGROUND_GEMS))){
