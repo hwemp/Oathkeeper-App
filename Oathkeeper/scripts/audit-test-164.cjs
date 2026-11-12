@@ -76,7 +76,7 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
   for(const slug of ['dragonfire','frostborne','elvenleaf','celestial','abyssal','gold-forged','necrotic','astral','oceanic','sunfire']){
    const elem=page.locator('[data-store-dice="'+slug+'"]').first();
    const bg=await elem.evaluate(el=>getComputedStyle(el,'::before').backgroundImage);
-   assert(bg.includes('/test164-dice/'+slug+'.png'),'Store dice not captured from original animation '+slug);
+   assert(bg.includes('/test166-dice/'+slug+'/d20.png'),'Store dice not captured from original animation '+slug);
   }
   await page.screenshot({path:'preview-output/164-animated-master-store.png',fullPage:true});
   report.screens.push('164-animated-master-store.png');
