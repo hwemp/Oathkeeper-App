@@ -48,7 +48,7 @@ export function repairMissingBackgroundPreviews(doc) {
   let updated=0;
   for(const img of store.querySelectorAll('img[src*="art/exact-store/"]')) {
     const original=img.getAttribute("src")||"";
-    const match=original.match(/(?:^|\\/)art\\/exact-store\\/([a-z0-9-]+)\\.webp(?:[?#]|$)/);
+    const match=original.match(/(?:^|\/)art\/exact-store\/([a-z0-9-]+)\.webp(?:[?#]|$)/);
     if(!match||!Object.hasOwn(BACKGROUND_GEMS,match[1]))continue;
     const slug=match[1];
     if(img.dataset.oathkeeperBackgroundMaster===slug)continue;
