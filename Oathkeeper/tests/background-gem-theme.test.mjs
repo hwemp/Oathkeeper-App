@@ -33,7 +33,7 @@ test('previews change gem locally without applying a paid background',()=>{
    style:{getPropertyValue:()=>''}
  };
  const btn={getAttribute:key=>key==='data-store-background'?'dragons-crag':null};
- const store={querySelector:selector=>selector.includes('[data-store-background]')?btn:null};
+ const store={querySelector:selector=>selector.includes('[data-store-background]')?btn:null,querySelectorAll:()=>[]};
  const doc={
    querySelector:selector=>selector==='.store-page'?store:null,
    body:applied,
