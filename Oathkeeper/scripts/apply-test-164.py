@@ -23,9 +23,14 @@ if not (dist/'art/exact-store/roll/astral.webp').is_file():
     raise RuntimeError('Frozen original roll artwork missing')
 for n in ('01','02','04','05','06','07','08','11','12','14'):
     master=root/'android/app/src/main/res/drawable-nodpi'/('oathkeeper_icon_art_'+n+'.webp')
-    applied=dist/'art/store-icons'/('launcher-'+n+'.webp')
-    if not applied.is_file() or not master.is_file():
-        raise RuntimeError('Missing actual Android launcher master and Store reference '+n)
-    if hashlib.sha256(applied.read_bytes()).digest()!=hashlib.sha256(master.read_bytes()).digest():
-        raise RuntimeError('Store icon and Android launcher master disagree '+n)
+    catalog=root/'web/public/art/store-icons'/('icon-'+n+'.webp')
+    if not catalog.is_file() or not master.is_file():
+        raise RuntimeError('Missing native Android launcher master or catalog art '+n)
+    if hashlib.sha256(catalog.read_bytes()).digest()!=hashlib.sha256(master.read_bytes()).digest():
+        raise RuntimeError('Store catalog art and native Android launcher master disagree '+n)
+    (dist/'art/store-icons').mkdir(parents=True, exist_ok=True)
+    for filename in ('icon-'+n+'.webp','launcher-'+n+'.webp'):
+        shutil.copyfile(master,dist/'art/store-icons'/filename)
+        if hashlib.sha256((dist/'art/store-icons'/filename).read_bytes()).digest()!=hashlib.sha256(master.read_bytes()).digest():
+            raise RuntimeError('Written Store preview differs from native launcher reference '+filename)
 print('164 stylesheet installed; 10 icons are byte-identical to native launcher masters.')
