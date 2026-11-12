@@ -103,6 +103,8 @@ const url='http://127.0.0.1:5209';
    const imgpath=await img.evaluate(e=>new URL(e.currentSrc||e.getAttribute('src'),document.baseURI).pathname);
    assert(imgpath.endsWith('/art/exact-store/roll/'+slug+'-still.webp'),
     'Bundle uses mismatched polygon or unrelated illustration '+slug+': '+imgpath);
+   const label=tile.locator('.ok-pick-name');
+   assert(await label.isVisible(),'Dice set name is not visible in bundle: '+slug);
    assert.equal(await tile.locator('.test166-bundle-live-art').count(),0);
   }
   await page.screenshot({path:'preview-output/169-bundles-original-illustrated-dice.png',fullPage:true});
@@ -114,11 +116,16 @@ const url='http://127.0.0.1:5209';
   if(!await animate.isChecked())await animate.check({force:true});
   await page.locator('[data-die="20"]').first().click();
   await page.locator('#diceForm button.dice-roll').click();
-  const canvas=page.locator('#diceTabletop canvas');
-  await canvas.waitFor({state:'visible',timeout:12000});
-  assert.equal(await canvas.count(),1,'The bad TEST 168 second WebGL animation remains active');
+  const animation=page.locator('#diceTabletop img.test169-approved-rolling-gif');
+  await animation.waitFor({state:'visible',timeout:12000});
+  await animation.evaluate(async img=>img.decode());
+  const filename=await animation.evaluate(img=>new URL(img.currentSrc||img.getAttribute('src'),document.baseURI).pathname);
+  assert(filename.endsWith('/art/exact-store/roll/astral-original.gif'),
+    'Dice tab is not displaying exact approved original GIF: '+filename);
+  assert.equal(await page.locator('#diceTabletop canvas').count(),0,
+    'Polygon canvas still competes with the master GIF');
   await page.waitForFunction(()=>document.querySelector('#diceTabletop')?.dataset.state==='landed',null,{timeout:11000});
-  assert(/^\d/.test(await page.locator('.dice-result strong').innerText()),'Original dice roll did not complete');
+  assert(/^\d/.test(await page.locator('.dice-result strong').innerText()),'Original dice roll result did not complete');
   await page.screenshot({path:'preview-output/169-original-roller-restored.png',fullPage:true});
   // Typography must remain inside the safe center of the ornate button frame.
   for(const viewport of [360,393,412]){
