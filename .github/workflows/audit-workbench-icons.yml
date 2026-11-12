@@ -7,6 +7,7 @@ on:
       - 'Oathkeeper/scripts/workbench-inspect-icons.cjs'
       - 'Oathkeeper/scripts/audit-workbench-source-alignment.mjs'
       - 'Oathkeeper/scripts/apply-workbench-icon-preview.py'
+      - 'Oathkeeper/scripts/normalize-workbench-icons-page.py'
       - 'Oathkeeper/scripts/audit-workbench-icon-preview.cjs'
       - 'Oathkeeper/web/test164-overrides.css'
       - 'Oathkeeper/scripts/apply-test-164.py'
@@ -91,7 +92,9 @@ jobs:
       - name: Apply approved icon source fix if present — no APK
         run: |
           if test -f scripts/apply-workbench-icon-preview.py; then
+            python scripts/normalize-workbench-icons-page.py
             python scripts/apply-workbench-icon-preview.py
+            test -s dist/art/exact-store/icons-workbench.webp
             node --check dist/assets/main-FCw4hQ90.js
             node scripts/audit-workbench-icon-preview.cjs
           else
