@@ -92,9 +92,50 @@ def main():
         shutil.copyfile(approved,destination)
         if sha256(destination) != sha256(approved):
             raise RuntimeError(f"Background master altered in copying: {slug}")
+    # TEST 163: preview the chosen illustrated dice skin using the ORIGINAL
+    # frozen 144 renderer. This changes only the two skin arguments and a label;
+    # never change the roll engine, 3D mesh, animation, timing, odds, or purchases.
+    compiled = DIST / "assets" / "main-FCw4hQ90.js"
+    if not compiled.is_file():
+        raise RuntimeError("Exact approved Build 144 compiled runtime not found")
+    before = compiled.read_text(encoding="utf-8")
+    changes = (
+        (
+            'le==="Dice"&&(u=hv(Re,M.rollHistory,M.diceAnimation,_i().dice))',
+            'le==="Dice"&&(u=hv(Re,M.rollHistory,M.diceAnimation,_i().dice||(M.storePreviewDice?ia.find(f=>f.slug===M.storePreviewDice):null)))',
+        ),
+        (
+            '},_i().dice)}if(le==="Dice"',
+            '},_i().dice||(M.storePreviewDice?ia.find(f=>f.slug===M.storePreviewDice):null))}if(le==="Dice"',
+        ),
+        (
+            'Your purchased dice theme is active. Rolls and probabilities remain unchanged.',
+            'TEST 163 visual preview only; not purchased or unlocked. Rolls and probabilities remain unchanged.',
+        ),
+    )
+    after = before
+    for old, new in changes:
+        if after.count(old) != 1:
+            raise RuntimeError(f"TEST 163 cannot safely locate one frozen dice preview hook: {old[:60]}")
+        after = after.replace(old, new, 1)
+    # Refuse any unreviewed edits or accidental overlap, and confirm the
+    # original verified-payment message is still present.
+    reconstructed = after
+    for old, new in reversed(changes):
+        if reconstructed.count(new) != 1:
+            raise RuntimeError("TEST 163 preview replacement did not preserve uniqueness")
+        reconstructed = reconstructed.replace(new, old, 1)
+    if reconstructed != before:
+        raise RuntimeError("TEST 163 changed content outside the three approved preview hooks")
+    if 'Purchase verification is required before applying this cosmetic.' not in after:
+        raise RuntimeError("Purchase ownership verification was modified")
+    compiled.write_text(after, encoding="utf-8")
+    patched_runtime = compiled.relative_to(DIST)
     for path, expected in original_hashes.items():
-        if path != Path("index.html") and sha256(DIST / path) != expected:
+        if path not in (Path("index.html"), patched_runtime) and sha256(DIST / path) != expected:
             raise RuntimeError(f"Frozen asset modified: {path}")
+    print("TEST 163 dice preview: same 144 renderer and RNG, selected visual skin only")
+
     print("Applied lossless vector ornament overlay. Original archived assets unchanged.")
 
 if __name__ == "__main__":
