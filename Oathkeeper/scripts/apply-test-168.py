@@ -22,9 +22,21 @@ def main():
   image-rendering:auto!important;
 }
 .dice-page .die-tile .reference-die {
-  background-size:contain!important;background-repeat:no-repeat!important;
-  background-position:center center!important;
+  /* Show the physical die itself, not a tiny whole-stage image. */
+  background-size:154% auto!important;background-repeat:no-repeat!important;
+  background-position:center 43%!important;
   image-rendering:auto!important;
+}
+.dice-page .dice-special-grid .reference-die {
+  background-size:143% auto!important;background-position:center 43%!important;
+}
+.dice-applied-skin .dice-applied-art {
+  background-size:153% auto!important;background-position:center 42%!important;
+}
+.ok-exact-store .ok-roll-box canvas.test168-store-webgl {
+  display:block!important;position:absolute!important;inset:0!important;
+  pointer-events:none!important;width:100%!important;height:100%!important;
+  z-index:7!important;image-rendering:auto!important;
 }
 .ok-exact-store [data-store-dice]::before,
 .ok-exact-store [data-store-bundle-dice]::before,
