@@ -42,12 +42,12 @@ def main():
     # purchasing restrictions. Only choose the canonical native image for
     # neutralized icon tile and the selected enlarged preview on ALL 10 slugs.
     new="""function ay(i='icon-01',u={supported:false,currentIcon:'default'}){
- const S=OKS.icons,r=Ol.find(d=>d.slug===i)||Ol[0],current=u?.currentIcon||'default',applied=current===r.iosIconName,supported=u?.supported===true;
+ const S=OKS.icons,catalog=Ol.map(d=>({...d,name:d.slug==='icon-07'?'Twin Battleaxes':d.slug==='icon-08'?'Astral D20':d.name})),r=catalog.find(d=>d.slug===i)||catalog[0],current=u?.currentIcon||'default',applied=current===r.iosIconName,supported=u?.supported===true;
  const master=String(r.slug);
  if(!/^icon-(01|02|04|05|06|07|08|11|12|14)$/.test(master))
   throw new Error('Unknown Android launcher icon selection');
  const exactIcon='art/store-icons/'+master+'.webp';
- let body=okTabs(S,'icons')+okNav(S)+okTiles(S,Ol,r.slug,'data-store-icon','Preview');
+ let body=okTabs(S,'icons')+okNav(S)+okTiles(S,catalog,r.slug,'data-store-icon','Preview');
  // The parent icons.webp sheet is normalized once by the Workbench art
  // processor; the live tile art and highlight are now the ONLY visual states.
  // Do not add an old special-case Chalice overlay or a second icon button.
