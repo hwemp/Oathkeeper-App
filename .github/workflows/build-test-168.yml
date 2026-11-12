@@ -6,8 +6,8 @@ on:
 permissions:
   contents: write
 concurrency:
-  group: oathkeeper-test-168-${{ github.ref }}
-  cancel-in-progress: true
+  group: oathkeeper-test-168-${{ github.sha }}
+  cancel-in-progress: false
 jobs:
   build:
     runs-on: ubuntu-latest
