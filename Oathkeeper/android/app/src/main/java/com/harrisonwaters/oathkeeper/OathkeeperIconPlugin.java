@@ -22,8 +22,11 @@ public class OathkeeperIconPlugin extends Plugin {
     }
 
     private ComponentName component(String alias) {
+        // An applicationIdSuffix changes the installed package name, not the
+        // compiled namespace used by AndroidManifest activity aliases.
+        String nativeNamespace = OathkeeperIconPlugin.class.getPackage().getName();
         return new ComponentName(getContext().getPackageName(),
-                getContext().getPackageName() + "." + alias);
+                nativeNamespace + "." + alias);
     }
 
     private String currentIcon() {
