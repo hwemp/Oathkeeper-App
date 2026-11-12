@@ -1,0 +1,218 @@
+name: Oathkeeper TEST-BRANCH-162 - Background-Matched Gemstones and Lossless Art
+on:
+  push:
+    branches: [TEST-BRANCH-162]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: oathkeeper-test-162-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: Oathkeeper
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: Oathkeeper/package-lock.json
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies and validate current source
+        run: |
+          npm ci
+          npm run check
+          npm run typecheck
+          npm test
+          npm run catalog
+          npm run build
+      - name: Verify retained approved store and dice web assets
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib
+          import shutil
+          import stat
+          import zipfile
+
+          root = Path('..').resolve()
+          chunk_dir = root / '.build142'
+          expected = [f'payload.part{i:02d}.bin' for i in range(10)]
+          parts = sorted(chunk_dir.glob('payload.part*.bin'))
+          if [p.name for p in parts] != expected:
+              raise RuntimeError('Missing or unexpected Build 142 payload chunks')
+          archive = Path('/tmp/oathkeeper-build144-web.zip')
+          digest = hashlib.sha256()
+          with archive.open('wb') as output:
+              for part in parts:
+                  with part.open('rb') as reader:
+                      while True:
+                          block = reader.read(1024 * 1024)
+                          if not block:
+                              break
+                          digest.update(block)
+                          output.write(block)
+          expected_digest = 'c83a657ab68b900b724b75c45b6d5d2256e69192a1d62e922279422fb0fb0b05'
+          if digest.hexdigest() != expected_digest:
+              raise RuntimeError('Build 142 payload SHA256 mismatch')
+          dist = Path('dist')
+          if dist.exists():
+              shutil.rmtree(dist)
+          dist.mkdir()
+          with zipfile.ZipFile(archive) as source:
+              for entry in source.infolist():
+                  if not entry.filename.startswith('web-assets/'):
+                      raise RuntimeError(f'Unexpected archive entry: {entry.filename}')
+                  relative = Path(entry.filename).relative_to('web-assets')
+                  if relative.is_absolute() or '..' in relative.parts:
+                      raise RuntimeError(f'Unsafe archive entry: {entry.filename}')
+                  if relative == Path('.'):
+                      continue
+                  mode = entry.external_attr >> 16
+                  if stat.S_ISLNK(mode):
+                      raise RuntimeError(f'Symlink not allowed: {entry.filename}')
+                  destination = dist / relative
+                  if entry.is_dir():
+                      destination.mkdir(parents=True, exist_ok=True)
+                      continue
+                  destination.parent.mkdir(parents=True, exist_ok=True)
+                  with source.open(entry) as reader, destination.open('wb') as writer:
+                      shutil.copyfileobj(reader, writer)
+          must_exist = [
+              'index.html',
+              'art/exact-store/dice.webp',
+              'art/exact-store/backgrounds.webp',
+              'art/exact-store/icons.webp',
+              'art/exact-store/roll/astral.webp',
+              'art/exact-store/roll/dragonfire.webp',
+          ]
+          if any(not (dist / name).is_file() for name in must_exist):
+              raise RuntimeError('Build 142 web assets are incomplete')
+          print('Verified full ZIP SHA256 and installed Build 142 web assets')
+          PY
+      - name: Install lossless vector background renderer
+        run: python -m pip install --disable-pip-version-check pillow cairosvg
+      - name: Apply six gemstone themes and independent high-resolution backgrounds
+        run: |
+          python scripts/apply-ornate-buttons.py
+          test -s dist/ornate-buttons.css
+          for svg in ornate-amethyst ornate-flourish-left ornate-flourish-right; do
+            test -s "dist/art/${svg}.svg"
+          done
+          grep -Fq 'data-oathkeeper-test161="ornate-buttons"' dist/index.html
+          grep -Fq 'data-oath-gem-theme-controller="true"' dist/index.html
+          test -s dist/ornate-gem-theme.js
+          python - <<'PY'
+          from pathlib import Path
+          from PIL import Image
+          bgs=('moonlit-citadel','ancient-ruins','enchanted-forest','dragons-crag',
+               'shadow-marsh','celestial-plains','crystal-caverns',
+               'elder-grove','mystic-lake','eternal-keep')
+          for slug in bgs:
+              p=Path('dist/art/hires-store-backgrounds')/(slug+'.webp')
+              assert p.is_file(),f'Missing {slug} image'
+              with Image.open(p) as im:
+                  assert im.size==(1600,1125),f'Wrong image dimensions {slug}: {im.size}'
+          for gem in ('amethyst','sapphire','emerald','ruby','aquamarine','citrine'):
+              assert (Path('dist/art')/('ornate-'+gem+'.svg')).is_file(),f'Missing {gem}'
+          print('Ten lossless full-resolution backgrounds and six gems verified')
+          PY
+      - name: Validate button UI embellishment files
+        run: node --test tests/ornate-buttons.test.mjs
+      - name: Replace old icon reservoir with exact Store image bytes
+        run: |
+          python -m pip install --disable-pip-version-check Pillow
+          python scripts/repair-default-launcher.py
+          python scripts/generate-free-icons.py
+          test "$(find android/app/src/main/res/mipmap-anydpi-v26 -maxdepth 1 -name 'oathkeeper_icon_*.xml' | wc -l)" -eq 10
+          for number in 01 02 04 05 06 07 08 11 12 14; do
+            test -s "android/app/src/main/res/mipmap-anydpi-v26/oathkeeper_icon_${number}.xml"
+            test -s "android/app/src/main/res/mipmap-nodpi/oathkeeper_icon_${number}.webp"
+            cmp "web/public/art/store-icons/icon-${number}.webp" "android/app/src/main/res/mipmap-nodpi/oathkeeper_icon_${number}.webp"
+            cmp "web/public/art/store-icons/icon-${number}.webp" "android/app/src/main/res/drawable-nodpi/oathkeeper_icon_art_${number}.webp"
+            grep -Fq "@drawable/oathkeeper_icon_art_${number}" "android/app/src/main/res/mipmap-anydpi-v26/oathkeeper_icon_${number}.xml"
+            test ! -e "android/app/src/main/res/mipmap-nodpi/oathkeeper_icon_${number}.png"
+            test ! -e "web/public/art/store-icons/launcher-${number}.webp"
+            # Legacy frozen web code may reference launcher-XX; supply identical bytes.
+            mkdir -p dist/art/store-icons
+            cp "web/public/art/store-icons/icon-${number}.webp" "dist/art/store-icons/icon-${number}.webp"
+            cp "web/public/art/store-icons/icon-${number}.webp" "dist/art/store-icons/launcher-${number}.webp"
+            cmp "dist/art/store-icons/icon-${number}.webp" "dist/art/store-icons/launcher-${number}.webp"
+          done
+      - name: Isolate TEST 162 APK while preserving unchanged Build 144 game assets
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('android/app/build.gradle')
+          source=p.read_text()
+          before='versionCode 6'
+          assert source.count(before)==1, 'Unexpected original versionCode; do not modify Android source blindly'
+          source=source.replace(before,'versionCode 162',1)
+          before='    buildTypes {\n        release {'
+          assert source.count(before)==1, 'Unexpected Gradle buildTypes; refusing unsafe edit'
+          source=source.replace(before, '    buildTypes {\n        debug {\n            applicationIdSuffix ".test162"\n            versionNameSuffix "-TEST-162"\n        }\n        release {',1)
+          p.write_text(source)
+          print('TEST 162 isolated Android application identity; no web assets modified')
+          PY
+      - name: Verify approved frozen dice and store image files remain present
+        run: |
+          test -s dist/art/exact-store/dice.webp
+          test -s dist/art/exact-store/backgrounds.webp
+          test -s dist/art/exact-store/icons.webp
+          test -s dist/art/exact-store/roll/astral.webp
+          test -s dist/art/exact-store/roll/dragonfire.webp
+          for number in 01 02 04 05 06 07 08 11 12 14; do
+            cmp "dist/art/store-icons/icon-${number}.webp" "web/public/art/store-icons/icon-${number}.webp"
+            cmp "dist/art/store-icons/launcher-${number}.webp" "web/public/art/store-icons/icon-${number}.webp"
+          done
+      - name: Sync Capacitor Android application
+        run: npx cap sync android
+      - name: Build debug-signed Android APK
+        run: |
+          chmod +x android/gradlew
+          cd android
+          ./gradlew assembleDebug --no-daemon --stacktrace
+      - name: Verify APK contains Build 144 dice animation, valid signature, and isolated test ID
+        run: |
+          APK=android/app/build/outputs/apk/debug/app-debug.apk
+          unzip -Z1 "$APK" | grep -Fq 'assets/public/art/exact-store/roll/astral.webp'
+          unzip -Z1 "$APK" | grep -Fq 'assets/public/ornate-buttons.css'
+          unzip -Z1 "$APK" | grep -Fq 'assets/public/art/ornate-amethyst.svg'
+          unzip -Z1 "$APK" | grep -Fq 'assets/public/ornate-gem-theme.js'
+          for gem in sapphire emerald ruby aquamarine citrine; do
+            unzip -Z1 "$APK" | grep -Fq "assets/public/art/ornate-${gem}.svg"
+          done
+          unzip -Z1 "$APK" | grep -Fq 'assets/public/art/hires-store-backgrounds/elder-grove.webp'
+          unzip -Z1 "$APK" | grep -Fq 'assets/public/art/ornate-flourish-left.svg'
+          unzip -Z1 "$APK" | grep -Fq 'assets/public/art/ornate-flourish-right.svg'
+          BUILD_TOOLS=$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -n 1)
+          "$BUILD_TOOLS/apksigner" verify --verbose "$APK"
+          "$BUILD_TOOLS/aapt" dump badging "$APK" | grep -Fq "package: name='com.harrisonwaters.oathkeeper.test162'"
+          mkdir -p output
+          cp "$APK" output/Oathkeeper-TEST-BRANCH-162.apk
+          cd output
+          sha256sum Oathkeeper-TEST-BRANCH-162.apk > SHA256SUMS.txt
+      - name: Upload installable test APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Oathkeeper-TEST-BRANCH-162
+          path: Oathkeeper/output/*
+          if-no-files-found: error
+          retention-days: 30
+      - name: Publish downloadable pre-release APK
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="android-test-162-${{ github.run_number }}-${{ github.run_attempt }}"
+          gh release create "$TAG" output/* --target "${{ github.sha }}" --title "Oathkeeper TEST-BRANCH-162 — Background-Matched Vector Gemstones and Lossless HD Background Previews" --prerelease --latest=false --notes "Frozen Build 144 animation and original art preserved. Six vector gemstones match selected backgrounds. Ten original SVG backgrounds rendered into lossless 1600px masters. Isolated TEST 162 package; official APK unchanged. APK is for testing. Keep official Build 144 installed; back up character data before testing."
