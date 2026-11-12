@@ -60,7 +60,7 @@ const host="http://127.0.0.1:5189";
     const selectedAsset=imgStatus.filter(x=>x.src.includes('/art/exact-store/'+slug+'.webp')||x.src.includes('/art/store-backgrounds/'+slug+'.svg'));
     if (slug !== 'moonlit-citadel') {
       assert(selectedAsset.length>0,'Selected standalone background not found for '+slug);
-      assert(selectedAsset.some(x=>x.intrinsic>=508),'Selected background lacks usable detail: '+slug);
+      assert(selectedAsset.some(x=>x.intrinsic>=508),'Selected background lacks usable detail: '+slug+' '+JSON.stringify(selectedAsset)+' ALL '+JSON.stringify(imgStatus));
     }
    }
    const blocked=await page.locator('[data-store-category]').first().evaluate(el=>getComputedStyle(el,'::after').pointerEvents);
