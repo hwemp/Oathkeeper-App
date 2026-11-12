@@ -32,7 +32,7 @@ test('test166 output is isolated from official application and previous test bui
  const workflow=read('../../.github/workflows/build-test-166.yml');
  assert.match(workflow,/branches: \[TEST-BRANCH-166\]/);
  assert.match(workflow,/versionCode 166/);
- assert.match(workflow,/applicationIdSuffix "\\.test166"/);
+ assert.match(workflow,/applicationIdSuffix "\.test166"/);
  assert.match(workflow,/make-test166-dice-previews/);
  assert.match(workflow,/audit-test-166/);
  assert.match(workflow,/test166-dice-parity\.css/);
