@@ -46,11 +46,19 @@ test('previews change gem locally without applying a paid background',()=>{
  assert.equal(updateGemTheme(doc),'emerald'); // after leaving preview, verified applied background wins
 });
 
-test('frozen Build 144 illustrated previews are not replaced by synthetic vectors',()=>{
-  const html={querySelector:()=>({})};
-  assert.equal(repairMissingBackgroundPreviews(html),0);
-  const src=repairMissingBackgroundPreviews.toString();
-  assert.doesNotMatch(src,/\.setAttribute\(\s*["']src["']/);
-  assert.doesNotMatch(src,/hires-store-backgrounds|svg2png/);
-  assert.equal(BACKGROUND_GEMS['moonlit-citadel'],'sapphire');
+test('all ten illustrated scenes use their approved WebP originals, not new vector redraws',()=>{
+  for(const slug of Object.keys(BACKGROUND_GEMS)){
+    const file=readFileSync(new URL('../web/public/art/store-backgrounds/'+slug+'.webp',import.meta.url));
+    assert(file.length>5000,slug+' must have image data');
+    assert.equal(file.toString('ascii',0,4),'RIFF');
+    assert.equal(file.toString('ascii',8,12),'WEBP');
+  }
+  const assigned={};
+  const img={dataset:{},getAttribute:key=>key==='src'?'/art/exact-store/ancient-ruins.webp':null,
+    setAttribute:(key,value)=>{assigned[key]=value}};
+  const doc={querySelector:sel=>sel==='.store-page'?{querySelectorAll:()=>[img]}:null};
+  assert.equal(repairMissingBackgroundPreviews(doc),1);
+  assert.equal(assigned.src,'/art/approved-backgrounds/ancient-ruins.webp');
+  assert.equal(repairMissingBackgroundPreviews(doc),0);
+  assert.doesNotMatch(repairMissingBackgroundPreviews.toString(),/hires-store-backgrounds|\.svg2png/);
 });
