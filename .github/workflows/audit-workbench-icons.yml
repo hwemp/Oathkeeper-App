@@ -7,6 +7,9 @@ on:
       - 'Oathkeeper/scripts/workbench-inspect-icons.cjs'
       - 'Oathkeeper/scripts/audit-workbench-source-alignment.mjs'
       - 'Oathkeeper/scripts/apply-workbench-icon-preview.py'
+      - 'Oathkeeper/scripts/audit-workbench-icon-preview.cjs'
+      - 'Oathkeeper/web/test164-overrides.css'
+      - 'Oathkeeper/scripts/apply-test-164.py'
       - 'Oathkeeper/web/workbench-icon-preview.css'
       - 'Oathkeeper/tests/workbench-icon-preview.test.mjs'
   workflow_dispatch:
