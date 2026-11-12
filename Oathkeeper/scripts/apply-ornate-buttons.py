@@ -16,7 +16,7 @@ SOURCE = ROOT / "web"
 STYLESHEET = "ornate-buttons.css"
 ART = ("ornate-amethyst.svg", "ornate-flourish-left.svg", "ornate-flourish-right.svg",
        "ornate-sapphire.svg", "ornate-emerald.svg", "ornate-ruby.svg",
-       "ornate-aquamarine.svg", "ornate-citrine.svg")
+       "ornate-aquamarine.svg", "ornate-citrine.svg", "ornate-nav-163.svg")
 
 def sha256(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
