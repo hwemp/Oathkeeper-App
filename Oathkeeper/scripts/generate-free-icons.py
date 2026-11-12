@@ -20,8 +20,8 @@ ADAPTIVE = RES / "mipmap-anydpi-v26"
 ADAPTIVE_ART = RES / "drawable-nodpi"
 IOS = ROOT / "ios/App/App/Assets.xcassets"
 ICONS = [(1, "moonlit-citadel"), (2, "ember-dragon"), (4, "lionheart-shield"),
-         (5, "shadow-mage"), (6, "arcane-chalice"), (7, "astral-d20"),
-         (8, "twin-battleaxes"), (11, "crystal-spires"),
+         (5, "shadow-mage"), (6, "arcane-chalice"), (7, "twin-battleaxes"),
+         (8, "astral-d20"), (11, "crystal-spires"),
          (12, "steel-sentinel"), (14, "sapphire-worldtree")]
 
 
