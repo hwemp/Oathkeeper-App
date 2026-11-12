@@ -24,12 +24,14 @@ function synchronize(reference=document) {
   for(const button of reference.querySelectorAll(referenceSelectors)){
     if(button.closest('.ok-exact-store,.store-themed-footer,.ok-bundle-grid'))continue;
     if(button.matches('[data-draft-remove],[data-coin-change],.die-tile,.notification-bell'))continue;
-    button.classList.add('oath170-reference-button');
+    if(!button.classList.contains('oath170-reference-button'))
+      button.classList.add('oath170-reference-button');
     const active=Boolean(
       button.matches('.selected,.active,[aria-pressed="true"],[aria-current="page"],[data-selected="true"]')
       ||(button.closest('#appMenu')&&button.dataset.tab&&button.dataset.tab===selectedTab)
     );
-    button.classList.toggle('oath170-reference-selected',active&&!button.disabled);
+    if(button.classList.contains('oath170-reference-selected') !== (active&&!button.disabled))
+      button.classList.toggle('oath170-reference-selected',active&&!button.disabled);
   }
 }
 function boot(){
