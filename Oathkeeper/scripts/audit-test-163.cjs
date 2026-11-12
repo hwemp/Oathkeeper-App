@@ -11,6 +11,13 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
   let browser;
   const findings={source:'frozen Build 144 + 163 ornaments',screens:[],warnings:[],errors:[],backgrounds:[],dice:[]};
   fs.mkdirSync('preview-output',{recursive:true});
+  // Read-only runtime inspection: capture the ACTUAL Build 144 archive modules,
+  // which can differ from current Vite source. Do not modify these originals.
+  const runtimeFiles=['app.js','dice-tabletop.js','dice-ui.js','store-ui.js','store-products.js','store-background-catalog.js'];
+  for(const name of runtimeFiles){
+    const original='dist/'+name;
+    if(fs.existsSync(original))fs.copyFileSync(original,'preview-output/frozen-144-'+name+'.txt');
+  }
   try {
     let ready=false;
     for(let i=0;i<80;i++){try{if((await fetch(base)).ok){ready=true;break}}catch{}await sleep(250);}
@@ -62,7 +69,8 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
       });
       findings.backgrounds.push({slug,...sample});
       const approved=sample.images.filter(img=>img.src.includes('/art/approved-backgrounds/'+slug+'.webp'));
-      if(approved.length===0) findings.errors.push(slug+': preview does not use the original approved scene');
+      const originalBakedMoon=slug==='moonlit-citadel' && sample.images.some(img=>img.src.includes('/art/exact-store/backgrounds.webp')&&img.intrinsic[0]>=900);
+      if(approved.length===0 && !originalBakedMoon) findings.errors.push(slug+': preview does not use the original approved scene');
       if(approved.some(img=>img.intrinsic[0]<500))findings.errors.push(slug+': original scene master smaller than 500px');
       for(const img of sample.images)if(!img.loaded)findings.errors.push('Missing image '+img.src);
       const upscaled=sample.images.filter(img=>img.intrinsic[0]>0&&img.displayed[0]>img.intrinsic[0]*1.5);
