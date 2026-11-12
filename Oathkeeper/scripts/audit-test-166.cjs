@@ -67,6 +67,19 @@ const skins=['dragonfire','frostborne','elvenleaf','celestial','abyssal','gold-f
     return inner?getComputedStyle(inner).backgroundImage:getComputedStyle(e,'::before').backgroundImage;
    });
    assert(css.includes('/test166-dice/'+skin+'/d20.png'),'Bundle used unrelated dice atlas '+skin+': '+css);
+   // Background declarations alone passed earlier while baked illustrations
+   // remained visible. Require a real positioned foreground with nonzero area.
+   const layer=bundle.locator(':scope > .test166-bundle-live-art');
+   await layer.waitFor({state:'visible',timeout:7000});
+   const visible=await layer.evaluate(e=>{
+    const box=e.getBoundingClientRect(),computed=getComputedStyle(e);
+    return {width:box.width,height:box.height,z:Number(computed.zIndex),
+      background:computed.backgroundImage,display:computed.display};
+   });
+   assert(visible.width>25&&visible.height>25&&visible.z>=20,
+     'Bundle overlay not actually visible for '+skin+': '+JSON.stringify(visible));
+   assert(visible.background.includes('/test166-dice/'+skin+'/d20.png'),
+     'Bundle visible layer uses wrong renderer art '+skin);
   }
   await page.screenshot({path:'preview-output/166-bundles-animated-masters.png',fullPage:true});
   await open();
