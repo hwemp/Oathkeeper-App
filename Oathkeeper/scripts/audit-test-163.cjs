@@ -44,8 +44,12 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
     assert(await page.locator('.store-page').isVisible(),'Approved Build 144 store is missing');
     await page.locator('[data-store-category="backgrounds"]').first().click();
     assert.equal(await page.locator('[data-store-background]').count(),10,'Expected ten background choices');
-    for(const slug of ['moonlit-citadel','ancient-ruins','crystal-caverns','eternal-keep']){
+    for(const slug of ['moonlit-citadel','ancient-ruins','enchanted-forest','dragons-crag','shadow-marsh','celestial-plains','crystal-caverns','elder-grove','mystic-lake','eternal-keep']){
       await page.locator('[data-store-background="'+slug+'"]').first().click();
+      await page.waitForFunction(()=>{
+        const imgs=[...document.querySelectorAll('.store-page img')];
+        return imgs.length>0 && imgs.every(img=>img.complete&&img.naturalWidth>0);
+      },null,{timeout:10000});
       const sample=await page.evaluate(()=>{
         const images=[...document.querySelectorAll('.store-page img')].map(img=>({
           src:img.currentSrc||img.src, loaded:img.complete&&img.naturalWidth>0,
@@ -55,6 +59,9 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
         return {images,gem:document.documentElement.dataset.oathGemTheme};
       });
       findings.backgrounds.push({slug,...sample});
+      const approved=sample.images.filter(img=>img.src.includes('/art/approved-backgrounds/'+slug+'.webp'));
+      if(approved.length===0) findings.errors.push(slug+': preview does not use the original approved scene');
+      if(approved.some(img=>img.intrinsic[0]<500))findings.errors.push(slug+': original scene master smaller than 500px');
       for(const img of sample.images)if(!img.loaded)findings.errors.push('Missing image '+img.src);
       const upscaled=sample.images.filter(img=>img.intrinsic[0]>0&&img.displayed[0]>img.intrinsic[0]*1.5);
       if(upscaled.length)findings.warnings.push(slug+': enlarged artwork exceeds its source pixel width by 1.5x');
