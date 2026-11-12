@@ -70,7 +70,7 @@ const host="http://127.0.0.1:5189";
    assert.equal(await page.locator("[data-store-dice]").count(),10,"Dice assets retained");
    await page.screenshot({path:"preview-output/gem-dice-"+width+".png",fullPage:true});
    await page.locator('[data-store-category="icons"]').first().click();
-   assert.equal(await page.locator("[data-store-icon]").count(),10,"Icon assets retained");
+   assert.equal(await page.locator("[data-store-icon]").count(),11,"Ten free icon choices plus original icon control retained");
    await page.locator('[data-store-category="bundles"]').first().click();
    assert.equal(await page.locator("[data-store-bundle-offer]").count(),2,"Bundle offers retained");
    assert.equal(await page.locator("[data-store-bundle-background]").count(),10,"Bundle backgrounds retained");
