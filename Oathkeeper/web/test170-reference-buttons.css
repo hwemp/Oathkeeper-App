@@ -1,0 +1,212 @@
+/* Oathkeeper TEST 170: one approved gold scrollwork + faceted-gem frame.
+ * The golden Overview reference is SELECTED; Powers/Inventory/Dice are NORMAL.
+ * An application theme changes only the gem faceting colors, not frame shape.
+ * No additional decorative pseudo layers cover text or block pointer events. */
+:root,[data-oath-gem-theme="amethyst"]{
+ --oath170-button-normal:url("./art/test170-buttons/amethyst-normal.svg");
+ --oath170-button-selected:url("./art/test170-buttons/amethyst-selected.svg");
+}
+:root[data-oath-gem-theme="sapphire"]{
+ --oath170-button-normal:url("./art/test170-buttons/sapphire-normal.svg");
+ --oath170-button-selected:url("./art/test170-buttons/sapphire-selected.svg");
+}
+:root[data-oath-gem-theme="emerald"]{
+ --oath170-button-normal:url("./art/test170-buttons/emerald-normal.svg");
+ --oath170-button-selected:url("./art/test170-buttons/emerald-selected.svg");
+}
+:root[data-oath-gem-theme="ruby"]{
+ --oath170-button-normal:url("./art/test170-buttons/ruby-normal.svg");
+ --oath170-button-selected:url("./art/test170-buttons/ruby-selected.svg");
+}
+:root[data-oath-gem-theme="aquamarine"]{
+ --oath170-button-normal:url("./art/test170-buttons/aquamarine-normal.svg");
+ --oath170-button-selected:url("./art/test170-buttons/aquamarine-selected.svg");
+}
+:root[data-oath-gem-theme="citrine"]{
+ --oath170-button-normal:url("./art/test170-buttons/citrine-normal.svg");
+ --oath170-button-selected:url("./art/test170-buttons/citrine-selected.svg");
+}
+
+/* Apply to HTML controls only, never to the Store's baked category/thumbnail
+ * hotspots. Prevent the old mismatched blue-gem ::after double ornament. */
+html body button.oath170-reference-button,
+html body .dice-page .dice-submenu button.oath170-reference-button,
+html body .card .row > button.oath170-reference-button,
+html #appMenu .menu-options button.oath170-reference-button,
+html #journalEditor .row button.oath170-reference-button,
+html #equipmentEditor .row button.oath170-reference-button,
+html body .workspace-tabs button.oath170-reference-button,
+html body .dm-workspace button.oath170-reference-button {
+ position:relative!important;
+ isolation:isolate!important;
+ display:inline-flex!important;
+ align-items:center!important;
+ justify-content:center!important;
+ box-sizing:border-box!important;
+ min-width:0!important;
+ min-height:86px!important;
+ max-width:100%!important;
+ text-align:center!important;
+ overflow-wrap:normal!important;
+ word-break:normal!important;
+ white-space:normal!important;
+ font-family:Georgia,serif!important;
+ font-size:clamp(13px,3.35vw,21px)!important;
+ font-weight:600!important;
+ line-height:1.12!important;
+ padding:24px clamp(22px,12%,38px)!important;
+ border:0!important;
+ border-radius:0!important;
+ background-color:transparent!important;
+ background-image:var(--oath170-button-normal)!important;
+ background-repeat:no-repeat!important;
+ background-position:center!important;
+ background-size:100% 100%!important;
+ box-shadow:none!important;
+ color:#f9dfac!important;
+ -webkit-text-fill-color:#f9dfac!important;
+ text-shadow:0 1px 2px #090617!important;
+ filter:none!important;
+ transform:none!important;
+}
+html body button.oath170-reference-button::before,
+html body button.oath170-reference-button::after {
+ content:none!important;
+ display:none!important;
+ background:none!important;
+ box-shadow:none!important;
+ border:0!important;
+}
+
+/* Glowing selected Overview is the sole visual model for selected states. */
+html body button.oath170-reference-button:is(.oath170-reference-selected,.active,.selected,[aria-pressed="true"],[aria-current="page"]):not(:disabled),
+html #nav button:is(.active,[aria-current="page"]):not(:disabled){
+ background-image:var(--oath170-button-selected)!important;
+ color:#fff1bd!important;
+ -webkit-text-fill-color:#fff1bd!important;
+ text-shadow:0 0 5px rgba(252,203,126,.85),0 1px 2px #200c19!important;
+ filter:drop-shadow(0 0 3px rgba(255,200,101,.65))!important;
+}
+html body button.oath170-reference-button:is(:focus-visible,:active):not(:disabled){
+ background-image:var(--oath170-button-selected)!important;
+ filter:drop-shadow(0 0 5px rgba(245,190,92,.7))!important;
+}
+html body button.oath170-reference-button:disabled{
+ background-image:var(--oath170-button-normal)!important;
+ opacity:.52!important;
+ filter:grayscale(.42)!important;
+ color:#d2b890!important;
+ -webkit-text-fill-color:#d2b890!important;
+}
+
+/* The master SVG is the ACTUAL background of the nav button, not a new
+ * pseudo-overlay pasted on top of the old blue-diamond SVG. */
+html #nav button.oath170-reference-button {
+ flex:0 0 calc((100% - 14px)/3)!important;
+ min-height:73px!important;
+ height:73px!important;
+ padding:18px 8px!important;
+ font-size:clamp(12px,3.6vw,20px)!important;
+ white-space:nowrap!important;
+ line-height:1!important;
+ overflow:visible!important;
+}
+html #nav button.oath170-reference-button::before,
+html #nav button.oath170-reference-button::after {
+ display:none!important;
+ content:none!important;
+}
+
+/* Full-width menu art fixes the earlier failure where labels were positioned
+ * left of the frames. Each button has enough center space for longer labels. */
+html #appMenu .menu-options {
+ max-height:min(72vh,700px)!important;
+ overflow-y:auto!important;
+ overflow-x:hidden!important;
+ padding:6px 5px 12px!important;
+ scrollbar-gutter:stable!important;
+}
+html #appMenu .menu-options button.oath170-reference-button{
+ display:flex!important;
+ width:100%!important;
+ min-height:75px!important;
+ height:auto!important;
+ margin:1px 0!important;
+ padding:22px 22px!important;
+ font-size:clamp(15px,3.75vw,20px)!important;
+ line-height:1.1!important;
+ text-align:center!important;
+ background-size:100% 100%!important;
+ overflow:visible!important;
+}
+html #appMenu .menu-options button.oath170-reference-button::after{
+ display:none!important;
+ content:none!important;
+}
+
+/* Two-line labels fit between gems instead of spilling over ornaments.
+ * Undo last action and Unofficial dice are explicitly protected. */
+html body .card .row > button.oath170-reference-button,
+html body .dice-page .dice-submenu button.oath170-reference-button,
+html #journalEditor button.oath170-reference-button,
+html #equipmentEditor button.oath170-reference-button{
+ flex:1 1 160px!important;
+ min-height:86px!important;
+ margin:0!important;
+ padding:24px 22px!important;
+ white-space:normal!important;
+ font-size:clamp(13px,3.4vw,19px)!important;
+ line-height:1.12!important;
+ text-align:center!important;
+}
+html body .dice-page .dice-submenu button.oath170-reference-button{
+ min-height:88px!important;
+ flex:1 1 0!important;
+}
+html #journalEditor .row,
+html #equipmentEditor .row{
+ display:flex!important;
+ align-items:stretch!important;
+ justify-content:center!important;
+ gap:10px!important;
+ flex-wrap:wrap!important;
+}
+html #journalEditor button.oath170-reference-button,
+html #equipmentEditor button.oath170-reference-button{
+ flex:1 1 155px!important;
+ min-width:0!important;
+ max-width:260px!important;
+}
+html body .card .row:has(button.oath170-reference-button) {
+ gap:8px!important;
+ align-items:center!important;
+ flex-wrap:wrap!important;
+}
+html body .card .row:has(button.oath170-reference-button) > input{
+ min-width:76px!important;
+ flex:0 1 95px!important;
+}
+
+/* Never overwrite a thumbnail's source image, currency stepper, native launcher
+ * icon, invisible Store purchasing hotspot or original GIF. */
+.ok-exact-store button.ok-hit,
+.store-themed-footer button,
+#equipmentEditor button[data-draft-remove],
+.coin-stepper button,
+.die-tile,
+.notification-bell{
+ --oath170-button-normal:none;
+ --oath170-button-selected:none;
+}
+@media(max-width:390px){
+ html #nav button.oath170-reference-button{font-size:clamp(12px,3.45vw,17px)!important;min-height:69px!important;height:69px!important;padding:18px 6px!important}
+ html #appMenu .menu-options button.oath170-reference-button{min-height:70px!important;font-size:15px!important;padding:19px 20px!important}
+ html body .card .row > button.oath170-reference-button,
+ html body .dice-page .dice-submenu button.oath170-reference-button,
+ html #journalEditor button.oath170-reference-button,
+ html #equipmentEditor button.oath170-reference-button{
+  min-height:83px!important;
+  font-size:clamp(12px,3.5vw,17px)!important;
+  padding:23px 19px!important;
+ }
+}
