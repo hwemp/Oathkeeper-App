@@ -17,7 +17,7 @@ function paintBundleChoices(doc=document){
   layer.style.setProperty('border-radius','3px','important');
   layer.style.setProperty('background-color','#11162a','important');
   layer.style.setProperty('background-position','center','important');
-  layer.style.setProperty('background-size','cover','important');
+  layer.style.setProperty('background-size','contain','important');
   layer.style.setProperty('background-repeat','no-repeat','important');
   layer.style.setProperty('image-rendering','auto','important');
   layer.style.setProperty('background-image','url("./art/test166-dice/'+slug+'/d20.png")','important');
