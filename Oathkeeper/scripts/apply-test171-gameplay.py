@@ -36,13 +36,12 @@ def main():
  next_code=original.replace("function zv(i,u,r,c=null){",
    """function zv(i,u,r,c=null){
  if(globalThis.OathkeeperTabletop171 && typeof globalThis.OathkeeperTabletop171.play==='function'){
-   const prepared=Rv(u);
-   return globalThis.OathkeeperTabletop171.play(i,u,prepared,r,c);
+   return globalThis.OathkeeperTabletop171.play(i,u,r,c);
  }
  """,1)
  if next_code==original:raise RuntimeError("Unable to update the gameplay roller entry point")
  s=s[:start]+next_code+s[end:]
- if "globalThis.OathkeeperTabletop171.play(i,u,prepared,r,c)" not in s:
+ if "globalThis.OathkeeperTabletop171.play(i,u,r,c)" not in s:
   raise RuntimeError("Gameplay call is missing")
  if "test169-approved-rolling-gif" not in s:
   raise RuntimeError("Preserved GIF fallback was lost")
