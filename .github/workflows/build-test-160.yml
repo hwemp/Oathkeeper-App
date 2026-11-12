@@ -160,11 +160,11 @@ jobs:
           unzip -Z1 "$APK" | grep -Fq 'assets/public/art/exact-store/roll/astral.webp'
           BUILD_TOOLS=$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -n 1)
           "$BUILD_TOOLS/apksigner" verify --verbose "$APK"
-          "$BUILD_TOOLS/aapt" dump badging "$APK" | grep -F "package: name=\u0027com.harrisonwaters.oathkeeper.test160\u0027"
+          "$BUILD_TOOLS/aapt" dump badging "$APK" | grep -Fq "package: name='com.harrisonwaters.oathkeeper.test160'"
           mkdir -p output
           cp "$APK" output/Oathkeeper-TEST-BRANCH-160.apk
           cd output
-          sha256sum Oathkeeper-Build-144-Store-Icon-Parity.apk > SHA256SUMS.txt
+          sha256sum Oathkeeper-TEST-BRANCH-160.apk > SHA256SUMS.txt
       - name: Upload installable test APK
         uses: actions/upload-artifact@v4
         with:
