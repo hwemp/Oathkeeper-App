@@ -25,6 +25,7 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
   // pointer path. Never use force:true or el.click() to conceal overlapping
   // Store controls. This also checks real user taps, not only DOM handlers.
   const clickExposed=async(locator,slug)=>{
+   await locator.scrollIntoViewIfNeeded();
    const p=await locator.evaluate(el=>{
     const r=el.getBoundingClientRect();
     const spots=[.5,.2,.8,.35,.65,.08,.92];
