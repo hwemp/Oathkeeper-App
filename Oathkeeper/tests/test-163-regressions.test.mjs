@@ -23,7 +23,8 @@ test('TEST 163: premium navigation uses one complete, independent vector border'
   assert.match(artwork,/<svg\b/);
   assert.match(artwork,/<\/svg>/);
   assert.match(artwork,/id="stone"/);
-  assert.match(artwork,/id="leaf"/);
+  assert.doesNotMatch(artwork,/id="leaf"/);
+  assert.doesNotMatch(artwork,/href="#leaf"/);
   assert.match(css,/#nav button::before\s*\{\s*background-image:\s*url\("\.\/art\/ornate-nav-163\.svg"\)/);
   assert.match(css,/#nav button::after\s*\{\s*content:\s*none !important/);
   assert.match(script,/ornate-nav-163\.svg/);
