@@ -78,21 +78,20 @@ def main():
         target = bg_dir / (slug + ".svg")
         if not target.exists():
             shutil.copyfile(source,target)
-        # Keep archived 156px thumbnails intact; generate independent 1600px masters.
-        raster = DIST / "art" / "hires-store-backgrounds" / (slug + ".webp")
-        import io
-        import cairosvg
+        # Use the original illustrated WebP master from the approved Store
+        # catalog, not unrelated SVG redraws. Never upscale or recompress it.
         from PIL import Image
-        png = cairosvg.svg2png(bytestring=source.read_bytes(),output_width=1600,output_height=1125)
-        img = Image.open(io.BytesIO(png)).convert("RGB")
-        raster.parent.mkdir(parents=True,exist_ok=True)
-        # Lossless preserves every pixel of the source vector rendering.
-        img.save(raster,format="WEBP",lossless=True,method=6)
-        with Image.open(raster) as verified:
-            if verified.size != (1600,1125):
-                raise RuntimeError(f"Rendered master has wrong dimensions: {slug}")
-        if raster.stat().st_size == 0:
-            raise RuntimeError(f"Empty generated background image: {slug}")
+        approved = SOURCE / "public" / "art" / "store-backgrounds" / (slug + ".webp")
+        if not approved.is_file():
+            raise RuntimeError(f"Approved illustrated original missing: {approved}")
+        with Image.open(approved) as img:
+            if img.width < 500 or img.height < 350:
+                raise RuntimeError(f"Original illustration too small: {slug}: {img.size}")
+        destination = DIST / "art" / "approved-backgrounds" / (slug + ".webp")
+        destination.parent.mkdir(parents=True,exist_ok=True)
+        shutil.copyfile(approved,destination)
+        if sha256(destination) != sha256(approved):
+            raise RuntimeError(f"Background master altered in copying: {slug}")
     for path, expected in original_hashes.items():
         if path != Path("index.html") and sha256(DIST / path) != expected:
             raise RuntimeError(f"Frozen asset modified: {path}")
