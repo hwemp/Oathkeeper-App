@@ -37,8 +37,10 @@ test('Dice page alone controls persisted optional animation without altering rol
   s.click('[data-tab="Settings"]');
   assert.equal(s.q('[data-k="diceAnimation"]'),null);
   s.click('[data-tab="Dice"]');
-  assert.equal(s.q('[data-k="diceAnimation"]').checked,false);
+  assert.equal(s.q('[data-k="diceAnimation"]').checked,true);
   assert.match(s.q('.dice-animation-setting').textContent,/Animate rolls/);
+  s.q('[data-k="diceAnimation"]').click();
+  assert.equal(s.saved().diceAnimation,false);
   s.q('[data-k="diceAnimation"]').click();
   assert.equal(s.saved().diceAnimation,true);
   s.q('#diceForm').dispatchEvent(new s.w.Event('submit',{bubbles:true,cancelable:true}));

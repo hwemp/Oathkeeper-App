@@ -145,7 +145,11 @@ export function storePage(selectedSlug = 'elvenleaf', options = {}) {
   const preview = '<section class="store-preview-pane" aria-live="polite" aria-label="Selected dice preview">'
     + '<div class="store-preview-image" role="img" aria-label="Larger preview of ' + esc(active.name)
     + ' dice" data-store-atlas-index="' + active.atlasIndex + '" style="' + diceArtStyle(active.atlasIndex) + '"></div>'
-    + '<div class="store-preview-description"><p>Selected dice design. This is a visual preview only; rolling results and odds are unchanged.</p></div></section>';
+    + '<div class="store-preview-description"><p>Selected Build 144 dice artwork. The animation below uses the chosen dice skin and does not affect game rolls.</p></div>'
+    + '<div class="store-dice-demo" aria-label="Animated dice design demonstration">'
+    + '<div class="dice-tabletop" id="storeDiceTabletop" data-store-dice-demo="' + esc(active.slug) + '" hidden><canvas aria-hidden="true"></canvas><p data-dice-landed hidden aria-live="polite"></p></div>'
+    + '<button type="button" class="store-dice-replay" data-store-preview-roll="' + esc(active.slug) + '">Replay 3D Dice Animation</button>'
+    + '<p class="store-dice-demo-note">Preview only · Sample D20 · No purchase required · No change to roll probabilities</p></div></section>';
   return storeShell('dice',
     '<h2 class="store-collection-title">Dice Collection <small>(' + SELECTED_DICE.length + ')</small></h2>'
     + '<div class="store-dice-grid" role="group" aria-label="Select a dice set to preview">' + tiles + '</div>'

@@ -1,0 +1,84 @@
+name: Oathkeeper TEST-BRANCH-159 - Build 144 Recovery APK
+on:
+  push:
+    branches: [TEST-BRANCH-159]
+    paths:
+      - 'Oathkeeper/**'
+      - '.github/workflows/build-test-159.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: oathkeeper-test-159-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: Oathkeeper
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: Oathkeeper/package-lock.json
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Confirm Build 144 artwork was not replaced
+        run: |
+          git diff --exit-code 5cc05acf9c179f556cfb32792c2690759ca7e860 HEAD -- web/public/art android/app/src/main/res || { echo "Unexpected changes to Build 144 artwork"; exit 1; }
+      - name: Rebuild native icon files from unchanged Build 144 masters
+        run: |
+          python -m pip install --disable-pip-version-check Pillow
+          python scripts/repair-default-launcher.py
+          python scripts/generate-free-icons.py
+      - name: Install, check and test recovery source
+        run: |
+          npm ci
+          npm run check
+          npm run typecheck
+          npm test
+          npm run catalog
+      - name: Compile current recovery source (no frozen Build 142 ZIP overwrite)
+        env:
+          VITE_COMMUNITY_URL: ${{ vars.OATHKEEPER_COMMUNITY_URL }}
+        run: |
+          npm run build
+          npx cap sync android
+      - name: Assemble test APK
+        run: |
+          chmod +x android/gradlew
+          cd android
+          ./gradlew assembleDebug --no-daemon --stacktrace
+      - name: Verify APK signature and package identity
+        run: |
+          APK=android/app/build/outputs/apk/debug/app-debug.apk
+          BUILD_TOOLS=$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -n 1)
+          "$BUILD_TOOLS/apksigner" verify --verbose "$APK"
+          "$BUILD_TOOLS/aapt" dump badging "$APK" | grep -F "package: name='com.harrisonwaters.oathkeeper.test159'"
+          mkdir -p output
+          cp "$APK" output/Oathkeeper-TEST-BRANCH-159.apk
+          cd output
+          sha256sum Oathkeeper-TEST-BRANCH-159.apk > SHA256SUMS.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Oathkeeper-TEST-BRANCH-159
+          path: Oathkeeper/output/*
+          if-no-files-found: error
+          retention-days: 30
+      - name: Publish TEST 159 prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="android-test-159-${{ github.run_number }}-${{ github.run_attempt }}"
+          gh release create "$TAG" output/* --target "${{ github.sha }}" --title "Oathkeeper TEST-BRANCH-159 - Build 144 Recovery" --prerelease --latest=false --notes "Source: Build 144 commit 5cc05acf plus isolated fixes. Current source is compiled directly, with original Build 144 art retained; restores the selectable-skin 3D Store dice preview, mobile card sizing, selection outlines and dice page animation defaults. Test package com.harrisonwaters.oathkeeper.test159; it does not overwrite the approved app. Debug-signed. Back up character data before testing. Purchases remain disabled."
