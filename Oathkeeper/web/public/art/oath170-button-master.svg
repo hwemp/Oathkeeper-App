@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 260" role="img" aria-label="Gothic gold button with faceted __THEME__ gems: __STATE__" fill="none">
+<defs>
+ <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fffbd7"/><stop offset=".12" stop-color="#d8a24d"/><stop offset=".28" stop-color="#7e3815"/><stop offset=".42" stop-color="#ffdc7f"/><stop offset=".62" stop-color="#aa6c2c"/><stop offset=".8" stop-color="#ffe3a0"/><stop offset="1" stop-color="#653115"/></linearGradient>
+ <linearGradient id="inner" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#231229"/><stop offset=".47" stop-color="#100b1c"/><stop offset="1" stop-color="#251124"/></linearGradient>
+ <linearGradient id="shine" x1="0" y1="0" x2="1" y2=".6"><stop stop-color="#fff4bd"/><stop offset=".15" stop-color="#b87929"/><stop offset=".46" stop-color="#fffbd6"/><stop offset=".75" stop-color="#c7923b"/><stop offset="1" stop-color="#8d491d"/></linearGradient>
+ <radialGradient id="innerGlow"><stop stop-color="#b9733b" stop-opacity="__INNER1__"/><stop offset=".68" stop-color="#e09d43" stop-opacity="__INNER2__"/><stop offset="1" stop-color="#120d1e" stop-opacity="0"/></radialGradient>
+ <linearGradient id="gem" x1="0" y1="0" x2="1" y2="1"><stop stop-color="__LIGHT__"/><stop offset=".34" stop-color="__MID__"/><stop offset=".75" stop-color="__DARK__"/><stop offset="1" stop-color="__MID__"/></linearGradient>
+ <filter id="glow" x="-30%" y="-70%" width="160%" height="240%"><feGaussianBlur stdDeviation="__BLUR__"/></filter>
+ <g id="gemstone">
+  <path d="M0-43L23-18L28 3L0 40L-28 3L-23-18Z" fill="#37191b" stroke="url(#gold)" stroke-width="4.5"/>
+  <path d="M0-35L19-15L23 3L0 32L-23 3L-19-15Z" fill="url(#gem)" stroke="__LIGHT__" stroke-width="1.8"/>
+  <path d="M0-35L-19-15L-7 2L0-12L19-15Z" fill="__LIGHT__" opacity=".72"/>
+  <path d="M-19-15L-23 3L-7 2L0-12Z" fill="__MID__" opacity=".8"/>
+  <path d="M19-15L23 3L7 2L0-12Z" fill="__DARK__" opacity=".7"/>
+  <path d="M-23 3L0 32L-7 2Z" fill="__DARK__" opacity=".72"/>
+  <path d="M23 3L0 32L7 2Z" fill="__MID__" opacity=".74"/>
+  <path d="M-7 2L0-12L7 2L0 31Z" fill="__LIGHT__" opacity=".29"/>
+  <path d="M-19-15L0-35L19-15M-23 3L0 32L23 3" stroke="#fff6fa" stroke-opacity=".58" stroke-width="1"/>
+  <path d="M0-27V24M-16 0H16" stroke="#f8e9ff" stroke-opacity=".36" stroke-width="1"/>
+ </g>
+ <g id="flourish">
+  <path d="M0 0C20-9 27-23 44-25C34-6 41 7 61 1C48-9 45-19 55-30C74-6 83-12 102-24C112-14 125-9 141-7" stroke="url(#gold)" stroke-width="6" stroke-linecap="round"/>
+  <path d="M1 4C23 5 31-10 47-12C35 4 38 13 51 16C67 20 72 5 91-2C99-6 111-8 137-5" stroke="#9a5727" stroke-width="3"/>
+  <path d="M0 0C16-14 28-29 46-31C45-14 54-15 72-20C90-24 92-13 104-12L132-10" stroke="url(#shine)" stroke-width="2.1" stroke-linecap="round"/>
+  <path d="M7-7C18-15 21-23 21-35C30-25 28-12 40-13M71-15C73-26 79-29 94-23" stroke="#f7d68b" stroke-width="2"/>
+ </g>
+</defs>
+<path d="M30 88Q61 52 118 78Q158 66 192 73L228 73Q262 66 302 78Q359 52 390 88Q412 110 410 131Q412 152 390 175Q359 209 303 184Q261 192 228 187L192 187Q159 192 118 184Q61 209 30 175Q8 154 10 131Q8 107 30 88Z" fill="url(#inner)" stroke="#5a2a17" stroke-width="7"/>
+<path d="M30 88Q61 52 118 78Q158 66 192 73L228 73Q262 66 302 78Q359 52 390 88Q412 110 410 131Q412 152 390 175Q359 209 303 184Q261 192 228 187L192 187Q159 192 118 184Q61 209 30 175Q8 154 10 131Q8 107 30 88Z" stroke="url(#gold)" stroke-width="5"/>
+<path d="M37 92Q64 68 115 83Q166 72 190 78H230Q254 72 305 83Q356 68 383 92Q403 112 401 131Q403 150 383 170Q356 196 305 180Q255 189 231 181H190Q166 189 115 180Q64 196 37 170Q17 150 19 131Q17 112 37 92Z" stroke="url(#shine)" stroke-width="1.7"/>
+<rect x="38" y="83" width="344" height="94" rx="50" fill="url(#innerGlow)"/>
+<path d="M29 99Q24 131 29 162M391 99Q397 131 391 162" stroke="#f8e2a3" stroke-opacity="__AURA__" stroke-width="2"/>
+<use href="#flourish" transform="translate(39 76)"/>
+<use href="#flourish" transform="translate(381 76) scale(-1 1)"/>
+<use href="#flourish" transform="translate(39 183) scale(1 -1)"/>
+<use href="#flourish" transform="translate(381 183) scale(-1 -1)"/>
+<path d="M92 93Q135 72 189 80M231 80Q285 72 328 93M92 168Q135 187 189 180M231 180Q285 187 328 168" stroke="url(#gold)" stroke-width="2.2" stroke-linecap="round"/>
+<use href="#gemstone" transform="translate(210 49)"/>
+<use href="#gemstone" transform="translate(210 211) scale(.83 .83)"/>
+<g opacity="__GLOW__" filter="url(#glow)" stroke="#ffcf78" stroke-width="7"><path d="M26 105Q13 131 26 160M394 105Q407 131 394 160M42 174Q92 204 148 179M272 179Q328 204 378 174"/></g>
+</svg>
