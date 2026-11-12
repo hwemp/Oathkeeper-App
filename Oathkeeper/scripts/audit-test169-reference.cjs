@@ -63,8 +63,10 @@ const url='http://127.0.0.1:5209';
    await hit.click({force:true});
    const art=page.locator('.ok-exact-store[data-ok-category="backgrounds"] .ok-canvas > img.ok-art').first();
    await art.waitFor({state:'visible',timeout:15000});
+   await art.evaluate(async e=>{await e.decode();});
    const actual=await art.evaluate(e=>({
-    path:new URL(e.currentSrc).pathname,width:e.naturalWidth,height:e.naturalHeight,
+    path:new URL(e.currentSrc||e.getAttribute('src'),document.baseURI).pathname,
+    width:e.naturalWidth,height:e.naturalHeight,
     rendered:[Math.round(e.getBoundingClientRect().width),Math.round(e.getBoundingClientRect().height)]
    }));
    assert(actual.path.endsWith('/art/exact-store/test169-bg/'+slug+'.webp'),
@@ -85,7 +87,8 @@ const url='http://127.0.0.1:5209';
    await hit.click({force:true});
    const animation=page.locator('.ok-exact-store .ok-roll-box img.ok-roll');
    await animation.waitFor({state:'visible',timeout:8000});
-   const path=await animation.evaluate(e=>new URL(e.currentSrc.split('?')[0]).pathname);
+   await animation.evaluate(async e=>{await e.decode();});
+   const path=await animation.evaluate(e=>new URL((e.currentSrc||e.getAttribute('src')).split('?')[0],document.baseURI).pathname);
    assert(path.endsWith('/art/exact-store/roll/'+slug+'.webp'),
     'Selected original animated artwork not used '+slug+': '+path);
    const bg=await hit.evaluate(e=>getComputedStyle(e,'::before').backgroundImage);
@@ -96,7 +99,8 @@ const url='http://127.0.0.1:5209';
   for(const slug of skins){
    const tile=page.locator('[data-store-bundle-dice="'+slug+'"]').first();
    const img=tile.locator('img.ok-art');
-   const imgpath=await img.evaluate(e=>new URL(e.currentSrc).pathname);
+   await img.evaluate(async e=>{await e.decode();});
+   const imgpath=await img.evaluate(e=>new URL(e.currentSrc||e.getAttribute('src'),document.baseURI).pathname);
    assert(imgpath.endsWith('/art/exact-store/roll/'+slug+'-still.webp'),
     'Bundle uses mismatched polygon or unrelated illustration '+slug+': '+imgpath);
    assert.equal(await tile.locator('.test166-bundle-live-art').count(),0);
