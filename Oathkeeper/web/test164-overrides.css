@@ -121,16 +121,16 @@
   background-size:contain!important;
   image-rendering:auto;
 }
-.ok-exact-store [data-store-icon="icon-01"]::before {background-image:url("./art/store-icons/launcher-01.webp")!important;}
-.ok-exact-store [data-store-icon="icon-02"]::before {background-image:url("./art/store-icons/launcher-02.webp")!important;}
-.ok-exact-store [data-store-icon="icon-04"]::before {background-image:url("./art/store-icons/launcher-04.webp")!important;}
-.ok-exact-store [data-store-icon="icon-05"]::before {background-image:url("./art/store-icons/launcher-05.webp")!important;}
-.ok-exact-store [data-store-icon="icon-06"]::before {background-image:url("./art/store-icons/launcher-06.webp")!important;}
-.ok-exact-store [data-store-icon="icon-07"]::before {background-image:url("./art/store-icons/launcher-07.webp")!important;}
-.ok-exact-store [data-store-icon="icon-08"]::before {background-image:url("./art/store-icons/launcher-08.webp")!important;}
-.ok-exact-store [data-store-icon="icon-11"]::before {background-image:url("./art/store-icons/launcher-11.webp")!important;}
-.ok-exact-store [data-store-icon="icon-12"]::before {background-image:url("./art/store-icons/launcher-12.webp")!important;}
-.ok-exact-store [data-store-icon="icon-14"]::before {background-image:url("./art/store-icons/launcher-14.webp")!important;}
+.ok-exact-store [data-store-icon="icon-01"]::before {background-image:url("./art/store-icons/icon-01.webp")!important;}
+.ok-exact-store [data-store-icon="icon-02"]::before {background-image:url("./art/store-icons/icon-02.webp")!important;}
+.ok-exact-store [data-store-icon="icon-04"]::before {background-image:url("./art/store-icons/icon-04.webp")!important;}
+.ok-exact-store [data-store-icon="icon-05"]::before {background-image:url("./art/store-icons/icon-05.webp")!important;}
+.ok-exact-store [data-store-icon="icon-06"]::before {background-image:url("./art/store-icons/icon-06.webp")!important;}
+.ok-exact-store [data-store-icon="icon-07"]::before {background-image:url("./art/store-icons/icon-07.webp")!important;}
+.ok-exact-store [data-store-icon="icon-08"]::before {background-image:url("./art/store-icons/icon-08.webp")!important;}
+.ok-exact-store [data-store-icon="icon-11"]::before {background-image:url("./art/store-icons/icon-11.webp")!important;}
+.ok-exact-store [data-store-icon="icon-12"]::before {background-image:url("./art/store-icons/icon-12.webp")!important;}
+.ok-exact-store [data-store-icon="icon-14"]::before {background-image:url("./art/store-icons/icon-14.webp")!important;}
 .ok-exact-store [data-store-background="moonlit-citadel"]::before {background-image:url("./art/approved-backgrounds/moonlit-citadel.webp")!important;}
 .ok-exact-store [data-store-background="ancient-ruins"]::before {background-image:url("./art/approved-backgrounds/ancient-ruins.webp")!important;}
 .ok-exact-store [data-store-background="enchanted-forest"]::before {background-image:url("./art/approved-backgrounds/enchanted-forest.webp")!important;}
@@ -199,4 +199,44 @@
  background-size:cover!important;
  background-position:center!important;
  image-rendering:auto!important;
+}
+
+/* Workbench ICON SOURCE REPAIR: exact native launcher preview, no alternate art.
+ * Keep the original illustrated gold frame but hide its stale baked icon.
+ * Do not apply this to backgrounds, dice, bundles, or native form controls. */
+.ok-exact-store[data-ok-category="icons"] .ok-icon-preview.ok-icon-launcher-master {
+  z-index:6!important;
+  display:block!important;
+  overflow:hidden!important;
+  border-radius:11%!important;
+  box-sizing:border-box!important;
+  background:#080c1b!important;
+  pointer-events:none!important;
+  box-shadow:none!important;
+}
+.ok-exact-store[data-ok-category="icons"] .ok-icon-preview.ok-icon-launcher-master > img.workbench-selected-launcher-art {
+  display:block!important;
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  max-width:100%!important;
+  max-height:100%!important;
+  object-fit:contain!important;
+  object-position:center!important;
+  transform:none!important;
+  image-rendering:auto!important;
+  border:0!important;
+  box-shadow:none!important;
+  border-radius:10%!important;
+}
+.ok-exact-store[data-ok-category="icons"] .ok-icon-neutral-launcher .ok-neutral-img{
+  object-fit:cover!important;
+  image-rendering:auto!important;
+}
+/* Current selection gets its own consistent gold highlight. */
+.ok-exact-store[data-ok-category="icons"] button.ok-hit[data-store-icon].ok-selected::before {
+  outline:3px solid #f9db81!important;
+  outline-offset:-1px!important;
+  box-shadow:0 0 12px rgba(255,199,69,.95)!important;
 }
