@@ -5,6 +5,9 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: oathkeeper-audit-163-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   preflight:
     name: Check graphics, selectors and real UI before any APK build
@@ -111,6 +114,16 @@ jobs:
             test -s "dist/art/store-backgrounds/${bg}.svg"
           done
           for svg in sapphire emerald ruby aquamarine citrine; do test -s "dist/art/ornate-${svg}.svg"; done
+      - name: Verify ten original 508px illustrated backgrounds and six gemstone frames
+        run: |
+          for slug in moonlit-citadel ancient-ruins enchanted-forest dragons-crag shadow-marsh celestial-plains crystal-caverns elder-grove mystic-lake eternal-keep; do
+            test -s "dist/art/approved-backgrounds/${slug}.webp"
+            cmp "web/public/art/store-backgrounds/${slug}.webp" "dist/art/approved-backgrounds/${slug}.webp"
+          done
+          for theme in sapphire emerald ruby aquamarine citrine; do
+            test -s "dist/art/ornate-nav-${theme}-163.svg"
+          done
+          test -s dist/art/ornate-nav-163.svg
       - name: Validate button UI embellishment files
         run: node --test tests/ornate-buttons.test.mjs
       - name: Install headless browser for real UI inspection
