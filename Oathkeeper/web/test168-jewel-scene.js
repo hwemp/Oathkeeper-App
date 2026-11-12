@@ -123,7 +123,7 @@ function makeJewelTexture(theme){
 function createDieMesh(sides,theme){
  const mesh=test168Mesh(sides);
  const verts=mesh.v,faces=mesh.f;
- const positions=[],colors=[];
+ const positions=[],colors=[],uvs=[];
  for(const [fi,face] of faces.entries()){
   const tint=new THREE.Color(theme.color).multiplyScalar(.72+.23*Math.sin(fi*2.399));
   const faceCenter=centerOfFace(face,verts),normal=normalOfFace(face,verts);
