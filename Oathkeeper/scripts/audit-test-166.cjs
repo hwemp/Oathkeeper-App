@@ -85,6 +85,10 @@ const skins=['dragonfire','frostborne','elvenleaf','celestial','abyssal','gold-f
   }
   await page.locator('[data-dice-mode="official"]').click();
   await page.screenshot({path:'preview-output/166-dice-menu-animation-matched.png',fullPage:true});
+  // The live-canvas assertion requires animation enabled. This test setting
+  // does not change production defaults or the randomness/animation engine.
+  const animate=page.locator('input[data-k="diceAnimation"]');
+  if(!await animate.isChecked())await animate.check({force:true});
   await page.locator('[data-die="20"]').first().click();
   await page.locator('#diceForm button.dice-roll').click();
   const canvas=page.locator('#diceTabletop canvas');
