@@ -44,6 +44,18 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
   assert.equal(await astral.getAttribute('aria-pressed'),'true','Astral selection did not work');
   const picture=await astral.evaluate(e=>getComputedStyle(e,'::before').backgroundImage);
   assert(picture.includes('/test166-dice/astral/d20.png'),'Store did not use real WebGL 3D master '+picture);
+  // The large Store preview must now use exactly the same new WebGL 3D scene
+  // as the thumbnails, rather than the older unrelated animated gif.
+  const store3d=page.locator('.ok-exact-store .ok-roll-box canvas.test168-store-webgl');
+  await store3d.waitFor({state:'visible',timeout:20000});
+  await page.waitForFunction(()=>{
+   const stage=document.querySelector('.ok-exact-store .ok-roll-box');
+   const canvas=stage?.querySelector('canvas.test168-store-webgl');
+   const old=stage?.querySelector('.ok-roll');
+   return canvas&&canvas.width>100&&canvas.height>90&&
+    stage.dataset.test168Webgl==='active'&&
+    old&&getComputedStyle(old).opacity==='0';
+  },null,{timeout:20000});
   await page.screenshot({path:'preview-output/168-store-real-3d.png',fullPage:true});
   await open();
   await page.locator('#nav button[data-tab="Dice"]').click();
