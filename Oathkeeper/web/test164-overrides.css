@@ -153,3 +153,50 @@
 .ok-exact-store [data-store-dice="sunfire"]::before {background-image:url("./art/test164-dice/sunfire.png")!important;}
 /* Tests intentionally cover only gallery hotspots; avoid overlaying artwork in
  * purchase, equipment, coin, journal, dice-roll and notification controls. */
+
+
+/* TEST 165: The master gold plaques retain their outline and matched gems,
+ * while all six vector variants no longer contain side leaves. */
+
+/* 4-digit quantity / lb values should not be clipped by narrow mobile cells.
+ * Stack input pairs in two equal columns, keeping calculation and bag state
+ * readable without introducing sideways scrolling. */
+@media(max-width:600px) {
+ #equipmentEditor .equipment-table tr {
+   display:grid!important;
+   grid-template-columns:repeat(2,minmax(0,1fr))!important;
+   gap:14px 12px!important;
+   width:100%!important;
+ }
+ #equipmentEditor .equipment-table td {min-width:0!important;max-width:100%}
+ #equipmentEditor .equipment-table td:first-child {grid-column:1/-1!important}
+ #equipmentEditor .equipment-table td:nth-child(2),
+ #equipmentEditor .equipment-table td:nth-child(3) {grid-column:auto!important}
+ #equipmentEditor .equipment-table td:nth-child(4) {grid-column:1!important}
+ #equipmentEditor .equipment-table td:nth-child(5) {grid-column:2!important}
+ #equipmentEditor .equipment-table td:last-child {grid-column:1/-1!important}
+ #equipmentEditor .equipment-table td[data-label]::before {white-space:normal;overflow-wrap:anywhere;min-height:1.25em}
+ #equipmentEditor .equipment-table td input[type="number"] {
+   display:block;box-sizing:border-box;
+   width:100%!important;min-width:0!important;max-width:100%!important;
+   min-height:54px!important;padding:8px 10px!important;
+   font-size:clamp(23px,5.6vw,29px)!important;
+   font-variant-numeric:lining-nums tabular-nums;
+ }
+ #equipmentEditor .bag-storage {display:flex;flex-wrap:wrap;white-space:normal;overflow-wrap:anywhere}
+}
+/* Also widen the body-weight editor field while preserving its live value. */
+#equipmentEditor input[data-draft-key="body"] {
+ box-sizing:border-box;
+ width:clamp(128px,35vw,186px)!important;
+ min-width:128px!important;
+ font-variant-numeric:lining-nums tabular-nums;
+ padding-inline:12px!important;
+}
+/* Store tiles use the renderer's newly cropped, native-resolution D20 frames.
+ * Fill only the existing thumbnail interior, never replace or alter the roller. */
+.ok-exact-store button.ok-hit[data-store-dice]::before {
+ background-size:cover!important;
+ background-position:center!important;
+ image-rendering:auto!important;
+}
