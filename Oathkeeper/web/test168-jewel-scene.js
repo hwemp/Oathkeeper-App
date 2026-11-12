@@ -68,10 +68,13 @@ function makeFaceGlyph(value,theme,dense=false){
  c.textAlign='center';c.textBaseline='middle';
  const str=String(value),font=str.length>=3?83:str.length===2?107:133;
  c.font='bold '+font+'px Georgia,serif';
- c.shadowColor='#f6c86b';c.shadowBlur=15;c.fillStyle='#fff7cf';c.fillText(str,128,133);
+ c.shadowColor='#e5a032';c.shadowBlur=8;c.fillStyle='#ffd27f';c.fillText(str,128,133);
  c.shadowBlur=0;c.lineWidth=13;c.strokeStyle='#210b24';c.strokeText(str,128,133);
- c.lineWidth=5;c.strokeStyle='#d9963c';c.strokeText(str,128,133);
- c.fillStyle='#fff4c5';c.fillText(str,128,132);
+ c.lineWidth=5;c.strokeStyle='#a86624';c.strokeText(str,128,133);
+ const metalFace=c.createLinearGradient(35,80,218,204);
+ metalFace.addColorStop(0,'#fff4c1');metalFace.addColorStop(.25,'#d58c30');
+ metalFace.addColorStop(.58,'#ffd981');metalFace.addColorStop(1,'#b86d23');
+ c.fillStyle=metalFace;c.fillText(str,128,132);
  const tex=new THREE.CanvasTexture(canvas);
  tex.colorSpace=THREE.SRGBColorSpace;
  tex.anisotropy=4;
@@ -80,22 +83,27 @@ function makeFaceGlyph(value,theme,dense=false){
 function createDieMesh(sides,theme){
  const mesh=test168Mesh(sides);
  const verts=mesh.v,faces=mesh.f;
- const positions=[];
- for(const face of faces){
+ const positions=[],colors=[];
+ for(const [fi,face] of faces.entries()){
+  const tint=new THREE.Color(theme.color).multiplyScalar(.47+.18*Math.sin(fi*2.399));
+  const faceColor=[tint.r,tint.g,tint.b];
   for(let i=1;i<face.length-1;i++){
-   for(const ix of [face[0],face[i],face[i+1]])positions.push(...verts[ix]);
+   for(const ix of [face[0],face[i],face[i+1]]){
+    positions.push(...verts[ix]);colors.push(...faceColor);
+   }
   }
  }
  const geometry=new THREE.BufferGeometry();
  geometry.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));
+ geometry.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));
  geometry.computeVertexNormals();
  const group=new THREE.Group();
  const bodyMaterial=new THREE.MeshPhysicalMaterial({
-  color:new THREE.Color(theme.color),
-  metalness:.19,roughness:.19,clearcoat:1,clearcoatRoughness:.06,
-  transmission:.18,thickness:1.1,ior:1.52,transparent:false,
-  envMapIntensity:1.4,side:THREE.DoubleSide,flatShading:true,
-  emissive:new THREE.Color(theme.color),emissiveIntensity:.09
+  color:0xffffff,vertexColors:true,
+  metalness:.12,roughness:.15,clearcoat:1,clearcoatRoughness:.04,
+  transmission:.035,thickness:1.9,ior:1.52,transparent:false,
+  envMapIntensity:.95,side:THREE.DoubleSide,flatShading:true,
+  emissive:new THREE.Color(theme.color),emissiveIntensity:.022
  });
  const body=new THREE.Mesh(geometry,bodyMaterial);
  body.castShadow=true;body.receiveShadow=true;
@@ -114,13 +122,13 @@ function createDieMesh(sides,theme){
   if(!edgePairs.has(key)){edgePairs.add(key);edges.push([i,k]);}
  }));
  const trimMaterial=new THREE.MeshStandardMaterial({
-  color:new THREE.Color(theme.rim),metalness:1,roughness:.16,
-  emissive:new THREE.Color(theme.rim),emissiveIntensity:.10
+  color:new THREE.Color(theme.rim),metalness:.83,roughness:.18,
+   emissive:new THREE.Color(theme.rim),emissiveIntensity:.028
  });
  const cylinder=new THREE.CylinderGeometry(1,1,1,7);
  const rim=new THREE.InstancedMesh(cylinder,trimMaterial,edges.length);
  const dummy=new THREE.Object3D(),up=new THREE.Vector3(0,1,0);
- const radius=sides>=50?.0054:.014;
+ const radius=sides>=50?.008:.027;
  for(let i=0;i<edges.length;i++){
   const [p,q]=edges[i].map(id=>v(verts[id]));
   const mid=p.clone().add(q).multiplyScalar(.5),axis=q.clone().sub(p);
@@ -187,7 +195,7 @@ export class JewelDiceScene{
   this.renderer.setSize(opts.width||248,opts.height||175,false);
   this.renderer.outputColorSpace=THREE.SRGBColorSpace;
   this.renderer.toneMapping=THREE.ACESFilmicToneMapping;
-  this.renderer.toneMappingExposure=1.75;
+  this.renderer.toneMappingExposure=1.08;
   this.scene=new THREE.Scene();
   // Physically based studio reflection probes are required for gemstone
   // reflections and polished gold trim; not just a flat RGB face shader.
@@ -202,10 +210,10 @@ export class JewelDiceScene{
   this.camera=new THREE.PerspectiveCamera(33,(opts.width||248)/(opts.height||175),.1,100);
   this.camera.position.set(0,1.05,6.4);this.camera.lookAt(0,0,0);
   const lights=[
-   new THREE.AmbientLight('#e2d4fd',1.65),
-   new THREE.DirectionalLight('#fff2cc',5.5),
-   new THREE.DirectionalLight('#bb83ff',3.2),
-   new THREE.PointLight('#fabc69',25,10)
+   new THREE.AmbientLight('#ad90dd',.65),
+   new THREE.DirectionalLight('#fff0d2',2.7),
+   new THREE.DirectionalLight('#a35cff',1.7),
+   new THREE.PointLight('#ffa447',8,10)
   ];
   lights[1].position.set(-3,4,6);lights[2].position.set(3,-1,-2);lights[3].position.set(2,2,3);
   lights.forEach(light=>this.scene.add(light));
