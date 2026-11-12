@@ -181,3 +181,22 @@
   #nav button { font-size: clamp(14px, 4.1vw, 17px) !important; }
 }
 /* END TEST 163: protected ornate navigation */
+
+
+/* TEST 163 adaptive navigation gems: the frame and lettering do not change.
+   Only the source vector's gem colors vary with the selected background. */
+:root[data-oath-gem-theme="sapphire"] #nav button::before {
+  background-image: url("./art/ornate-nav-sapphire-163.svg") !important;
+}
+:root[data-oath-gem-theme="emerald"] #nav button::before {
+  background-image: url("./art/ornate-nav-emerald-163.svg") !important;
+}
+:root[data-oath-gem-theme="ruby"] #nav button::before {
+  background-image: url("./art/ornate-nav-ruby-163.svg") !important;
+}
+:root[data-oath-gem-theme="aquamarine"] #nav button::before {
+  background-image: url("./art/ornate-nav-aquamarine-163.svg") !important;
+}
+:root[data-oath-gem-theme="citrine"] #nav button::before {
+  background-image: url("./art/ornate-nav-citrine-163.svg") !important;
+}
