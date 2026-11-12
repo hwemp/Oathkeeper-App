@@ -104,7 +104,7 @@ const skins=['dragonfire','frostborne','elvenleaf','celestial','abyssal','gold-f
   if(!await animate.isChecked())await animate.check({force:true});
   await page.locator('[data-die="20"]').first().click();
   await page.locator('#diceForm button.dice-roll').click();
-  const canvas=page.locator('#diceTabletop canvas');
+  const canvas=page.locator('#diceTabletop canvas:not(.test168-live-webgl)');
   await canvas.waitFor({state:'visible',timeout:10000});
   // An inserted canvas starts at the browser default 300×150 before the
   // first requestAnimationFrame. Wait for the original high-density renderer
