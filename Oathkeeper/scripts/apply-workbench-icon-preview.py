@@ -48,16 +48,9 @@ def main():
   throw new Error('Unknown Android launcher icon selection');
  const exactIcon='art/store-icons/'+master+'.webp';
  let body=okTabs(S,'icons')+okNav(S)+okTiles(S,Ol,r.slug,'data-store-icon','Preview');
- // The frozen illustration contains an always-glowing default Chalice tile.
- // When another icon is selected, neutralize ONLY that stale baked-in tile
- // with the actual approved Android launcher master for icon-06.
- if(r.slug!=='icon-06'){
-  const t=S.tiles,x=t.xs[4],y=t.ys[0],p=9;
-  const box=[x-p,y-p,x+t.w+p,y+t.h+p];
-  const image='<img class="ok-neutral-img" src="art/store-icons/icon-06.webp" alt="" draggable="false" style="left:'+(p/(t.w+2*p)*100)+'%;top:'+(p/(t.h+2*p)*100)+'%;width:'+(t.w/(t.w+2*p)*100)+'%;height:'+(t.h/(t.h+2*p)*100)+'%">';
-  body+=okRegion(box,S.w,S.h,image,'ok-neutral-tile ok-icon-neutral-launcher','background:#010b17');
-  body+=okButton([711,477,867,637],S.w,S.h,'data-store-icon="icon-06"','Preview Arcane Chalice');
- }
+ // The parent icons.webp sheet is normalized once by the Workbench art
+ // processor; the live tile art and highlight are now the ONLY visual states.
+ // Do not add an old special-case Chalice overlay or a second icon button.
  // A single preview element is rendered for ALL selections, including Chalice.
  // It is strictly the SAME byte-verified native launcher WebP as the tile.
  // Do not load any separate legacy preview image here.
@@ -79,7 +72,7 @@ def main():
     if patched[:start]!=original[:start] or patched[start+len(new):]!=original[end:]:
         raise RuntimeError("Changes escaped the single Store icon-renderer function")
     RUNTIME.write_text(patched,encoding="utf-8")
-    print("WORKBENCH ICON REPAIR: selected preview and icon-06 neutral tile use exact Android launcher master for all 10 choices. No other feature changed.")
+    print("WORKBENCH ICON REPAIR: all 10 selected previews use the corresponding exact Android launcher master; no overlay of the old special-case Chalice tile. No other feature changed.")
 
 if __name__=="__main__":
     main()
