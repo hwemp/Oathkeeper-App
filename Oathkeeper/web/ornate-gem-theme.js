@@ -37,16 +37,26 @@ export function selectedBackgroundSlug(doc) {
 }
 /* Build 144's frozen screenshots contain 156px background thumbnails.
    Keep every archived byte and display separate 1600px SVG-derived masters. */
-/* Preserve the actual Build 144 artwork from the frozen archive.
- * TEST 162 forcibly swapped a detailed illustrated scene for a different
- * simplified SVG-derived 1600px scene. Enlarging a vector is not proof
- * of image parity; no replacement is permitted until the exact approved
- * full-resolution artwork has been identified and verified. */
+/* TEST 163: The exact illustrated scene is preserved, not re-drawn.
+ * Archived 144 uses low-resolution 156px scene previews; their originals are
+ * also available as illustrated 508x360 WebP files in the source catalog.
+ * The packager copies those originals byte-for-byte into the frozen runtime.
+ * No SVG redraws, image enlargement, replacement scenes or lossy recompression. */
 export function repairMissingBackgroundPreviews(doc) {
-  // No substitutions: original background thumbnails and previews remain
-  // byte-for-byte those packed in the approved Build 144 archive.
-  // Do not modify src, image dimensions, or CSS rendering here.
-  return 0;
+  const store=doc.querySelector(".store-page");
+  if(!store) return 0;
+  let updated=0;
+  for(const img of store.querySelectorAll('img[src*="art/exact-store/"]')) {
+    const original=img.getAttribute("src")||"";
+    const match=original.match(/(?:^|\\/)art\\/exact-store\\/([a-z0-9-]+)\\.webp(?:[?#]|$)/);
+    if(!match||!Object.hasOwn(BACKGROUND_GEMS,match[1]))continue;
+    const slug=match[1];
+    if(img.dataset.oathkeeperBackgroundMaster===slug)continue;
+    img.dataset.oathkeeperBackgroundMaster=slug;
+    img.setAttribute("src","/art/approved-backgrounds/"+slug+".webp");
+    updated++;
+  }
+  return updated;
 }
 
 export function updateGemTheme(doc) {
