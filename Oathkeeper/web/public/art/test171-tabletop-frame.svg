@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="420" viewBox="0 0 420 420" fill="none" role="img" aria-label="Ornate square tabletop frame with faceted __THEME__ gems">
+<defs>
+ <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+  <stop stop-color="#fffbd7"/><stop offset=".13" stop-color="#d8a24d"/>
+  <stop offset=".3" stop-color="#753d1c"/><stop offset=".48" stop-color="#ffe29c"/>
+  <stop offset=".67" stop-color="#bd742e"/><stop offset=".86" stop-color="#fae2a0"/><stop offset="1" stop-color="#6d371c"/>
+ </linearGradient>
+ <linearGradient id="gem" x1="0" y1="0" x2="1" y2="1">
+  <stop stop-color="__LIGHT__"/><stop offset=".34" stop-color="__MID__"/>
+  <stop offset=".75" stop-color="__DARK__"/><stop offset="1" stop-color="__MID__"/>
+ </linearGradient>
+ <radialGradient id="glaze"><stop stop-color="#2b1740" stop-opacity=".05"/><stop offset="1" stop-color="#060916" stop-opacity=".38"/></radialGradient>
+ <g id="gemstone">
+  <path d="M0-43L23-18L28 3L0 40L-28 3L-23-18Z" fill="#37191b" stroke="url(#gold)" stroke-width="4.5"/>
+  <path d="M0-35L19-15L23 3L0 32L-23 3L-19-15Z" fill="url(#gem)" stroke="__LIGHT__" stroke-width="1.8"/>
+  <path d="M0-35L-19-15L-7 2L0-12L19-15Z" fill="__LIGHT__" opacity=".72"/>
+  <path d="M-19-15L-23 3L-7 2L0-12Z" fill="__MID__" opacity=".8"/>
+  <path d="M19-15L23 3L7 2L0-12Z" fill="__DARK__" opacity=".7"/>
+  <path d="M-23 3L0 32L-7 2Z" fill="__DARK__" opacity=".72"/>
+  <path d="M23 3L0 32L7 2Z" fill="__MID__" opacity=".74"/>
+  <path d="M-7 2L0-12L7 2L0 31Z" fill="__LIGHT__" opacity=".29"/>
+  <path d="M-19-15L0-35L19-15M-23 3L0 32L23 3" stroke="#fff6fa" stroke-opacity=".58" stroke-width="1"/>
+  <path d="M0-27V24M-16 0H16" stroke="#f8e9ff" stroke-opacity=".36" stroke-width="1"/>
+ </g>
+ <g id="corner">
+  <path d="M0 72V27Q0 0 27 0H72" stroke="#3a1b13" stroke-width="10" stroke-linecap="round"/>
+  <path d="M0 72V27Q0 0 27 0H72" stroke="url(#gold)" stroke-width="6" stroke-linecap="round"/>
+  <path d="M13 69V30Q13 13 31 13H69" stroke="#fff1bb" stroke-opacity=".8" stroke-width="2"/>
+  <path d="M8 70Q25 45 41 34C34 50 46 64 56 57C70 42 48 33 35 21C58 32 65 15 75 5" stroke="url(#gold)" stroke-width="4" stroke-linecap="round"/>
+  <path d="M19 82C38 61 60 73 67 56C74 44 69 33 60 28M36 40Q45 31 60 33" stroke="#f6cf80" stroke-width="1.8"/>
+ </g>
+</defs>
+<rect x="10" y="10" width="400" height="400" rx="22" fill="url(#glaze)" stroke="#3b1e18" stroke-width="8"/>
+<rect x="10" y="10" width="400" height="400" rx="22" stroke="url(#gold)" stroke-width="5"/>
+<rect x="21" y="21" width="378" height="378" rx="15" stroke="#b98540" stroke-width="1.8" stroke-opacity=".88"/>
+<rect x="25" y="25" width="370" height="370" rx="12" stroke="#fff4b5" stroke-opacity=".35" stroke-width=".8"/>
+<use href="#corner" transform="translate(9 9)"/>
+<use href="#corner" transform="translate(411 9) scale(-1 1)"/>
+<use href="#corner" transform="translate(9 411) scale(1 -1)"/>
+<use href="#corner" transform="translate(411 411) scale(-1 -1)"/>
+<path d="M75 10H175M245 10H345M75 410H175M245 410H345" stroke="url(#gold)" stroke-width="3" stroke-linecap="round"/>
+<path d="M10 80V176M10 244V340M410 80V176M410 244V340" stroke="url(#gold)" stroke-width="2"/>
+<use href="#gemstone" transform="translate(210 13) scale(.45)"/>
+<use href="#gemstone" transform="translate(210 407) scale(.45)"/>
+<use href="#gemstone" transform="translate(13 210) scale(.38)"/>
+<use href="#gemstone" transform="translate(407 210) scale(.38)"/>
+</svg>
