@@ -95,6 +95,8 @@ jobs:
               raise RuntimeError('Build 142 web assets are incomplete')
           print('Verified full ZIP SHA256 and installed Build 142 web assets')
           PY
+      - name: Install high-fidelity SVG-to-WebP render dependencies
+        run: python -m pip install --disable-pip-version-check pillow cairosvg
       - name: Add ornate background-responsive gems to preserved Build 144 user interface
         run: |
           python scripts/apply-ornate-buttons.py

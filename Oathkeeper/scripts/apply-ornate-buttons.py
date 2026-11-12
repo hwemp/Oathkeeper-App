@@ -75,6 +75,20 @@ def main():
         target = bg_dir / (slug + ".svg")
         if not target.exists():
             shutil.copyfile(source,target)
+        # Build 144's static UI specifically loads /art/exact-store/<slug>.webp.
+        # Fill ONLY absent raster names from the actual original SVG masters.
+        # The original archive is otherwise SHA-256 identical.
+        raster = DIST / "art" / "exact-store" / (slug + ".webp")
+        if not raster.exists():
+            import io
+            import cairosvg
+            from PIL import Image
+            png = cairosvg.svg2png(bytestring=source.read_bytes(),output_width=1600,output_height=1125)
+            img = Image.open(io.BytesIO(png)).convert("RGB")
+            raster.parent.mkdir(parents=True,exist_ok=True)
+            img.save(raster,format="WEBP",quality=96,method=6)
+            if raster.stat().st_size < 20000:
+                raise RuntimeError(f"Rendered background master suspiciously small: {slug}")
     for path, expected in original_hashes.items():
         if path != Path("index.html") and sha256(DIST / path) != expected:
             raise RuntimeError(f"Frozen asset modified: {path}")

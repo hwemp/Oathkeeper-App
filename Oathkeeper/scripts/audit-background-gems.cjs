@@ -57,8 +57,11 @@ const host="http://127.0.0.1:5189";
        intrinsic:img.naturalWidth,displayed:img.getBoundingClientRect().width
     })));
     assert(imgStatus.length>0&&imgStatus.every(x=>x.ok),'Images missing for '+slug+': '+JSON.stringify(imgStatus));
-    const selectedAsset=await page.locator('.store-page img[src*="/art/store-backgrounds/'+slug+'.svg"]').count();
-    if (slug !== 'moonlit-citadel') assert(selectedAsset>0,'Original per-background SVG fallback failed for '+slug);
+    const selectedAsset=imgStatus.filter(x=>x.src.includes('/art/exact-store/'+slug+'.webp')||x.src.includes('/art/store-backgrounds/'+slug+'.svg'));
+    if (slug !== 'moonlit-citadel') {
+      assert(selectedAsset.length>0,'Selected standalone background not found for '+slug);
+      assert(selectedAsset.some(x=>x.intrinsic>=508),'Selected background lacks usable detail: '+slug);
+    }
    }
    const blocked=await page.locator('[data-store-category]').first().evaluate(el=>getComputedStyle(el,'::after').pointerEvents);
    assert.equal(blocked,"none","Decorative trim must not intercept clicks");
