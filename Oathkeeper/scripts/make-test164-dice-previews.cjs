@@ -16,7 +16,7 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
   for(let n=0;n<100;n++){try{if((await fetch(base)).ok){served=true;break}}catch{}await sleep(200)}
   assert(served,'Test 164 local app server was not ready');
   browser=await chromium.launch({headless:true});
-  const page=await browser.newPage({viewport:{width:393,height:852},deviceScaleFactor:3});
+  const page=await browser.newPage({viewport:{width:393,height:852},deviceScaleFactor:4});
   const problems=[];
   page.on('pageerror',err=>problems.push(err.message));
   fs.mkdirSync('dist/art/test164-dice',{recursive:true});
@@ -92,7 +92,8 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
    await page.locator('#diceForm button.dice-roll').click();
    const canvas=page.locator('#diceTabletop canvas');
    await canvas.waitFor({timeout:10000});
-   await page.waitForTimeout(300);
+   // Frame near landing: matching the animated D20 texture while allowing asynchronous UV textures to finish loading.
+   await page.waitForTimeout(1280);
    const pixels=await canvas.evaluate(el=>{
     const ctx=el.getContext('2d');
     if(!ctx||el.width<100||el.height<100)return 0;
@@ -102,10 +103,27 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
    });
    assert(pixels>300,slug+': rendered dice animation frame is blank');
    const output='dist/art/test164-dice/'+slug+'.png';
-   await canvas.screenshot({path:output,animations:'disabled'});
+   // Crop directly from the UNMODIFIED live roller at 4x device density.
+   // The old full-canvas capture made each die tiny in the Store thumbnail.
+   // This preserves actual 3D faceting/face artwork, not a pixel-art repaint.
+   const capture=await canvas.evaluate(el=>{
+    const ratio=el.width/Math.max(1,el.getBoundingClientRect().width);
+    const cropWidth=Math.min(el.width,Math.round(164*ratio));
+    const cropHeight=Math.min(el.height,Math.round(cropWidth*175/248));
+    const x=Math.max(0,Math.min(el.width-cropWidth,Math.round(el.width*.5-cropWidth/2)));
+    const y=Math.max(0,Math.min(el.height-cropHeight,Math.round(el.height*.55-cropHeight/2)));
+    const frame=document.createElement('canvas');
+    frame.width=cropWidth;frame.height=cropHeight;
+    const ctx=frame.getContext('2d');
+    ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+    ctx.drawImage(el,x,y,cropWidth,cropHeight,0,0,cropWidth,cropHeight);
+    return {width:frame.width,height:frame.height,data:frame.toDataURL('image/png').split(',')[1]};
+   });
+   assert(capture.width>=600&&capture.height>=400,slug+': 4x preview capture was not high resolution');
+   fs.writeFileSync(output,Buffer.from(capture.data,'base64'));
    const bytes=fs.statSync(output).size;
    assert(bytes>4000,slug+': captured image is suspiciously small');
-   record.push({slug,source:'original 144 animated dice canvas',pixels,bytes,asset:'art/test164-dice/'+slug+'.png'});
+   record.push({slug,source:'original 144 animated dice canvas (4x cropped original frame)',pixels,bytes,width:capture.width,height:capture.height,asset:'art/test164-dice/'+slug+'.png'});
    console.log('TEST 164: animation-derived Store preview',slug,bytes);
   }
   assert.deepEqual(problems,[],'Browser errors during reference generation');
