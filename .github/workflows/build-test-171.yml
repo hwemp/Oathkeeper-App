@@ -1,0 +1,320 @@
+name: Oathkeeper TEST-BRANCH-171 - Approved Master Amethyst Buttons and Selected Gold Glow
+on:
+  push:
+    branches: [TEST-BRANCH-171]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: oathkeeper-test-171-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: Oathkeeper
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: Oathkeeper/package-lock.json
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies and validate current source
+        run: |
+          npm ci
+          npm run check
+          npm run typecheck
+          npm test
+          npm run catalog
+          npm run build
+      - name: Verify retained approved store and dice web assets
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib
+          import shutil
+          import stat
+          import zipfile
+
+          root = Path('..').resolve()
+          chunk_dir = root / '.build142'
+          expected = [f'payload.part{i:02d}.bin' for i in range(10)]
+          parts = sorted(chunk_dir.glob('payload.part*.bin'))
+          if [p.name for p in parts] != expected:
+              raise RuntimeError('Missing or unexpected Build 142 payload chunks')
+          archive = Path('/tmp/oathkeeper-build144-web.zip')
+          digest = hashlib.sha256()
+          with archive.open('wb') as output:
+              for part in parts:
+                  with part.open('rb') as reader:
+                      while True:
+                          block = reader.read(1024 * 1024)
+                          if not block:
+                              break
+                          digest.update(block)
+                          output.write(block)
+          expected_digest = 'c83a657ab68b900b724b75c45b6d5d2256e69192a1d62e922279422fb0fb0b05'
+          if digest.hexdigest() != expected_digest:
+              raise RuntimeError('Build 142 payload SHA256 mismatch')
+          dist = Path('dist')
+          if dist.exists():
+              shutil.rmtree(dist)
+          dist.mkdir()
+          with zipfile.ZipFile(archive) as source:
+              for entry in source.infolist():
+                  if not entry.filename.startswith('web-assets/'):
+                      raise RuntimeError(f'Unexpected archive entry: {entry.filename}')
+                  relative = Path(entry.filename).relative_to('web-assets')
+                  if relative.is_absolute() or '..' in relative.parts:
+                      raise RuntimeError(f'Unsafe archive entry: {entry.filename}')
+                  if relative == Path('.'):
+                      continue
+                  mode = entry.external_attr >> 16
+                  if stat.S_ISLNK(mode):
+                      raise RuntimeError(f'Symlink not allowed: {entry.filename}')
+                  destination = dist / relative
+                  if entry.is_dir():
+                      destination.mkdir(parents=True, exist_ok=True)
+                      continue
+                  destination.parent.mkdir(parents=True, exist_ok=True)
+                  with source.open(entry) as reader, destination.open('wb') as writer:
+                      shutil.copyfileobj(reader, writer)
+          must_exist = [
+              'index.html',
+              'art/exact-store/dice.webp',
+              'art/exact-store/backgrounds.webp',
+              'art/exact-store/icons.webp',
+              'art/exact-store/roll/astral.webp',
+              'art/exact-store/roll/dragonfire.webp',
+          ]
+          if any(not (dist / name).is_file() for name in must_exist):
+              raise RuntimeError('Build 142 web assets are incomplete')
+          print('Verified full ZIP SHA256 and installed Build 142 web assets')
+          PY
+      - name: Install lossless vector background renderer
+        run: python -m pip install --disable-pip-version-check pillow cairosvg numpy
+      - name: Apply approved 144 art with 163 original scene masters, matched gems, and visual dice previews
+        run: |
+          python scripts/apply-ornate-buttons.py
+          python scripts/apply-test-164.py
+          test -s dist/ornate-buttons.css
+          test -s dist/test164-overrides.css
+          test -s dist/art/ornate-nav-163.svg
+          for gem in sapphire emerald ruby aquamarine citrine; do
+            test -s "dist/art/ornate-nav-${gem}-163.svg"
+            test -s "dist/art/ornate-${gem}.svg"
+          done
+          for slug in moonlit-citadel ancient-ruins enchanted-forest dragons-crag shadow-marsh celestial-plains crystal-caverns elder-grove mystic-lake eternal-keep; do
+            test -s "dist/art/approved-backgrounds/${slug}.webp"
+            cmp "web/public/art/store-backgrounds/${slug}.webp" "dist/art/approved-backgrounds/${slug}.webp"
+          done
+          test -s dist/ornate-gem-theme.js
+          node --check dist/assets/main-FCw4hQ90.js
+          grep -Fq 'TEST 163 visual preview only' dist/assets/main-FCw4hQ90.js
+          grep -Fq 'Purchase verification is required before applying this cosmetic.' dist/assets/main-FCw4hQ90.js
+      - name: Replace copied background overlays at source and restore approved GIF artworks
+        run: |
+          python -m py_compile scripts/build-test169-reference-assets.py scripts/patch-test169-approved-source.py
+          npm install --no-save --package-lock=false playwright@1.56.1
+          npx playwright install --with-deps chromium
+          python scripts/build-test169-reference-assets.py
+          python scripts/patch-test169-approved-source.py
+          node --check dist/assets/main-FCw4hQ90.js
+          node scripts/audit-test169-reference.cjs
+          python scripts/apply-test170-buttons.py
+          node scripts/audit-test170-reference.cjs
+          python scripts/apply-test171-gameplay.py
+          node --check dist/test171-gameplay-toss.js
+          node --check dist/assets/main-FCw4hQ90.js
+          node scripts/audit-test171-gameplay.cjs
+      - name: Upload TEST 171 real browser screenshots before APK packaging
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: TEST-171-pre-apk-screenshots
+          path: Oathkeeper/preview-output/*
+          if-no-files-found: ignore
+          retention-days: 15
+      - name: Verify all approved original assets and source-composited backgrounds
+        run: |
+          test -s preview-output/169-browser-report.json
+          test -s preview-output/169-reference-asset-report.json
+          test -s dist/test169-reference.css
+          test -s dist/test170-reference-buttons.css
+          test -s dist/test170-button-states.js
+          test -s dist/test171-gameplay-toss.js
+          test -s dist/test171-gameplay-toss.css
+          test -s preview-output/171-tabletop-audit.json
+          test -s preview-output/171-gameplay-toss-in-progress.png
+          test -s preview-output/171-gameplay-toss-landed.png
+          test -s preview-output/171-store-original-showcase-unchanged.png
+          for gem in amethyst sapphire emerald ruby aquamarine citrine; do
+            test -s "dist/art/test171-tabletop-frames/${gem}.svg"
+          done
+          sha256sum dist/art/exact-store/roll/astral-original.gif | grep -Fq fc8b485dcee02e1959df45e3cfda7c4d6dda238a9ac51d0b5b5bb2bfc65046bb
+          for gem in amethyst sapphire emerald ruby aquamarine citrine; do
+            for state in selected normal; do
+              test -s "dist/art/test170-buttons/${gem}-${state}.svg"
+            done
+          done
+          test -s preview-output/170-overview-selected-amethyst.png
+          test -s preview-output/170-menu-amethyst-button-design.png
+          test -s preview-output/170-powers-selected-amethyst.png
+          test ! -e dist/test168-live-3d.js
+          test ! -e dist/test166-dice-parity.css
+          for slug in moonlit-citadel ancient-ruins enchanted-forest dragons-crag shadow-marsh celestial-plains crystal-caverns elder-grove mystic-lake eternal-keep; do
+            test -s "dist/art/exact-store/test169-bg/${slug}.webp"
+          done
+          for slug in default dragonfire frostborne elvenleaf celestial abyssal gold-forged necrotic astral oceanic sunfire; do
+            for sides in 3 4 6 8 10 12 20 50 100; do
+              test -s "dist/art/test169-dice/${slug}/d${sides}.webp"
+            done
+          done
+          sha256sum dist/art/exact-store/roll/astral-original.gif | grep -Fq fc8b485dcee02e1959df45e3cfda7c4d6dda238a9ac51d0b5b5bb2bfc65046bb
+          test -s dist/art/exact-store/roll/astral.webp
+          test -s dist/art/exact-store/roll/astral-still.webp
+          node --test tests/test169-reference-regressions.test.mjs
+          node --test tests/test170-master-buttons.test.mjs
+      - name: Validate button UI embellishment files and new 165 regressions
+        run: |
+          node --test tests/ornate-buttons.test.mjs
+          node --test tests/test165-ui-regressions.test.mjs
+          node --test tests/test166-dice-parity.test.mjs
+          node --test tests/test167-dice-studio.test.mjs
+          node --test tests/test168-webgl-graphics.test.mjs
+          node --test tests/test169-reference-regressions.test.mjs
+      - name: Replace old icon reservoir with exact Store image bytes
+        run: |
+          python -m pip install --disable-pip-version-check Pillow
+          python scripts/repair-default-launcher.py
+          python scripts/generate-free-icons.py
+          test "$(find android/app/src/main/res/mipmap-anydpi-v26 -maxdepth 1 -name 'oathkeeper_icon_*.xml' | wc -l)" -eq 10
+          for number in 01 02 04 05 06 07 08 11 12 14; do
+            test -s "android/app/src/main/res/mipmap-anydpi-v26/oathkeeper_icon_${number}.xml"
+            test -s "android/app/src/main/res/mipmap-nodpi/oathkeeper_icon_${number}.webp"
+            cmp "web/public/art/store-icons/icon-${number}.webp" "android/app/src/main/res/mipmap-nodpi/oathkeeper_icon_${number}.webp"
+            cmp "web/public/art/store-icons/icon-${number}.webp" "android/app/src/main/res/drawable-nodpi/oathkeeper_icon_art_${number}.webp"
+            grep -Fq "@drawable/oathkeeper_icon_art_${number}" "android/app/src/main/res/mipmap-anydpi-v26/oathkeeper_icon_${number}.xml"
+            test ! -e "android/app/src/main/res/mipmap-nodpi/oathkeeper_icon_${number}.png"
+            test ! -e "web/public/art/store-icons/launcher-${number}.webp"
+            # Legacy frozen web code may reference launcher-XX; supply identical bytes.
+            mkdir -p dist/art/store-icons
+            cp "web/public/art/store-icons/icon-${number}.webp" "dist/art/store-icons/icon-${number}.webp"
+            cp "web/public/art/store-icons/icon-${number}.webp" "dist/art/store-icons/launcher-${number}.webp"
+            cmp "dist/art/store-icons/icon-${number}.webp" "dist/art/store-icons/launcher-${number}.webp"
+          done
+      - name: Isolate TEST 171 APK while preserving unchanged Build 144 game assets
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('android/app/build.gradle')
+          source=p.read_text()
+          before='versionCode 6'
+          assert source.count(before)==1, 'Unexpected original versionCode; do not modify Android source blindly'
+          source=source.replace(before,'versionCode 171',1)
+          before='    buildTypes {\n        release {'
+          assert source.count(before)==1, 'Unexpected Gradle buildTypes; refusing unsafe edit'
+          source=source.replace(before, '    buildTypes {\n        debug {\n            applicationIdSuffix ".test171"\n            versionNameSuffix "-TEST-171"\n        }\n        release {',1)
+          p.write_text(source)
+          print('TEST 171 isolated Android application identity; no web assets modified')
+          PY
+      - name: Verify approved frozen dice and store image files remain present
+        run: |
+          test -s dist/art/exact-store/dice.webp
+          test -s dist/art/exact-store/backgrounds.webp
+          test -s dist/art/exact-store/icons.webp
+          test -s dist/art/exact-store/roll/astral.webp
+          test -s dist/art/exact-store/roll/dragonfire.webp
+          for number in 01 02 04 05 06 07 08 11 12 14; do
+            cmp "dist/art/store-icons/icon-${number}.webp" "web/public/art/store-icons/icon-${number}.webp"
+            cmp "dist/art/store-icons/launcher-${number}.webp" "web/public/art/store-icons/icon-${number}.webp"
+          done
+      - name: Refuse icon master divergence or missing rolling dice art in final packaged web assets
+        run: |
+          for number in 01 02 04 05 06 07 08 11 12 14; do
+            cmp "dist/art/store-icons/launcher-${number}.webp" "android/app/src/main/res/drawable-nodpi/oathkeeper_icon_art_${number}.webp"
+          done
+          for slug in dragonfire frostborne elvenleaf celestial abyssal gold-forged necrotic astral oceanic sunfire; do
+            test -s "dist/art/exact-store/roll/${slug}-still.webp"
+          done
+          test -s dist/test164-overrides.css
+          test -s dist/test169-reference.css
+      - name: Sync Capacitor Android application
+        run: npx cap sync android
+      - name: Build debug-signed Android APK
+        run: |
+          chmod +x android/gradlew
+          cd android
+          ./gradlew assembleDebug --no-daemon --stacktrace
+      - name: Verify APK contains Build 144 dice animation, valid signature, and isolated test ID
+        run: |
+          APK=android/app/build/outputs/apk/debug/app-debug.apk
+          unzip -Z1 "$APK" | grep -Fq 'assets/public/art/exact-store/roll/astral.webp'
+          unzip -Z1 "$APK" | grep -Fq 'assets/public/ornate-buttons.css'
+          unzip -Z1 "$APK" | grep -Fq 'assets/public/art/ornate-amethyst.svg'
+          unzip -Z1 "$APK" | grep -Fq 'assets/public/art/ornate-nav-163.svg'
+          unzip -Z1 "$APK" | grep -Fq 'assets/public/art/approved-backgrounds/ancient-ruins.webp'
+          unzip -Z1 "$APK" | grep -Fq 'assets/public/ornate-gem-theme.js'
+          for gem in sapphire emerald ruby aquamarine citrine; do
+            unzip -Z1 "$APK" | grep -Fq "assets/public/art/ornate-${gem}.svg"
+          done
+          unzip -Z1 "$APK" | grep -Fq 'assets/public/art/approved-backgrounds/elder-grove.webp'
+          unzip -Z1 "$APK" | grep -Fq 'assets/public/art/ornate-flourish-left.svg'
+          unzip -Z1 "$APK" | grep -Fq 'assets/public/art/ornate-flourish-right.svg'
+          unzip -Z1 "$APK" | grep -Fq 'assets/public/test164-overrides.css'
+          unzip -Z1 "$APK" | grep -Fq 'assets/public/test169-reference.css'
+          unzip -Z1 "$APK" | grep -Fq 'assets/public/test170-reference-buttons.css'
+          unzip -Z1 "$APK" | grep -Fq 'assets/public/test170-button-states.js'
+          unzip -Z1 "$APK" | grep -Fq 'assets/public/test171-gameplay-toss.js'
+          unzip -Z1 "$APK" | grep -Fq 'assets/public/test171-gameplay-toss.css'
+          for gem in amethyst sapphire emerald ruby aquamarine citrine; do
+            unzip -Z1 "$APK" | grep -Fq "assets/public/art/test171-tabletop-frames/${gem}.svg"
+          done
+          for gem in amethyst sapphire emerald ruby aquamarine citrine; do
+            for state in selected normal; do
+              unzip -Z1 "$APK" | grep -Fq "assets/public/art/test170-buttons/${gem}-${state}.svg"
+            done
+          done
+          unzip -Z1 "$APK" | grep -Fq 'assets/public/art/exact-store/roll/astral-original.gif'
+          for slug in moonlit-citadel ancient-ruins enchanted-forest dragons-crag shadow-marsh celestial-plains crystal-caverns elder-grove mystic-lake eternal-keep; do
+            unzip -Z1 "$APK" | grep -Fq "assets/public/art/exact-store/test169-bg/${slug}.webp"
+          done
+          for slug in default dragonfire frostborne elvenleaf celestial abyssal gold-forged necrotic astral oceanic sunfire; do
+            for sides in 3 4 6 8 10 12 20 50 100; do
+              unzip -Z1 "$APK" | grep -Fq "assets/public/art/test169-dice/${slug}/d${sides}.webp"
+            done
+          done
+          if unzip -Z1 "$APK" | grep -Fq 'assets/public/test168-live-3d.js'; then
+            echo "Synthetic WebGL renderer must not ship with original approved animation"
+            exit 1
+          fi
+          BUILD_TOOLS=$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -n 1)
+          "$BUILD_TOOLS/apksigner" verify --verbose "$APK"
+          "$BUILD_TOOLS/aapt" dump badging "$APK" | grep -Fq "package: name='com.harrisonwaters.oathkeeper.test171'"
+          mkdir -p output
+          cp "$APK" output/Oathkeeper-TEST-BRANCH-171.apk
+          cd output
+          sha256sum Oathkeeper-TEST-BRANCH-171.apk > SHA256SUMS.txt
+      - name: Upload installable test APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Oathkeeper-TEST-BRANCH-171
+          path: Oathkeeper/output/*
+          if-no-files-found: error
+          retention-days: 30
+      - name: Publish downloadable pre-release APK
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="android-test-171-${{ github.run_number }}-${{ github.run_attempt }}"
+          gh release create "$TAG" output/* --target "${{ github.sha }}" --title "Oathkeeper TEST-BRANCH-171 — Separate Original Store Showcase and Compact Tabletop Gameplay" --prerelease --latest=false --notes "Isolated Oathkeeper TEST 171: the original approved Store GIF/showcase remains byte-for-byte unchanged, while gameplay now features a separate tabletop toss using the detailed original dice artwork, independent translation, bounce and settlement inside a compact ornate gold frame with six matching faceted gemstone themes. The secure original dice result and modifiers are unchanged; the visual layer never generates results. Reduced-motion mode and original GIF fallback included. Previous TEST 170 controls and Store designs remain intact. Device testing and user approval still required."
