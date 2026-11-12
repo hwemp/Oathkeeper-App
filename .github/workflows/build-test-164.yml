@@ -126,10 +126,10 @@ jobs:
         run: |
           npm install --no-save --package-lock=false playwright@1.56.1
           npx playwright install --with-deps chromium
-          node scripts/audit-test-163.cjs
           node scripts/make-test164-dice-previews.cjs
+          node scripts/audit-test-163.cjs
           node scripts/audit-test-164.cjs
-      - name: Upload 163 browser screenshots before APK packaging
+      - name: Upload 164 browser screenshots before APK packaging
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -168,7 +168,7 @@ jobs:
             cp "web/public/art/store-icons/icon-${number}.webp" "dist/art/store-icons/launcher-${number}.webp"
             cmp "dist/art/store-icons/icon-${number}.webp" "dist/art/store-icons/launcher-${number}.webp"
           done
-      - name: Isolate TEST 163 APK while preserving unchanged Build 144 game assets
+      - name: Isolate TEST 164 APK while preserving unchanged Build 144 game assets
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -181,7 +181,7 @@ jobs:
           assert source.count(before)==1, 'Unexpected Gradle buildTypes; refusing unsafe edit'
           source=source.replace(before, '    buildTypes {\n        debug {\n            applicationIdSuffix ".test164"\n            versionNameSuffix "-TEST-164"\n        }\n        release {',1)
           p.write_text(source)
-          print('TEST 163 isolated Android application identity; no web assets modified')
+          print('TEST 164 isolated Android application identity; no web assets modified')
           PY
       - name: Verify approved frozen dice and store image files remain present
         run: |
