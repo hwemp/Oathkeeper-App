@@ -60,9 +60,9 @@ def main():
     html = index.read_text(encoding="utf-8")
     if 'src="./ornate-gem-theme.js"' not in html:
         script = '<script type="module" src="./ornate-gem-theme.js" data-oath-gem-theme-controller="true"></script>'
-        if len(re.findall(r"</head\\s*>",html,flags=re.I)) != 1:
+        if len(re.findall(r"</head\s*>",html,flags=re.I)) != 1:
             raise RuntimeError("Cannot safely insert background-gem controller")
-        html = re.sub(r"</head\\s*>", script + "</head>", html, count=1, flags=re.I)
+        html = re.sub(r"</head\s*>", script + "</head>", html, count=1, flags=re.I)
         index.write_text(html,encoding="utf-8")
     for path, expected in original_hashes.items():
         if path != Path("index.html") and sha256(DIST / path) != expected:
