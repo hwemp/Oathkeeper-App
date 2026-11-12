@@ -59,7 +59,7 @@ def main():
   'ok-replacement-preview ok-icon-preview ok-icon-launcher-master');
  body+=okRegion([150,1255,737,1342],S.w,S.h,`<p>Free fantasy launcher icon design.</p><p>${applied?'This icon is currently applied.':fe(r.name)+' selected.'}</p>`,'ok-text-mask');
  body+=okRegion([40,1418,850,1516],S.w,S.h,`<p>All ten alternate app icons are FREE, and the original stays available.</p><div class="ok-icon-actions"><button data-store-apply-icon="${r.slug}"${!supported||applied?' disabled':''}>${applied?'Icon Applied':'Apply Icon · FREE'}</button><button data-store-restore-icon="default"${!supported||current==='default'?' disabled':''}>Restore Original Icon</button></div>`,'ok-text-mask ok-icon-foot');
- return okPage('icons',okCanvas(S,body),`<p class="ok-accessible-status" role="status">${fe(r.name)} selected. ${supported?(applied?'Currently applied.':'Apply this free icon to your home screen.'):'Launcher icon changes require a supported installed app.'}</p>`);
+ return okPage('icons',okCanvas({...S,img:'icons-workbench'},body),`<p class="ok-accessible-status" role="status">${fe(r.name)} selected. ${supported?(applied?'Currently applied.':'Apply this free icon to your home screen.'):'Launcher icon changes require a supported installed app.'}</p>`);
 }
 """
     # The 144 JS uses literal template strings here. All $ expressions must
