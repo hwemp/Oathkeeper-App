@@ -77,13 +77,77 @@ function createRollView(stage){
  const initialStop=control.stop;
  control.stop=()=>{landedObserver.disconnect();initialStop()};
 }
+
+// The archived 144 Store renders an older GIF inside .ok-roll-box. Match the
+// exact same 3D models used for Store cards and the Dice roller here too.
+// Preserve the original GIF as the fallback until WebGL has rendered.
+const storeControllers=new WeakMap();
+function currentStoreSkin(box){
+ const root=box.closest('.ok-exact-store');
+ const selected=root?.querySelector('[data-store-dice][aria-pressed="true"],[data-store-dice].ok-selected,[data-store-dice].selected');
+ const slug=selected?.getAttribute('data-store-dice');
+ if(slug)return themeSlugForCatalogue(slug);
+ const title=root?.querySelector('.ok-ribbon')?.textContent?.trim().toLowerCase();
+ return themeSlugForCatalogue(title||'default');
+}
+function createStorePreview(box){
+ if(!box?.isConnected||storeControllers.has(box))return;
+ const original=box.querySelector('.ok-roll');
+ if(!original)return;
+ const canvas=document.createElement('canvas');
+ canvas.className='test168-store-webgl';
+ canvas.setAttribute('aria-hidden','true');
+ canvas.style.cssText='position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:7;opacity:0;border-radius:8px';
+ box.appendChild(canvas);
+ let renderer,frame=0,disposed=false,theme='',start=0;
+ const control={stop(){
+  if(disposed)return;disposed=true;
+  cancelAnimationFrame(frame);
+  original.style.opacity='';
+  try{renderer?.dispose()}catch{}
+  canvas.remove();running.delete(control);
+ }};
+ storeControllers.set(box,control);running.add(control);
+ try{
+  renderer=new JewelDiceScene(canvas,{width:Math.max(1,box.clientWidth),height:Math.max(1,box.clientHeight)});
+  theme=currentStoreSkin(box);
+  renderer.setDice(20,theme,1);
+  renderer.render(1,[20]);
+  canvas.style.opacity='1';
+  original.style.opacity='0';
+  box.dataset.test168Webgl='active';
+ }catch(e){
+  console.warn('TEST 168 Store WebGL fallback to original GIF',e);
+  control.stop();return;
+ }
+ const tick=(now)=>{
+  if(disposed)return;
+  if(!box.isConnected){control.stop();return}
+  try{
+   const next=currentStoreSkin(box);
+   if(next!==theme){theme=next;renderer.setDice(20,theme,1);start=now}
+   if(!start)start=now;
+   const w=box.clientWidth,h=box.clientHeight;
+   renderer.setSize(w,h,window.devicePixelRatio||1);
+   const cycle=(now-start)%3200;
+   const t=Math.min(1,cycle/1650);
+   renderer.render(t,[20]);
+  }catch(e){console.warn('TEST 168 Store 3D fallback',e);control.stop();return}
+  frame=requestAnimationFrame(tick);
+ };
+ frame=requestAnimationFrame(tick);
+}
+
 function boot(){
  if(!hasWebGL()){
   document.documentElement.dataset.test168Webgl='unsupported';
   return;
  }
  document.documentElement.dataset.test168Webgl='supported';
- const mount=()=>document.querySelectorAll('.dice-page #diceTabletop').forEach(createRollView);
+ const mount=()=>{
+  document.querySelectorAll('.dice-page #diceTabletop').forEach(createRollView);
+  document.querySelectorAll('.ok-exact-store .ok-roll-box').forEach(createStorePreview);
+ };
  mount();
  let scheduled=false;
  const obs=new MutationObserver(records=>{
@@ -95,6 +159,7 @@ function boot(){
  obs.observe(document.body,{subtree:true,childList:true});
  document.addEventListener('visibilitychange',()=>{
   if(document.visibilityState==='hidden')for(const v of [...running])v.stop();
+  else mount();
  });
 }
 if(typeof document!=='undefined'){
