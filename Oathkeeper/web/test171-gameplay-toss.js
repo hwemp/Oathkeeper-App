@@ -121,13 +121,13 @@ function createRoll(stage,result,onComplete,skin){
       const vertical=multi?(i<2?-36:36):0;
       const spin=4*360+index*79;
       const keyframes=[
-        {offset:0,transform:'translate3d('+(side*116)+'px,-112px,110px) rotateZ(-'+(spin+45)+'deg) rotateY(58deg) scale(.69)',filter:'brightness(1.28) drop-shadow(0 24px 13px #0a0613a3)'},
-        {offset:.24,transform:'translate3d('+(side*64)+'px,48px,19px) rotateZ(-'+(spin*.68)+'deg) rotateY(130deg) scale(.98)',filter:'brightness(1.06) drop-shadow(0 8px 8px #0009)'},
-        {offset:.42,transform:'translate3d('+(side*42)+'px,-45px,48px) rotateZ(-'+(spin*.42)+'deg) rotateY(90deg) scale(.87)',filter:'brightness(1.18) drop-shadow(0 21px 10px #0009)'},
-        {offset:.61,transform:'translate3d('+(side*23)+'px,22px,7px) rotateZ(-'+(spin*.24)+'deg) rotateY(42deg) scale(1.02)',filter:'brightness(.96) drop-shadow(0 5px 5px #0009)'},
-        {offset:.75,transform:'translate3d('+(side*15)+'px,-18px,24px) rotateZ(-'+(spin*.13)+'deg) rotateY(19deg) scale(.95)',filter:'brightness(1.03) drop-shadow(0 12px 9px #0009)'},
-        {offset:.9,transform:'translate3d('+(side*8)+'px,5px,3px) rotateZ(-'+(spin*.04)+'deg) rotateY(9deg) scale(1)',filter:'brightness(.98) drop-shadow(0 5px 4px #0009)'},
-        {offset:1,transform:'translate3d('+horizontal+'px,'+vertical+'px,0) rotateZ(0deg) rotateY(0deg) scale(1)',filter:'brightness(1) drop-shadow(0 5px 4px #000b)'}
+        {offset:0,transform:'translate3d('+(side*116)+'px,-112px,110px) rotateZ(-'+(spin+45)+'deg) rotateX(8deg) rotateY(17deg) scale(.69)',filter:'brightness(1.28) drop-shadow(0 24px 13px #0a0613a3)'},
+        {offset:.24,transform:'translate3d('+(side*64)+'px,48px,19px) rotateZ(-'+(spin*.68)+'deg) rotateX(12deg) rotateY(-21deg) scale(.98)',filter:'brightness(1.06) drop-shadow(0 8px 8px #0009)'},
+        {offset:.42,transform:'translate3d('+(side*42)+'px,-45px,48px) rotateZ(-'+(spin*.42)+'deg) rotateX(-9deg) rotateY(14deg) scale(.87)',filter:'brightness(1.18) drop-shadow(0 21px 10px #0009)'},
+        {offset:.61,transform:'translate3d('+(side*23)+'px,22px,7px) rotateZ(-'+(spin*.24)+'deg) rotateX(6deg) rotateY(-11deg) scale(1.02)',filter:'brightness(.96) drop-shadow(0 5px 5px #0009)'},
+        {offset:.75,transform:'translate3d('+(side*15)+'px,-18px,24px) rotateZ(-'+(spin*.13)+'deg) rotateX(-5deg) rotateY(8deg) scale(.95)',filter:'brightness(1.03) drop-shadow(0 12px 9px #0009)'},
+        {offset:.9,transform:'translate3d('+(side*8)+'px,5px,3px) rotateZ(-'+(spin*.04)+'deg) rotateX(4deg) rotateY(-6deg) scale(1)',filter:'brightness(.98) drop-shadow(0 5px 4px #0009)'},
+        {offset:1,transform:'translate3d('+horizontal+'px,'+vertical+'px,0) rotateZ(0deg) rotateX(0deg) rotateY(0deg) scale(1)',filter:'brightness(1) drop-shadow(0 5px 4px #000b)'}
       ];
       const animation=wrap.animate(keyframes,{duration:DURATION,easing:'linear',fill:'forwards',iterations:1});
       activeAnimations.push(animation);
