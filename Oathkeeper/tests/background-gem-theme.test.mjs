@@ -46,11 +46,11 @@ test('previews change gem locally without applying a paid background',()=>{
  assert.equal(updateGemTheme(doc),'emerald'); // after leaving preview, verified applied background wins
 });
 
-test('missing frozen preview fallback uses ten original separate SVGs, no raster enlargement',()=>{
- for(const slug of Object.keys(BACKGROUND_GEMS)){
-   const svg=readFileSync(new URL('../web/public/art/store-backgrounds/'+slug+'.svg',import.meta.url),'utf8');
-   assert.match(svg,/<svg\b/);
- }
- assert.match(repairMissingBackgroundPreviews.toString(),/hires-store-backgrounds/);
- assert.match(repairMissingBackgroundPreviews.toString(),/\.svg/);
+test('frozen Build 144 illustrated previews are not replaced by synthetic vectors',()=>{
+  const html={querySelector:()=>({})};
+  assert.equal(repairMissingBackgroundPreviews(html),0);
+  const src=repairMissingBackgroundPreviews.toString();
+  assert.doesNotMatch(src,/\.setAttribute\(\s*["']src["']/);
+  assert.doesNotMatch(src,/hires-store-backgrounds|svg2png/);
+  assert.equal(BACKGROUND_GEMS['moonlit-citadel'],'sapphire');
 });
