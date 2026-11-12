@@ -18,7 +18,7 @@ const originalGifSha='fc8b485dcee02e1959df45e3cfda7c4d6dda238a9ac51d0b5b5bb2bfc6
     'TEST 171 gameplay not included');
   assert(!index.includes('test168-live-3d.js'),'Rejected mesh animation unexpectedly enabled');
   const src=fs.readFileSync('dist/assets/main-FCw4hQ90.js','utf8');
-  assert(src.includes('OathkeeperTabletop171.play(i,u,prepared,r,c)'),
+  assert(src.includes('OathkeeperTabletop171.play(i,u,r,c)'),
     'Gameplay UI not connected to original result calculations');
   assert(src.includes('test169-approved-rolling-gif'),'Original GIF fallback lost');
   const renderer=fs.readFileSync('dist/test171-gameplay-toss.js','utf8');
