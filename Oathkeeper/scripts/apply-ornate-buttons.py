@@ -83,9 +83,13 @@ def main():
         png = cairosvg.svg2png(bytestring=source.read_bytes(),output_width=1600,output_height=1125)
         img = Image.open(io.BytesIO(png)).convert("RGB")
         raster.parent.mkdir(parents=True,exist_ok=True)
-        img.save(raster,format="WEBP",quality=96,method=6)
-        if raster.stat().st_size < 20000:
-            raise RuntimeError(f"Rendered background master suspiciously small: {slug}")
+        # Lossless preserves every pixel of the source vector rendering.
+        img.save(raster,format="WEBP",lossless=True,method=6)
+        with Image.open(raster) as verified:
+            if verified.size != (1600,1125):
+                raise RuntimeError(f"Rendered master has wrong dimensions: {slug}")
+        if raster.stat().st_size == 0:
+            raise RuntimeError(f"Empty generated background image: {slug}")
     for path, expected in original_hashes.items():
         if path != Path("index.html") and sha256(DIST / path) != expected:
             raise RuntimeError(f"Frozen asset modified: {path}")
