@@ -1,0 +1,155 @@
+/* TEST-BRANCH-164, scoped style repair. 163's broad gem overlays are removed.
+ * Only approved navigation gets a gem. Store art is explicitly derived from
+ * existing rolling renderer captures and exact Android launcher master files. */
+:root { --test164-gold: #e8c47e; }
+:where(button,a.button,[role="button"])::after {
+  content:none!important;
+  display:none!important;
+  background-image:none!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+.notification-bell::before,.notification-bell::after,
+#equipmentEditor [data-draft-remove]::before,
+#equipmentEditor [data-draft-remove]::after {
+  content:none!important; display:none!important;
+}
+#appMenu .menu-options button:not(.notification-bell) {
+  position:relative; padding-left:39px!important;
+  border:1px solid rgba(215,174,99,.60)!important;
+  border-radius:8px;
+  margin:3px 0;
+  color:#f6da9d;
+  background:linear-gradient(145deg,#0b1229,#231632)!important;
+}
+#appMenu .menu-options button.account-menu-button {
+  background:linear-gradient(145deg,#53202d,#80283c)!important;
+}
+#appMenu .menu-options button:not(.notification-bell)::after {
+  content:""!important; display:block!important;
+  position:absolute; inset:auto auto auto 11px!important;
+  left:11px!important; top:50%!important;
+  width:17px; height:22px; margin-top:-11px;
+  pointer-events:none; opacity:1!important;
+  border:0!important;box-shadow:none!important;
+  background:var(--oath-button-gem-image) center/contain no-repeat!important;
+}
+.store-themed-footer button {
+  position:relative;
+  padding-left:25px!important;
+}
+.store-themed-footer button::after {
+  content:""!important;display:block!important;
+  position:absolute;inset:auto auto auto 6px!important;
+  top:50%!important;width:14px;height:18px;margin-top:-9px;
+  pointer-events:none;opacity:1!important;
+  border:0!important;box-shadow:none!important;
+  background:var(--oath-button-gem-image) center/contain no-repeat!important;
+}
+/* The established 163 navigation art contains exactly one gem in its frame. */
+#nav button::after {content:none!important;display:none!important;}
+#nav button::before {pointer-events:none;}
+/* Editor actions match the four engraved character navigation plaques.
+ * The original gold X is a plain glyph inside a clean, retained gold frame. */
+#journalEditor .row button,
+#equipmentEditor .row button {
+  min-height:55px!important;min-width:120px!important;
+  padding:17px 16px 13px!important;
+  font:600 17px/1.15 Georgia,serif!important;
+  color:#f5d68d!important;
+  background: url("./art/ornate-nav-163.svg") center/100% 100% no-repeat!important;
+  border:0!important;border-radius:0!important;box-shadow:none!important;
+  text-shadow:0 1px 2px #130918;
+}
+:root[data-oath-gem-theme="sapphire"] #journalEditor .row button,
+:root[data-oath-gem-theme="sapphire"] #equipmentEditor .row button {
+  background-image:url("./art/ornate-nav-sapphire-163.svg")!important;
+}
+:root[data-oath-gem-theme="emerald"] #journalEditor .row button,
+:root[data-oath-gem-theme="emerald"] #equipmentEditor .row button {
+  background-image:url("./art/ornate-nav-emerald-163.svg")!important;
+}
+:root[data-oath-gem-theme="ruby"] #journalEditor .row button,
+:root[data-oath-gem-theme="ruby"] #equipmentEditor .row button {
+  background-image:url("./art/ornate-nav-ruby-163.svg")!important;
+}
+:root[data-oath-gem-theme="aquamarine"] #journalEditor .row button,
+:root[data-oath-gem-theme="aquamarine"] #equipmentEditor .row button {
+  background-image:url("./art/ornate-nav-aquamarine-163.svg")!important;
+}
+:root[data-oath-gem-theme="citrine"] #journalEditor .row button,
+:root[data-oath-gem-theme="citrine"] #equipmentEditor .row button {
+  background-image:url("./art/ornate-nav-citrine-163.svg")!important;
+}
+#equipmentEditor [data-draft-remove] {
+  appearance:none!important;
+  min-width:42px!important;width:42px!important;height:44px!important;
+  padding:0!important;
+  background:linear-gradient(150deg,#11162a,#26172f)!important;
+  border:2px solid #cba663!important; border-radius:7px!important;
+  box-shadow:inset 0 0 0 1px #85603e,0 1px 3px #030513!important;
+  color:#f5d28b!important;
+  font:700 27px/1 Georgia,serif!important;
+  -webkit-text-fill-color:#f5d28b!important;
+  text-shadow:0 1px 2px #100c19!important;
+}
+#equipmentEditor [data-draft-remove] .gold-text{
+  background:none!important;color:#f5d28b!important;
+  -webkit-text-fill-color:#f5d28b!important;
+  font:700 27px/1 Georgia,serif!important;
+}
+#equipmentEditor [data-action="draft-add"]{
+  border:1px solid #cba663!important;
+  background:linear-gradient(145deg,#15192c,#241630)!important;
+  color:#f6d995!important;
+}
+/* Existing exact-store tiles are invisible click hotspots over a baked image.
+ * Cover their *interiors* with reference assets, not another diamond. The
+ * reference images themselves remain untouched and original frames remain.
+ * Icons read the same byte-checked WebPs as native Android launcher aliases. */
+.ok-exact-store button.ok-hit[data-store-icon]::before,
+.ok-exact-store button.ok-hit[data-store-background]::before,
+.ok-exact-store button.ok-hit[data-store-dice]::before {
+  content:""!important;display:block!important;
+  position:absolute!important;inset:3px!important;
+  z-index:2!important; pointer-events:none!important;
+  border:0!important;border-radius:3px!important;
+  box-shadow:none!important;
+  background-color:#11142a;
+  background-position:center!important;
+  background-repeat:no-repeat!important;
+  background-size:contain!important;
+  image-rendering:auto;
+}
+.ok-exact-store [data-store-icon="icon-01"]::before {background-image:url("./art/store-icons/launcher-01.webp")!important;}
+.ok-exact-store [data-store-icon="icon-02"]::before {background-image:url("./art/store-icons/launcher-02.webp")!important;}
+.ok-exact-store [data-store-icon="icon-04"]::before {background-image:url("./art/store-icons/launcher-04.webp")!important;}
+.ok-exact-store [data-store-icon="icon-05"]::before {background-image:url("./art/store-icons/launcher-05.webp")!important;}
+.ok-exact-store [data-store-icon="icon-06"]::before {background-image:url("./art/store-icons/launcher-06.webp")!important;}
+.ok-exact-store [data-store-icon="icon-07"]::before {background-image:url("./art/store-icons/launcher-07.webp")!important;}
+.ok-exact-store [data-store-icon="icon-08"]::before {background-image:url("./art/store-icons/launcher-08.webp")!important;}
+.ok-exact-store [data-store-icon="icon-11"]::before {background-image:url("./art/store-icons/launcher-11.webp")!important;}
+.ok-exact-store [data-store-icon="icon-12"]::before {background-image:url("./art/store-icons/launcher-12.webp")!important;}
+.ok-exact-store [data-store-icon="icon-14"]::before {background-image:url("./art/store-icons/launcher-14.webp")!important;}
+.ok-exact-store [data-store-background="moonlit-citadel"]::before {background-image:url("./art/approved-backgrounds/moonlit-citadel.webp")!important;}
+.ok-exact-store [data-store-background="ancient-ruins"]::before {background-image:url("./art/approved-backgrounds/ancient-ruins.webp")!important;}
+.ok-exact-store [data-store-background="enchanted-forest"]::before {background-image:url("./art/approved-backgrounds/enchanted-forest.webp")!important;}
+.ok-exact-store [data-store-background="dragons-crag"]::before {background-image:url("./art/approved-backgrounds/dragons-crag.webp")!important;}
+.ok-exact-store [data-store-background="shadow-marsh"]::before {background-image:url("./art/approved-backgrounds/shadow-marsh.webp")!important;}
+.ok-exact-store [data-store-background="celestial-plains"]::before {background-image:url("./art/approved-backgrounds/celestial-plains.webp")!important;}
+.ok-exact-store [data-store-background="crystal-caverns"]::before {background-image:url("./art/approved-backgrounds/crystal-caverns.webp")!important;}
+.ok-exact-store [data-store-background="elder-grove"]::before {background-image:url("./art/approved-backgrounds/elder-grove.webp")!important;}
+.ok-exact-store [data-store-background="mystic-lake"]::before {background-image:url("./art/approved-backgrounds/mystic-lake.webp")!important;}
+.ok-exact-store [data-store-background="eternal-keep"]::before {background-image:url("./art/approved-backgrounds/eternal-keep.webp")!important;}
+.ok-exact-store [data-store-dice="dragonfire"]::before {background-image:url("./art/test164-dice/dragonfire.png")!important;}
+.ok-exact-store [data-store-dice="frostborne"]::before {background-image:url("./art/test164-dice/frostborne.png")!important;}
+.ok-exact-store [data-store-dice="elvenleaf"]::before {background-image:url("./art/test164-dice/elvenleaf.png")!important;}
+.ok-exact-store [data-store-dice="celestial"]::before {background-image:url("./art/test164-dice/celestial.png")!important;}
+.ok-exact-store [data-store-dice="abyssal"]::before {background-image:url("./art/test164-dice/abyssal.png")!important;}
+.ok-exact-store [data-store-dice="gold-forged"]::before {background-image:url("./art/test164-dice/gold-forged.png")!important;}
+.ok-exact-store [data-store-dice="necrotic"]::before {background-image:url("./art/test164-dice/necrotic.png")!important;}
+.ok-exact-store [data-store-dice="astral"]::before {background-image:url("./art/test164-dice/astral.png")!important;}
+.ok-exact-store [data-store-dice="oceanic"]::before {background-image:url("./art/test164-dice/oceanic.png")!important;}
+.ok-exact-store [data-store-dice="sunfire"]::before {background-image:url("./art/test164-dice/sunfire.png")!important;}
+/* Tests intentionally cover only gallery hotspots; avoid overlaying artwork in
+ * purchase, equipment, coin, journal, dice-roll and notification controls. */
