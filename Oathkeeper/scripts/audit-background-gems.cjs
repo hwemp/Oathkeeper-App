@@ -51,6 +51,7 @@ const host="http://127.0.0.1:5189";
     assert(after.includes("ornate-"+gem+".svg"),'Incorrect gemstone on '+slug+': '+after);
     const selected=await page.locator('[data-store-background="'+slug+'"]').getAttribute('aria-pressed');
     assert.equal(selected,'true','Selected background did not persist: '+slug);
+    await page.waitForFunction(()=>[...document.querySelectorAll('.store-page img')].every(img=>img.complete&&img.naturalWidth>0),null,{timeout:8000});
     const imgStatus=await page.locator('.store-page img').evaluateAll(images=>images.map(img=>({
        ok:img.complete&&img.naturalWidth>0,src:img.currentSrc||img.src,
        intrinsic:img.naturalWidth,displayed:img.getBoundingClientRect().width
