@@ -106,9 +106,9 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
     assert.match(await previewDie.innerText(),/preview only/i,'No purchase entitlement may be implied');
     await page.locator('input[data-k="diceAnimation"]').check({force:true});
     await page.locator('#diceForm button.dice-roll').click();
-    await page.locator('#diceTabletop canvas').waitFor({timeout:10000});
+    await page.locator('#diceTabletop canvas:not(.test168-live-webgl)').waitFor({timeout:10000});
     await page.waitForTimeout(300);
-    const canvasReport=await page.locator('#diceTabletop canvas').evaluate(canvas=>{
+    const canvasReport=await page.locator('#diceTabletop canvas:not(.test168-live-webgl)').evaluate(canvas=>{
       const ctx=canvas.getContext('2d'),data=ctx.getImageData(0,0,canvas.width,canvas.height).data;
       let visible=0;for(let i=3;i<data.length;i+=4)if(data[i]>0)visible++;
       return {width:canvas.width,height:canvas.height,visiblePixels:visible};
