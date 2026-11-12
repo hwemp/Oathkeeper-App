@@ -41,7 +41,7 @@ export function repairMissingBackgroundPreviews(doc) {
   const store=doc.querySelector(".store-page");
   if (!store) return 0;
   let updated=0;
-  for (const img of store.querySelectorAll('img[src*="/art/exact-store/"]')) {
+  for (const img of store.querySelectorAll('img[src*="art/exact-store/"]')) {
     const source=img.getAttribute("src") || "";
     const match=source.match(/(?:^|\/)art\/exact-store\/([a-z0-9-]+)\.webp(?:[?#]|$)/);
     if (!match || !Object.hasOwn(BACKGROUND_GEMS,match[1])) continue;
