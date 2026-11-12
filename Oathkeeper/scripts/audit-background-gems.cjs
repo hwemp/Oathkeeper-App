@@ -57,10 +57,10 @@ const host="http://127.0.0.1:5189";
        intrinsic:img.naturalWidth,displayed:img.getBoundingClientRect().width
     })));
     assert(imgStatus.length>0&&imgStatus.every(x=>x.ok),'Images missing for '+slug+': '+JSON.stringify(imgStatus));
-    const selectedAsset=imgStatus.filter(x=>x.src.includes('/art/exact-store/'+slug+'.webp')||x.src.includes('/art/store-backgrounds/'+slug+'.svg'));
+    const selectedAsset=imgStatus.filter(x=>x.src.includes('/art/hires-store-backgrounds/'+slug+'.webp')||x.src.includes('/art/store-backgrounds/'+slug+'.svg'));
     if (slug !== 'moonlit-citadel') {
-      assert(selectedAsset.length>0,'Selected standalone background not found for '+slug);
-      assert(selectedAsset.some(x=>x.intrinsic>=508),'Selected background lacks usable detail: '+slug+' '+JSON.stringify(selectedAsset)+' ALL '+JSON.stringify(imgStatus));
+      assert(selectedAsset.length>0,'Selected high-definition background not found for '+slug);
+      assert(selectedAsset.some(x=>x.intrinsic>=1500),'Selected background still low-resolution: '+slug+' '+JSON.stringify(selectedAsset));
     }
    }
    const blocked=await page.locator('[data-store-category]').first().evaluate(el=>getComputedStyle(el,'::after').pointerEvents);

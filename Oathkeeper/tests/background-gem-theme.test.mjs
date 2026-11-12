@@ -51,5 +51,6 @@ test('missing frozen preview fallback uses ten original separate SVGs, no raster
    const svg=readFileSync(new URL('../web/public/art/store-backgrounds/'+slug+'.svg',import.meta.url),'utf8');
    assert.match(svg,/<svg\b/);
  }
+ assert.match(repairMissingBackgroundPreviews.toString(),/hires-store-backgrounds/);
  assert.match(repairMissingBackgroundPreviews.toString(),/\.svg/);
 });
