@@ -13,11 +13,17 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
   fs.mkdirSync('preview-output',{recursive:true});
   // Read-only runtime inspection: capture the ACTUAL Build 144 archive modules,
   // which can differ from current Vite source. Do not modify these originals.
-  const runtimeFiles=['app.js','dice-tabletop.js','dice-ui.js','store-ui.js','store-products.js','store-background-catalog.js'];
-  for(const name of runtimeFiles){
-    const original='dist/'+name;
-    if(fs.existsSync(original))fs.copyFileSync(original,'preview-output/frozen-144-'+name+'.txt');
-  }
+  const inspectRuntime=(directory,relative='')=>{
+    if(!fs.existsSync(directory))return;
+    for(const entry of fs.readdirSync(directory,{withFileTypes:true})){
+      const full=directory+'/'+entry.name,sub=relative?relative+'/'+entry.name:entry.name;
+      if(entry.isDirectory()){if(!sub.startsWith('art/'))inspectRuntime(full,sub);continue;}
+      if(!/\\.(?:js|css|html)$/i.test(entry.name))continue;
+      const dest='preview-output/frozen-144-'+sub.replaceAll('/','_')+'.txt';
+      fs.copyFileSync(full,dest);
+    }
+  };
+  inspectRuntime('dist');
   try {
     let ready=false;
     for(let i=0;i<80;i++){try{if((await fetch(base)).ok){ready=true;break}}catch{}await sleep(250);}
