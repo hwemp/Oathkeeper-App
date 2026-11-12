@@ -64,6 +64,17 @@ def main():
             raise RuntimeError("Cannot safely insert background-gem controller")
         html = re.sub(r"</head\s*>", script + "</head>", html, count=1, flags=re.I)
         index.write_text(html,encoding="utf-8")
+    # High-resolution individual background art is already in the repository.
+    # Add only missing fallback paths; do not modify frozen Build 144 assets.
+    bg_dir = DIST / "art" / "store-backgrounds"
+    bg_dir.mkdir(parents=True,exist_ok=True)
+    for slug in ["moonlit-citadel","ancient-ruins","enchanted-forest","dragons-crag","shadow-marsh","celestial-plains","crystal-caverns","elder-grove","mystic-lake","eternal-keep"]:
+        source = SOURCE / "public" / "art" / "store-backgrounds" / (slug + ".svg")
+        if not source.is_file() or b"<svg" not in source.read_bytes()[:250]:
+            raise RuntimeError(f"Original fallback source missing: {slug}")
+        target = bg_dir / (slug + ".svg")
+        if not target.exists():
+            shutil.copyfile(source,target)
     for path, expected in original_hashes.items():
         if path != Path("index.html") and sha256(DIST / path) != expected:
             raise RuntimeError(f"Frozen asset modified: {path}")

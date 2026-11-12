@@ -56,6 +56,8 @@ const host="http://127.0.0.1:5189";
        intrinsic:img.naturalWidth,displayed:img.getBoundingClientRect().width
     })));
     assert(imgStatus.length>0&&imgStatus.every(x=>x.ok),'Images missing for '+slug+': '+JSON.stringify(imgStatus));
+    const selectedAsset=await page.locator('.store-page img[src*="/art/store-backgrounds/'+slug+'.svg"]').count();
+    assert(selectedAsset>0,'Original per-background SVG fallback failed for '+slug);
    }
    const blocked=await page.locator('[data-store-category]').first().evaluate(el=>getComputedStyle(el,'::after').pointerEvents);
    assert.equal(blocked,"none","Decorative trim must not intercept clicks");

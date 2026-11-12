@@ -105,6 +105,9 @@ jobs:
           grep -Fq 'data-oathkeeper-test161="ornate-buttons"' dist/index.html
           grep -Fq 'data-oath-gem-theme-controller="true"' dist/index.html
           test -s dist/ornate-gem-theme.js
+          for bg in moonlit-citadel ancient-ruins enchanted-forest dragons-crag shadow-marsh celestial-plains crystal-caverns elder-grove mystic-lake eternal-keep; do
+            test -s "dist/art/store-backgrounds/${bg}.svg"
+          done
           for svg in sapphire emerald ruby aquamarine citrine; do test -s "dist/art/ornate-${svg}.svg"; done
       - name: Validate button UI embellishment files
         run: node --test tests/ornate-buttons.test.mjs

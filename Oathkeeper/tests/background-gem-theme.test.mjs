@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {BACKGROUND_GEMS,gemForBackground,selectedBackgroundSlug,updateGemTheme} from '../web/ornate-gem-theme.js';
+import {BACKGROUND_GEMS,gemForBackground,selectedBackgroundSlug,updateGemTheme,repairMissingBackgroundPreviews} from '../web/ornate-gem-theme.js';
 const css=readFileSync(new URL('../web/ornate-buttons.css',import.meta.url),'utf8');
 const catalog=readFileSync(new URL('../web/store-background-catalog.js',import.meta.url),'utf8');
 test('all ten backgrounds have intentional and distinct gemstone mappings',()=>{
@@ -44,4 +44,12 @@ test('previews change gem locally without applying a paid background',()=>{
  assert.equal(attrs['data-oath-gem-theme'],'ruby');
  store.querySelector=()=>null;
  assert.equal(updateGemTheme(doc),'emerald'); // after leaving preview, verified applied background wins
+});
+
+test('missing frozen preview fallback uses ten original separate SVGs, no raster enlargement',()=>{
+ for(const slug of Object.keys(BACKGROUND_GEMS)){
+   const svg=readFileSync(new URL('../web/public/art/store-backgrounds/'+slug+'.svg',import.meta.url),'utf8');
+   assert.match(svg,/<svg\b/);
+ }
+ assert.match(repairMissingBackgroundPreviews.toString(),/\.svg/);
 });

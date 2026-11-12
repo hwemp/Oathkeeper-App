@@ -35,7 +35,31 @@ export function selectedBackgroundSlug(doc) {
   if (match && Object.hasOwn(BACKGROUND_GEMS,match[1])) return match[1];
   return "moonlit-citadel";
 }
+/* Build 144's frozen screen references per-background WebP masters that are
+   absent from the approved archived payload. Use the repository's original,
+   independent SVG artwork ONLY when that original WebP fails to load. */
+export function repairMissingBackgroundPreviews(doc) {
+  const store=doc.querySelector(".store-page");
+  if (!store) return 0;
+  let attached=0;
+  for (const img of store.querySelectorAll('img[src*="/art/exact-store/"]')) {
+    const source=img.getAttribute("src") || "";
+    const match=source.match(/\/art\/exact-store\/([a-z0-9-]+)\.webp(?:[?#]|$)/);
+    if (!match || !Object.hasOwn(BACKGROUND_GEMS,match[1])) continue;
+    if (img.dataset.oathBackgroundFallbackAttached) continue;
+    img.dataset.oathBackgroundFallbackAttached="true";
+    attached++;
+    const setFallback=()=>{
+      img.setAttribute("src","/art/store-backgrounds/"+match[1]+".svg");
+      img.dataset.oathBackgroundFallback="vector";
+    };
+    img.addEventListener("error",setFallback,{once:true});
+    if (img.complete && img.naturalWidth===0) setFallback();
+  }
+  return attached;
+}
 export function updateGemTheme(doc) {
+  repairMissingBackgroundPreviews(doc);
   const gem = gemForBackground(selectedBackgroundSlug(doc));
   const html = doc.documentElement;
   if (html.getAttribute("data-oath-gem-theme") !== gem) html.setAttribute("data-oath-gem-theme",gem);
