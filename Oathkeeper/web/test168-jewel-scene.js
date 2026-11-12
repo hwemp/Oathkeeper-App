@@ -3,6 +3,7 @@
  * Meshes use the original protected tabletop shape() via the generated
  * geometry-only adapter. Preview PNGs and live animation share this scene. */
 import * as THREE from 'three';
+import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 import {test168Mesh} from './test168-geometry.js';
 import {SELECTED_DICE} from './store-dice-catalog.js';
 
@@ -188,6 +189,16 @@ export class JewelDiceScene{
   this.renderer.toneMapping=THREE.ACESFilmicToneMapping;
   this.renderer.toneMappingExposure=1.75;
   this.scene=new THREE.Scene();
+  // Physically based studio reflection probes are required for gemstone
+  // reflections and polished gold trim; not just a flat RGB face shader.
+  this.pmrem=null;this.envTexture=null;
+  try{
+   this.pmrem=new THREE.PMREMGenerator(this.renderer);
+   this.envTexture=this.pmrem.fromScene(new RoomEnvironment(),.04);
+   this.scene.environment=this.envTexture.texture;
+  }catch(error){
+   console.warn('TEST 168: room reflections unavailable; using direct studio lights.',error);
+  }
   this.camera=new THREE.PerspectiveCamera(33,(opts.width||248)/(opts.height||175),.1,100);
   this.camera.position.set(0,1.05,6.4);this.camera.lookAt(0,0,0);
   const lights=[
@@ -275,6 +286,7 @@ export class JewelDiceScene{
   this.dice=[];
   this.ring.geometry.dispose();this.ring.material.dispose();this.ring2.material.dispose();
   this.pedestal.geometry.dispose();this.pedestal.material.dispose();
+  this.envTexture?.dispose();this.pmrem?.dispose();
   this.renderer.dispose();
  }
 }
