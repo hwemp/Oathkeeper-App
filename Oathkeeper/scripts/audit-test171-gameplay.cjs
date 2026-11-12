@@ -99,6 +99,10 @@ const originalGifSha='fc8b485dcee02e1959df45e3cfda7c4d6dda238a9ac51d0b5b5bb2bfc6
     assert(animations>=1,'Gameplay die has no real translation/bounce motion');
     await page.screenshot({path:'preview-output/171-gameplay-toss-in-progress.png',fullPage:true});
     await page.waitForFunction(()=>document.querySelector('#diceTabletop')?.dataset.state==='landed',null,{timeout:13000});
+    await page.waitForFunction(()=>{
+      const value=document.querySelector('.dice-result strong')?.textContent?.trim()||'';
+      return /^-?\d[\d,]*$/.test(value);
+    },null,{timeout:10000});
     const result=await page.locator('.dice-result strong').innerText();
     assert(/^-?\d[\d,]*$/.test(result),'Dice result was not delivered by original engine: '+result);
     const text=await stage.locator('[data-dice-landed]').innerText();
