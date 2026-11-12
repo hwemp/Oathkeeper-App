@@ -47,9 +47,9 @@ def main():
     html = index.read_text(encoding="utf-8")
     if STYLESHEET not in html:
         link = f'<link rel="stylesheet" href="./{STYLESHEET}" data-oathkeeper-test161="ornate-buttons">'
-        if len(re.findall(r"</head\\s*>", html, flags=re.I)) != 1:
+        if len(re.findall(r"</head\s*>", html, flags=re.I)) != 1:
             raise RuntimeError("Unexpected HTML structure; refused to rewrite approved UI")
-        html = re.sub(r"</head\\s*>", link + "</head>", html, count=1, flags=re.I)
+        html = re.sub(r"</head\s*>", link + "</head>", html, count=1, flags=re.I)
         index.write_text(html, encoding="utf-8")
     for path, expected in original_hashes.items():
         if path != Path("index.html") and sha256(DIST / path) != expected:
