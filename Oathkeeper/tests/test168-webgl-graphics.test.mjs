@@ -19,7 +19,7 @@ test('TEST 168 genuinely renders PBR 3D, metallic raised edges, proper lights, f
   'WebGLRenderer','MeshPhysicalMaterial','RoomEnvironment','PMREMGenerator',
   'metalness','roughness','transmission','clearcoat','CylinderGeometry',
   'InstancedMesh','CanvasTexture','PointLight','DirectionalLight',
-  'getTest168Mesh','test168Mesh','makeFaceGlyph','createDieMesh'
+  'test168Mesh','makeFaceGlyph','createDieMesh'
  ])assert(source.includes(term),'Missing real 3D feature '+term);
  assert.match(source,/this\.renderer\.render\(this\.scene,this\.camera\)/);
  assert.match(source,/const mesh=test168Mesh\(sides\)/);
