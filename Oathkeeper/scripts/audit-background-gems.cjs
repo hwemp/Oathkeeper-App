@@ -42,6 +42,16 @@ const host="http://127.0.0.1:5189";
    await page.locator(".store-page").waitFor({timeout:10000});
    const category=page.locator('[data-store-category="backgrounds"]').first();
    await category.click();
+   await page.waitForTimeout(350);
+   const actual=await page.evaluate(()=>{
+     const store=document.querySelector('.store-page');
+     return {className:store?.className,classes:[...new Set([...store.querySelectorAll('[class]')].map(x=>x.className).filter(x=>typeof x==='string'))].slice(0,60),
+       tiles:store?.querySelectorAll('button').length,
+       tileHTML:[...store.querySelectorAll('button')].slice(0,14).map(x=>x.outerHTML.slice(0,350)),
+       snippet:store?.innerHTML.slice(0,3000),
+       theme:document.documentElement.dataset.oathGemTheme};
+   });
+   console.log('ACTUAL FROZEN STORE DOM '+JSON.stringify(actual)); 
    assert.equal(await page.locator('.store-background-tile').count(),10,'Ten background previews');
    for(const [slug,gem] of Object.entries(mappings)){
     const tile=page.locator('[data-store-background="'+slug+'"]');
