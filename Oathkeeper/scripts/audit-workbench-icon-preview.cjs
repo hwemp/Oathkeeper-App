@@ -92,6 +92,11 @@ const sleep=n=>new Promise(r=>setTimeout(r,n));
    assert(read.selectedGlow!==read.unselectedGlow,'Selected tile lacks unique live glow');
    assert(read.tileFrame.includes('15px'),'Selected tile gold frame shape is not uniform');
    assert.equal(read.pressed,'true','Store selection lost active semantics '+slug);
+   const nameExpected={'07':'Twin Battleaxes','08':'Astral D20'}[id];
+   if(nameExpected){
+     assert(read.alt.includes(nameExpected),'Selected preview name does not match actual native launcher art '+slug);
+     assert(read.bodyText.includes(nameExpected+' selected'),'Selected caption is assigned to wrong native launcher icon '+slug);
+   }
    assert(read.geometry.w>90&&read.geometry.h>90&&read.geometry.w<=read.region.w,'Selected icon is improperly sized '+slug);
    await page.screenshot({path:'preview-output/workbench-icon-'+id+'-after.png',fullPage:true});
    audit.push({slug,sha256:sha('dist/art/store-icons/icon-'+id+'.webp'),...read});
