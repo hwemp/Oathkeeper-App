@@ -37,7 +37,24 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
     }
     return null;
    });
-   if(!p)throw new Error(slug+': no uncovered pointer target. Correct overlapping gallery controls before release.');
+   if(!p){
+    const detail=await locator.evaluate(el=>{
+     const r=el.getBoundingClientRect();
+     const hit=(fx,fy)=>{
+      const x=r.left+r.width*fx,y=r.top+r.height*fy;
+      const top=document.elementFromPoint(x,y);
+      return {fx,fy,x,y,tag:top?.tagName,cls:top?.className,html:top?.outerHTML?.slice(0,340),z:getComputedStyle(top||el).zIndex};
+     };
+     const hits=[hit(.5,.5),hit(.2,.2),hit(.8,.8),hit(.5,.1),hit(.1,.5)];
+     const rects=[...document.querySelectorAll('[data-store-dice]')].map(item=>{
+      const b=item.getBoundingClientRect();return {slug:item.getAttribute('data-store-dice'),r:[b.left,b.top,b.width,b.height],z:getComputedStyle(item).zIndex,position:getComputedStyle(item).position};
+     });
+     return {target:el.outerHTML.slice(0,380),rect:[r.left,r.top,r.width,r.height],hits,rects};
+    });
+    console.error('TEST 164 HITBOX DIAGNOSTIC '+slug,JSON.stringify(detail));
+    await page.screenshot({path:'preview-output/164-hitbox-'+slug+'.png',fullPage:true});
+    throw new Error(slug+': no uncovered pointer target. Correct overlapping gallery controls before release.');
+   }
    await page.mouse.click(p.x,p.y);
    return p;
   };
