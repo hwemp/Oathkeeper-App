@@ -177,11 +177,12 @@ export function hasWebGL(){
 export class JewelDiceScene{
  constructor(canvas,opts={}){
   this.canvas=canvas;
+  this.capture=!!opts.capture;
   this.renderer=new THREE.WebGLRenderer({
    canvas,antialias:true,alpha:true,preserveDrawingBuffer:!!opts.capture,
    powerPreference:'high-performance'
   });
-  this.renderer.setPixelRatio(Math.min(2,window.devicePixelRatio||1));
+  this.renderer.setPixelRatio(Math.min(this.capture?4:2,window.devicePixelRatio||1));
   this.renderer.setSize(opts.width||248,opts.height||175,false);
   this.renderer.outputColorSpace=THREE.SRGBColorSpace;
   this.renderer.toneMapping=THREE.ACESFilmicToneMapping;
@@ -217,7 +218,7 @@ export class JewelDiceScene{
  }
  setSize(width,height,dpr=window.devicePixelRatio||1){
   const w=Math.max(1,Math.round(width)),h=Math.max(1,Math.round(height));
-  this.renderer.setPixelRatio(Math.min(2,Math.max(1,dpr)));
+  this.renderer.setPixelRatio(Math.min(this.capture?4:2,Math.max(1,dpr)));
   this.renderer.setSize(w,h,false);
   this.camera.aspect=w/h;this.camera.updateProjectionMatrix();
  }
@@ -236,6 +237,7 @@ export class JewelDiceScene{
    mesh.scale.setScalar(mag);
    mesh.position.set((col-(cols-1)/2)*(this.count<=4?1.7:1.07),
       ((rows-1)/2-row)*(this.count<=4?1.4:.98),0);
+   mesh.userData.baseY=mesh.position.y;
    this.root.add(mesh);this.dice.push(mesh);
   }
   this.ring.visible=this.count===1;
@@ -262,7 +264,7 @@ export class JewelDiceScene{
       (1-ease)*TAU*(1.4+i*.13),'XYZ'));
    die.quaternion.copy(finalQuat).multiply(spin);
    const lift=t<1?Math.abs(Math.sin(t*TAU*2.2))*Math.pow(1-t,1.35)*.65:0;
-   die.position.z=0;die.position.y=die.position.y-lift+lift; // base y is immutable
+   die.position.y=die.userData.baseY+lift*.30;
    die.position.z=lift*.35;
   }
   this.renderer.render(this.scene,this.camera);
