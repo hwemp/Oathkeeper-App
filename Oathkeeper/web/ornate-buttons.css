@@ -140,3 +140,44 @@
 .ok-exact-store button.ok-hit:is(:focus-visible,.ok-selected,[aria-pressed="true"])::after {
   filter: drop-shadow(0 0 2px rgba(255,222,157,.7));
 }
+
+
+/* TEST 163: protected ornate navigation; lettering remains live accessible text.
+   One complete frame supplies the gold edges, side scrollwork and both jewels.
+   The prior overlay drew a second gemstone and ornaments over the label. */
+#nav button::before {
+  background-image: url("./art/ornate-nav-163.svg") !important;
+  background-size: 100% 100% !important;
+  filter: brightness(.99) drop-shadow(0 1px 2px #000b) !important;
+}
+#nav button:is(.active,[aria-current="page"])::before {
+  filter: brightness(1.18) drop-shadow(0 0 5px #ffd16f8c) !important;
+}
+#nav button::after {
+  content: none !important;
+  display: none !important;
+}
+#nav button {
+  white-space: nowrap;
+  text-overflow: clip;
+  overflow: visible;
+  isolation: isolate;
+}
+/* Tight buttons keep a gem and fine edge only; no 39px side flourishes across
+   the labels. Full-size store cards and the main navigation keep own artwork. */
+:where(.card button, .menu-options button, .dice-page button, .rules-desk button)::after {
+  background-image: var(--oath-button-gem-image);
+  background-size: 10px auto;
+  background-position: center top -5px;
+  background-repeat: no-repeat;
+  pointer-events: none;
+}
+/* Tiny controls must never have readable symbols covered by decorations. */
+:where(.coin-stepper button, .power-rank-row button, .notification-bell)::after {
+  background-size: 7px auto;
+  opacity: .60;
+}
+@media(max-width:420px) {
+  #nav button { font-size: clamp(14px, 4.1vw, 17px) !important; }
+}
+/* END TEST 163: protected ornate navigation */
