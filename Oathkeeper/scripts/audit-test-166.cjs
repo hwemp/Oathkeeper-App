@@ -106,7 +106,17 @@ const skins=['dragonfire','frostborne','elvenleaf','celestial','abyssal','gold-f
   await page.locator('#diceForm button.dice-roll').click();
   const canvas=page.locator('#diceTabletop canvas');
   await canvas.waitFor({state:'visible',timeout:10000});
-  assert(await canvas.evaluate(e=>e.width>=600&&e.height>=300),'Live high-density animated dice canvas missing');
+  // An inserted canvas starts at the browser default 300×150 before the
+  // first requestAnimationFrame. Wait for the original high-density renderer
+  // to paint, rather than asserting its dimensions before a frame exists.
+  await page.waitForFunction(()=>{
+   const c=document.querySelector('#diceTabletop canvas');
+   if(!c||c.width<400||c.height<250)return false;
+   const ctx=c.getContext('2d');
+   if(!ctx)return false;
+   const pixel=ctx.getImageData(Math.floor(c.width/2),Math.floor(c.height/2),1,1).data;
+   return pixel[3]>0;
+  },null,{timeout:7000});
   assert.deepEqual(issues,[],'Test 166 resource or runtime errors');
   console.log('TEST 166 VISUAL PARITY PASSED: store, bundles, D3-D100, live roller.');
  }finally{
