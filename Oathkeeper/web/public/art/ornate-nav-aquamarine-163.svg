@@ -20,19 +20,11 @@
   <path d="M-4 0H4M0-4V4" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" filter="url(#aura)"/>
   <circle r="2" fill="#ffffff"/>
  </g>
- <g id="leaf">
-  <path d="M12 35C17 22 24 20 32 22 40 20 43 16 42 12 48 19 42 29 32 30 24 26 20 32 12 35Z" fill="url(#metal)" stroke="#80471b" stroke-width=".7"/>
-  <path d="M12 35Q29 19 42 12M13 39Q31 32 41 36Q46 40 43 45 40 48 37 44" stroke="url(#gold)" stroke-width="2.2" stroke-linecap="round"/>
-  <path d="M15 38Q25 31 34 35Q30 46 21 47L15 38ZM14 48Q23 51 31 52Q27 63 39 65Q24 67 17 57Z" fill="url(#metal)" stroke="#925e2b" stroke-width=".8"/>
-  <path d="M13 47Q30 53 40 66M12 43Q22 42 28 45M17 30C18 19 15 16 12 14 23 18 25 23 17 30Z" stroke="url(#gold)" stroke-width="1.5" stroke-linecap="round"/>
-  <path d="M13 35Q23 27 32 25M17 56Q25 62 33 63" stroke="#ffffff2be" stroke-width=".7" opacity=".9"/>
- </g>
 </defs>
 <path d="M22 19Q34 12 49 19L70 17 79 13H101L110 17 131 19Q146 12 158 19Q167 22 172 31L177 44 172 57Q166 67 158 69Q147 75 131 69L110 71 101 75H79L70 71 49 69Q34 76 22 69Q11 65 7 57L3 44 7 31Q12 21 22 19Z" fill="#150d18" stroke="#502511" stroke-width="3"/>
 <path d="M22 19Q34 12 49 19L70 17 79 13H101L110 17 131 19Q146 12 158 19Q167 22 172 31L177 44 172 57Q166 67 158 69Q147 75 131 69L110 71 101 75H79L70 71 49 69Q34 76 22 69Q11 65 7 57L3 44 7 31Q12 21 22 19Z" fill="url(#face)" stroke="url(#gold)" stroke-width="2.3"/>
 <path d="M23 25Q34 18 48 25L70 23 80 19H100L110 23 132 25Q146 18 157 25Q163 28 167 35L169 44 167 53Q163 60 157 63Q146 70 132 63L110 65 100 69H80L70 65 48 63Q34 70 23 63Q15 59 13 53L11 44 13 35Q15 29 23 25Z" stroke="#b67937" stroke-width="1.1"/>
 <path d="M36 21C58 20 67 24 77 18M103 18C114 24 122 20 144 21M36 67C58 68 67 64 77 70M103 70C114 64 122 68 144 67" stroke="url(#metal)" stroke-width="1.6" stroke-linecap="round"/>
-<use href="#leaf"/><use href="#leaf" transform="translate(180 0) scale(-1 1)"/>
 <use href="#stone" x="90" y="14"/><use href="#stone" x="90" y="74"/>
 <path d="M27 29Q52 25 70 30M110 30Q128 25 153 29M27 59Q52 63 70 58M110 58Q128 63 153 59" stroke="#e4ad55" stroke-width=".8" opacity=".7"/>
 </svg>
