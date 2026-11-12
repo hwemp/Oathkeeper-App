@@ -2,7 +2,7 @@
 
 ## Selected options
 1 Moonlit Citadel; 2 Ember Dragon; 4 Lionheart Shield; 5 Shadow Mage;
-6 Arcane Chalice; 7 Astral D20; 8 Twin Battleaxes; 11 Crystal Spires;
+6 Arcane Chalice; 7 Twin Battleaxes; 8 Astral D20; 11 Crystal Spires;
 12 Steel Sentinel; 14 Sapphire Worldtree.
 
 The existing Android `ic_launcher` and iOS primary `AppIcon` are never
