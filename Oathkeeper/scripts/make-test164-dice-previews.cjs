@@ -71,7 +71,10 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
    await page.locator('#appMenu summary').click();
    await page.locator('#appMenu button[data-tab="Store"]').click();
    await page.locator('[data-store-category="dice"]').first().click();
-   const tile=page.locator('[data-store-dice="'+slug+'"]').first();
+   // An archived overlay adds a second, smaller Elvenleaf hitbox over the
+   // first. The topmost duplicate invokes the exact same selection action.
+   // Select the visible top-layer button, not its covered duplicate.
+   const tile=page.locator('[data-store-dice="'+slug+'"]').last();
    assert(await tile.count(),slug+': Store selection missing');
    const point=await clickExposed(tile,slug);
    console.log('TEST 164 pointer-click area',slug,JSON.stringify(point));
