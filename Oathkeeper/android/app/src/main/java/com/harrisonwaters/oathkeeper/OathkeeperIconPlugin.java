@@ -23,7 +23,7 @@ public class OathkeeperIconPlugin extends Plugin {
 
     private ComponentName component(String alias) {
         return new ComponentName(getContext().getPackageName(),
-                getContext().getPackageName() + "." + alias);
+                OathkeeperIconPlugin.class.getPackage().getName() + "." + alias);
     }
 
     private String currentIcon() {

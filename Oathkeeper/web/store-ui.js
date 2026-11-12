@@ -88,7 +88,7 @@ function storeBundlePage(options={}){
   return '<button type="button" class="bundle-pick bundle-dice-pick'+(selected?' selected':'')+'"'
    +' data-store-bundle-dice="'+esc(item.slug)+'" aria-label="'+(all?'Included: ':'Select ')+esc(item.name)+' dice set"'
    +' aria-pressed="'+selected+'"'+(all?' disabled aria-disabled="true"':'')
-   +' style="'+diceArtStyle(item.atlasIndex)+'"><span class="bundle-dice-art" aria-hidden="true"></span>'
+   +' style="'+diceArtStyle(item.atlasIndex)+'"><img class="bundle-dice-art" src="'+esc(item.imagePath)+'" alt="" loading="lazy" decoding="async">'
    +'<span class="sr-only">'+esc(item.name)+'</span></button>';
  }).join('');
  const backgrounds=SELECTED_BACKGROUNDS.map(item=>{
@@ -139,12 +139,12 @@ export function storePage(selectedSlug = 'elvenleaf', options = {}) {
     return '<button type="button" class="store-dice-tile' + (selected ? ' selected' : '') + '"'
       + ' data-store-dice="' + esc(item.slug) + '" aria-label="Preview ' + esc(item.name) + ' dice design"'
       + ' aria-pressed="' + selected + '" style="' + diceArtStyle(item.atlasIndex) + '">'
-      + '<span class="store-dice-tile-art" aria-hidden="true"></span>'
+      + '<img class="store-dice-tile-art" src="'+esc(item.imagePath)+'" alt="" loading="lazy" decoding="async">'
       + '<span class="sr-only">' + esc(item.name) + '</span></button>';
   }).join('');
   const preview = '<section class="store-preview-pane" aria-live="polite" aria-label="Selected dice preview">'
     + '<div class="store-preview-image" role="img" aria-label="Larger preview of ' + esc(active.name)
-    + ' dice" data-store-atlas-index="' + active.atlasIndex + '" style="' + diceArtStyle(active.atlasIndex) + '"></div>'
+    + ' dice" data-store-atlas-index="' + active.atlasIndex + '" style="' + diceArtStyle(active.atlasIndex) + '"><img class="store-dice-preview-art" src="' + esc(active.imagePath) + '" alt="" loading="eager" decoding="async"></div>'
     + '<div class="store-preview-description"><p>Selected dice design. This is a visual preview only; rolling results and odds are unchanged.</p></div></section>';
   return storeShell('dice',
     '<h2 class="store-collection-title">Dice Collection <small>(' + SELECTED_DICE.length + ')</small></h2>'
@@ -198,7 +198,7 @@ function iconStorePage(selectedSlug = 'icon-01', iconStatus = {supported:false,c
     + '<div class="store-icon-preview-media"><img class="store-icon-preview-image"'
     + ' src="' + esc(active.imagePath) + '" alt="' + esc(active.name) + ' free app icon"'
     + ' loading="eager" decoding="async"></div>'
-    + '<div class="store-background-preview-details"><p>Free fantasy launcher icon design.</p>'
+    + '<div class="store-background-preview-details"><p>Android launcher image, generated from Build 144 resources. Your launcher may apply a different mask.</p>'
     + '<p>' + (applied ? 'This icon is currently applied.' : 'Apply this free design as your home-screen app icon.') + '</p></div></section>';
   const actions = '<div class="store-selection-footer store-icon-actions">'
     + '<p>All ten alternate app icons are <strong>FREE</strong>, and the original stays available. '

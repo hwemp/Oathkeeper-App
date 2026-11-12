@@ -8,7 +8,8 @@ test('each native Android launcher is the exact corresponding Store image', asyn
  assert.equal(SELECTED_APP_ICONS.length,10);
  for (const icon of SELECTED_APP_ICONS) {
   const n=String(icon.selection).padStart(2,'0');
-  assert.equal(icon.imagePath,'/art/store-icons/icon-'+n+'.webp');
+  assert.equal(icon.imagePath,'/art/store-icons/preview-'+n+'.webp');
+  assert.equal(icon.masterImagePath,'/art/store-icons/icon-'+n+'.webp');
   assert.equal(icon.iosIconName,'AppIcon-'+n);
   const store=await readFile(new URL('../web/public/art/store-icons/icon-'+n+'.webp',import.meta.url));
   const native=await readFile(new URL('../android/app/src/main/res/mipmap-nodpi/oathkeeper_icon_'+n+'.webp',import.meta.url));
@@ -38,6 +39,6 @@ test('old alternate-image reservoir is removed; generator preserves primary laun
  assert.match(script,/shutil\.copyfile\(src, adaptive_path\)/);
  assert.match(script,/native_path\.read_bytes\(\) != src\.read_bytes\(\)/);
  assert.match(script,/same_pixels\(ios_path, scaled\(art, 1024\)\)/);
- assert.doesNotMatch(script,/SAFE_ART_RATIO|CLEAN_CROP_RATIO|GaussianBlur|putalpha/);
+ assert.doesNotMatch(script,/SAFE_ART_RATIO|CLEAN_CROP_RATIO|GaussianBlur/);
  assert.doesNotMatch(script,/ic_launcher\.png|AppIcon-512@2x\.png/);
 });

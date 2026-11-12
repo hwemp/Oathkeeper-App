@@ -7,7 +7,7 @@ android {
         applicationId "com.harrisonwaters.oathkeeper"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 6
+        versionCode 158
         versionName "1.5-age-gate-preview"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
@@ -17,6 +17,10 @@ android {
         }
     }
     buildTypes {
+        debug {
+            applicationIdSuffix ".test"
+            versionNameSuffix "-TEST-158"
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'

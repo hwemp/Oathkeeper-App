@@ -153,4 +153,4 @@ export const SELECTED_DICE = Object.freeze([
     "status": "preview_only",
     "atlasIndex": 9
   }
-].map(item=>Object.freeze(item)));
+].map(item=>Object.freeze({...item,imagePath:'/art/store-dice/'+item.slug+'.webp'})));

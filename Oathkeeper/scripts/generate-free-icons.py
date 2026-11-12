@@ -10,7 +10,7 @@ The original Oathkeeper app icon is deliberately untouched.
 from pathlib import Path
 import hashlib
 import shutil
-from PIL import Image, ImageChops
+from PIL import Image, ImageChops, ImageDraw
 
 ROOT = Path(__file__).resolve().parent.parent
 WEB = ROOT / "web/public/art/store-icons"
@@ -73,6 +73,17 @@ def make_icon(number, slug):
         raise RuntimeError(f"Adaptive icon background differs from Store art: {slug}")
     if native_path.read_bytes() != src.read_bytes():
         raise RuntimeError(f"Launcher resource differs from Store art: {slug}")
+
+    # Generate a Store-only preview of the ACTUAL native 144 adaptive background.
+    # Only the central 72/108 portion of an adaptive icon is visible.
+    side = round(art.width * (72 / 108))
+    offset = (art.width - side) // 2
+    display = art.crop((offset, offset, offset + side, offset + side)).convert('RGBA')
+    display = display.resize((768, 768), Image.Resampling.LANCZOS)
+    mask = Image.new('L', (768, 768), 0)
+    ImageDraw.Draw(mask).ellipse((0, 0, 767, 767), fill=255)
+    display.putalpha(mask)
+    display.save(WEB / f'preview-{number:02d}.webp', 'WEBP', lossless=True, method=6)
 
     # Android OS applies the adaptive mask; no second overlay is permitted.
     xml = ('<?xml version="1.0" encoding="utf-8"?>\n'

@@ -851,3 +851,13 @@ body:has(.store-page)>main>#view{width:100%;min-width:0}
   .store-selection-footer{grid-template-columns:repeat(2,minmax(0,1fr))}
   .store-selection-footer p{grid-column:1/-1}
 }
+
+/* TEST 158: preserve 144 composition; ensure every selected rim is attached to its card. */
+.store-page :is(.store-dice-tile,.store-background-tile,.store-icon-tile,.bundle-pick){box-sizing:border-box!important;position:relative;border-radius:12px;overflow:hidden}
+.store-page :is(.store-dice-tile,.store-background-tile,.store-icon-tile,.bundle-pick).selected{outline:0!important;border-color:#ffe1a2!important;box-shadow:inset 0 0 0 2px #ffde96,0 0 8px 1px #ffcc61b8!important}
+.store-page :is(.store-dice-tile,.store-background-tile,.store-icon-tile,.bundle-pick)::after{content:none!important;display:none!important}
+.store-page :is(.store-dice-tile-art,.bundle-dice-art,.store-background-tile-art,.store-icon-tile-art,.store-dice-preview-art){display:block;width:100%;height:100%;min-width:0;min-height:0;max-width:100%;max-height:100%;object-fit:contain!important;object-position:center!important;background-image:none!important}
+.store-page .store-preview-image{background-image:none!important;display:grid;place-items:center;overflow:hidden}
+.store-page .store-dice-preview-art{width:100%;height:100%;aspect-ratio:248/175}
+.store-page :is(.store-icon-tile-art,.store-icon-preview-image){object-fit:contain!important;object-position:center!important}
+.store-page .store-background-preview-image{object-fit:contain!important;object-position:center!important}
