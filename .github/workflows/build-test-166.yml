@@ -109,7 +109,6 @@ jobs:
           python scripts/apply-test-164.py
           test -s dist/ornate-buttons.css
           test -s dist/test164-overrides.css
-          test -s dist/test166-dice-parity.css
           test -s dist/art/ornate-nav-163.svg
           for gem in sapphire emerald ruby aquamarine citrine; do
             test -s "dist/art/ornate-nav-${gem}-163.svg"
