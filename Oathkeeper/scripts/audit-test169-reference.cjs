@@ -94,6 +94,9 @@ const url='http://127.0.0.1:5209';
    const bg=await hit.evaluate(e=>getComputedStyle(e,'::before').backgroundImage);
    assert(bg.includes('/roll/'+slug+'-still.webp'),'Store thumbnail no longer matches GIF master '+slug);
   }
+  // Explicitly choose the approved Astral GIF reference before verifying the
+  // Dice tab. Earlier loop ends at Sunfire and its valid authored WebP.
+  await page.locator('[data-store-dice="astral"]').first().click({force:true});
   await page.screenshot({path:'preview-output/169-dice-store-original-animated-art.png',fullPage:true});
   await page.locator('[data-store-category="bundles"]').first().click();
   for(const slug of skins){
