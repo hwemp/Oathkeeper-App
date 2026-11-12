@@ -37,25 +37,18 @@ export function selectedBackgroundSlug(doc) {
 }
 /* Build 144's frozen screenshots contain 156px background thumbnails.
    Keep every archived byte and display separate 1600px SVG-derived masters. */
+/* Preserve the actual Build 144 artwork from the frozen archive.
+ * TEST 162 forcibly swapped a detailed illustrated scene for a different
+ * simplified SVG-derived 1600px scene. Enlarging a vector is not proof
+ * of image parity; no replacement is permitted until the exact approved
+ * full-resolution artwork has been identified and verified. */
 export function repairMissingBackgroundPreviews(doc) {
-  const store=doc.querySelector(".store-page");
-  if (!store) return 0;
-  let updated=0;
-  for (const img of store.querySelectorAll('img[src*="art/exact-store/"]')) {
-    const source=img.getAttribute("src") || "";
-    const match=source.match(/(?:^|\/)art\/exact-store\/([a-z0-9-]+)\.webp(?:[?#]|$)/);
-    if (!match || !Object.hasOwn(BACKGROUND_GEMS,match[1])) continue;
-    if (img.dataset.oathBackgroundHires) continue;
-    img.dataset.oathBackgroundHires="true";
-    updated++;
-    img.addEventListener("error",()=>{
-      img.setAttribute("src","/art/store-backgrounds/"+match[1]+".svg");
-      img.dataset.oathBackgroundFallback="vector";
-    },{once:true});
-    img.setAttribute("src","/art/hires-store-backgrounds/"+match[1]+".webp");
-  }
-  return updated;
+  // No substitutions: original background thumbnails and previews remain
+  // byte-for-byte those packed in the approved Build 144 archive.
+  // Do not modify src, image dimensions, or CSS rendering here.
+  return 0;
 }
+
 export function updateGemTheme(doc) {
   repairMissingBackgroundPreviews(doc);
   const gem = gemForBackground(selectedBackgroundSlug(doc));
