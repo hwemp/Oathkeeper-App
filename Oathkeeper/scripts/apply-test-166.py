@@ -102,6 +102,20 @@ def main():
  if html.count("</head>")!=1 or "test166-dice-parity.css" in html:
   raise RuntimeError("Unexpected or duplicate 166 CSS insertion")
  index.write_text(html.replace("</head>",ref+"</head>",1),encoding="utf-8")
+ # Frozen 144 renders its bundle items inside a baked background collage.
+ # CSS-only pseudo-element backgrounds can compute correctly yet remain hidden
+ # under that collage. An explicit pointer-transparent foreground is required.
+ import shutil
+ layer_source=ROOT/"web"/"test166-bundle-overlay.js"
+ layer_dest=DIST/"test166-bundle-overlay.js"
+ if not layer_source.is_file() or "test166-bundle-live-art" not in layer_source.read_text():
+  raise RuntimeError("Visible bundle renderer overlay source unavailable")
+ shutil.copyfile(layer_source,layer_dest)
+ html=index.read_text(encoding="utf-8")
+ script='<script type="module" src="./test166-bundle-overlay.js" data-test166-visible-bundles="true"></script>'
+ if html.count("</head>")!=1 or "test166-bundle-overlay.js" in html:
+  raise RuntimeError("Unexpected or duplicate 166 visual script")
+ index.write_text(html.replace("</head>",script+"</head>",1),encoding="utf-8")
  print("TEST 166: 99 native-resolution rolling renderer captures mapped to store, bundles and dice selectors.")
 
 if __name__=="__main__":
