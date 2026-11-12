@@ -1,4 +1,12 @@
-/* Oathkeeper TEST BRANCH 161 — decorative overlay for every interactive button.
+:root { --oath-button-gem-image: url("./art/ornate-sapphire.svg"); }
+:root[data-oath-gem-theme="amethyst"] { --oath-button-gem-image: url("./art/ornate-amethyst.svg"); }
+:root[data-oath-gem-theme="sapphire"] { --oath-button-gem-image: url("./art/ornate-sapphire.svg"); }
+:root[data-oath-gem-theme="emerald"] { --oath-button-gem-image: url("./art/ornate-emerald.svg"); }
+:root[data-oath-gem-theme="ruby"] { --oath-button-gem-image: url("./art/ornate-ruby.svg"); }
+:root[data-oath-gem-theme="aquamarine"] { --oath-button-gem-image: url("./art/ornate-aquamarine.svg"); }
+:root[data-oath-gem-theme="citrine"] { --oath-button-gem-image: url("./art/ornate-citrine.svg"); }
+
+/* Oathkeeper TEST BRANCH 162 — decorative overlay for every interactive button.
    Generated SVGs contain true vector facets and metallic filigree.
    No CSS here scales, crops, filters, or swaps existing dice/icons/background art.
    Pointer-events are deliberately disabled so all existing button actions work. */
@@ -23,7 +31,7 @@
     inset 0 0 6px rgba(246, 182, 83, .20),
     0 0 3px rgba(245, 196, 105, .30);
   background-image:
-    url("./art/ornate-amethyst.svg"),
+    var(--oath-button-gem-image),
     url("./art/ornate-flourish-left.svg"),
     url("./art/ornate-flourish-right.svg");
   background-position: center top -2px, left center, right center;
@@ -52,7 +60,7 @@
 :where(.store-dice-tile, .store-background-tile, .store-icon-tile, .bundle-pick, .die-tile)::after {
   inset: 0;
   border: 1px solid rgba(244, 203, 125, .94);
-  background-image: url("./art/ornate-amethyst.svg");
+  background-image: var(--oath-button-gem-image);
   background-size: 11px auto;
   background-position: center top -4px;
   background-repeat: no-repeat;
@@ -88,7 +96,7 @@
 .coin-stepper button::after, .notification-bell::after,
 .power-rank-row button::after {
   inset: 0;
-  background-image: url("./art/ornate-amethyst.svg");
+  background-image: var(--oath-button-gem-image);
   background-size: 9px auto;
   background-position: center top -4px;
 }

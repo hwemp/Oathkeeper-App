@@ -14,7 +14,9 @@ ROOT = Path(__file__).resolve().parent.parent
 DIST = ROOT / "dist"
 SOURCE = ROOT / "web"
 STYLESHEET = "ornate-buttons.css"
-ART = ("ornate-amethyst.svg", "ornate-flourish-left.svg", "ornate-flourish-right.svg")
+ART = ("ornate-amethyst.svg", "ornate-flourish-left.svg", "ornate-flourish-right.svg",
+       "ornate-sapphire.svg", "ornate-emerald.svg", "ornate-ruby.svg",
+       "ornate-aquamarine.svg", "ornate-citrine.svg")
 
 def sha256(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
@@ -51,6 +53,17 @@ def main():
             raise RuntimeError("Unexpected HTML structure; refused to rewrite approved UI")
         html = re.sub(r"</head\s*>", link + "</head>", html, count=1, flags=re.I)
         index.write_text(html, encoding="utf-8")
+    theme_js = (SOURCE / "ornate-gem-theme.js")
+    if not theme_js.is_file() or b"data-oath-gem-theme" not in theme_js.read_bytes():
+        raise RuntimeError("Gem theme controller missing or malformed")
+    shutil.copyfile(theme_js, DIST / "ornate-gem-theme.js")
+    html = index.read_text(encoding="utf-8")
+    if 'src="./ornate-gem-theme.js"' not in html:
+        script = '<script type="module" src="./ornate-gem-theme.js" data-oath-gem-theme-controller="true"></script>'
+        if len(re.findall(r"</head\\s*>",html,flags=re.I)) != 1:
+            raise RuntimeError("Cannot safely insert background-gem controller")
+        html = re.sub(r"</head\\s*>", script + "</head>", html, count=1, flags=re.I)
+        index.write_text(html,encoding="utf-8")
     for path, expected in original_hashes.items():
         if path != Path("index.html") and sha256(DIST / path) != expected:
             raise RuntimeError(f"Frozen asset modified: {path}")
