@@ -35,9 +35,8 @@ def main():
  s=s[:start]+new+s[end:]
  # Replace actual bundle image reference, not its rendered overlay.
  original='>$'+'{okImage(d.slug)}<span class="ok-pick-name">'
- replacement='>$'+'{okImage(kind===\\'dice\\'?\\'roll/\\'+d.slug+\\'-still\\':d.slug)}<span class="ok-pick-name">'
+ replacement=">$"+"{okImage(kind==='dice'?'roll/'+d.slug+'-still':d.slug)}<span class=\"ok-pick-name\">"
  # Correct JS single-quoted string representation (no literal backslashes).
- replacement=replacement.replace("\\'","'")
  if s.count(original)!=1:raise RuntimeError("Bundle image source call changed")
  s=s.replace(original,replacement,1)
  if s[s.index("function okDiceStage("):s.index("function ey(")]!=before_engine:
