@@ -43,6 +43,51 @@ def main():
   raise RuntimeError("Approved original animation mutated")
  if "ok-replacement-preview" in s[s.index("function ty("):s.index("function ay(")]:
   raise RuntimeError("Old pasted overlay remains")
+ # The exact supplied 352×356 / 12-frame artwork, not the TEST 168
+ # polygon canvas, is the visual master for the Dice tab itself. Preserve
+ # original Rv() face/result data and callback, without synthesizing rolls.
+ aa=s.index("function zv(")
+ bb=s.index("const jp=Object.freeze",aa)
+ old_roller=s[aa:bb]
+ if "Rv(u)" not in old_roller or 'dataset.state="landed"' not in old_roller:
+  raise RuntimeError("Approved dice stage/result wrapper changed")
+ gif_roller="""function zv(i,u,r,c=null){
+ if(!i){r();return ()=>{}}
+ const d=i.querySelector('canvas');
+ if(d)d.remove();
+ const slug=c?.slug||'astral';
+ const scene=['dragonfire','frostborne','elvenleaf','celestial','abyssal','gold-forged','necrotic','astral','oceanic','sunfire'].includes(slug)?slug:'astral';
+ const reduce=globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches===true;
+ const image=document.createElement('img');
+ image.className='test169-approved-rolling-gif';
+ image.alt='Approved original detailed gemstone die rolling animation';
+ image.decoding='async';
+ image.draggable=false;
+ const asset=scene==='astral'&&!reduce?'astral-original.gif':scene+(reduce?'-still.webp':'.webp');
+ image.src='art/exact-store/roll/'+asset+(reduce?'':'?play='+Date.now());
+ image.style.cssText='display:block;width:min(100%,355px);height:auto;max-height:355px;object-fit:contain;object-position:center;margin:0 auto;image-rendering:auto';
+ i.prepend(image);
+ i.dataset.test169Master='gif';
+ const rolls=Rv(u);
+ let cancelled=false,finished=false;
+ const finish=()=>{
+  if(cancelled||finished||!i.isConnected)return;
+  finished=true;i.dataset.state='landed';
+  const status=i.querySelector('[data-dice-landed]');
+  if(status){
+    status.hidden=false;
+    status.textContent=u.quantity>rolls.length?'Showing '+rolls.length+' of '+u.quantity+' rolls · '+u.total+' total':
+     rolls.map(x=>x.caption+' '+x.face).join(' · ');
+  }
+  r();
+ };
+ const timer=globalThis.setTimeout(finish,reduce?0:1560);
+ return ()=>{cancelled=true;globalThis.clearTimeout(timer);image.remove()};
+}
+"""
+ s=s[:aa]+gif_roller+s[bb:]
+ if "test169-approved-rolling-gif" not in s or "function Rv(" not in s:
+  raise RuntimeError("Approved roller visual could not be replaced safely")
  SRC.write_text(s,encoding="utf-8")
  if not STYLE.is_file():raise RuntimeError("Shared design stylesheet missing")
  css=DIST/"test169-reference.css"
