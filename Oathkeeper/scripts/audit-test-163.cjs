@@ -18,7 +18,7 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
     for(const entry of fs.readdirSync(directory,{withFileTypes:true})){
       const full=directory+'/'+entry.name,sub=relative?relative+'/'+entry.name:entry.name;
       if(entry.isDirectory()){if(!sub.startsWith('art/'))inspectRuntime(full,sub);continue;}
-      if(!/\\.(?:js|css|html)$/i.test(entry.name))continue;
+      if(!/\.(?:js|css|html)$/i.test(entry.name))continue;
       const dest='preview-output/frozen-144-'+sub.replaceAll('/','_')+'.txt';
       fs.copyFileSync(full,dest);
     }
