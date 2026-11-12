@@ -80,26 +80,74 @@ function makeFaceGlyph(value,theme,dense=false){
  tex.anisotropy=4;
  return tex;
 }
+/* Deterministic high-detail mineral surface, generated on device offline.
+ * Swirling crystal bands, internal dark absorption and fine gold inclusions
+ * give the PBR mesh visual complexity without changing its geometry. */
+function makeJewelTexture(theme){
+ const canvas=document.createElement('canvas');canvas.width=512;canvas.height=512;
+ const c=canvas.getContext('2d');
+ const grad=c.createLinearGradient(0,0,470,512);
+ grad.addColorStop(0,'#0d071c');grad.addColorStop(.22,theme.color);
+ grad.addColorStop(.44,'#180c36');grad.addColorStop(.65,theme.color);
+ grad.addColorStop(.84,'#260a43');grad.addColorStop(1,'#070712');
+ c.fillStyle=grad;c.fillRect(0,0,512,512);
+ // Transparent-looking internal caustics and angled bands are fixed for every
+ // render, so collection thumbnails match live 3D dice exactly.
+ for(let i=0;i<72;i++){
+  const fy=(i*73.81)%540-12,fx=(i*121.37)%600-44;
+  const alpha=.025+.055*Math.abs(Math.sin(i*4.19));
+  c.strokeStyle=i%5===0?'rgba(255,224,157,'+alpha+')':'rgba(211,131,255,'+alpha+')';
+  c.lineWidth=(i%6===0?3.5:1.1);
+  c.beginPath();c.moveTo(fx-120,fy+64);
+  c.bezierCurveTo(fx+25,fy-65,fx+170,fy+170,fx+350,fy-68);
+  c.stroke();
+ }
+ for(let i=0;i<42;i++){
+  const x=12+((i*193.23)%488),y=15+((i*317.71)%480);
+  const radius=i%7===0?3.3:1.1;
+  c.fillStyle=i%4?'rgba(239,166,255,.14)':'rgba(255,219,135,.35)';
+  c.beginPath();c.arc(x,y,radius,0,TAU);c.fill();
+ }
+ const glow=c.createRadialGradient(140,94,8,242,240,360);
+ glow.addColorStop(0,'rgba(255,225,255,.29)');
+ glow.addColorStop(.32,'rgba(193,89,255,.08)');
+ glow.addColorStop(1,'rgba(0,0,0,.38)');
+ c.fillStyle=glow;c.fillRect(0,0,512,512);
+ const texture=new THREE.CanvasTexture(canvas);
+ texture.colorSpace=THREE.SRGBColorSpace;
+ texture.wrapS=THREE.RepeatWrapping;texture.wrapT=THREE.RepeatWrapping;
+ texture.anisotropy=8;
+ return texture;
+}
+
 function createDieMesh(sides,theme){
  const mesh=test168Mesh(sides);
  const verts=mesh.v,faces=mesh.f;
  const positions=[],colors=[];
  for(const [fi,face] of faces.entries()){
-  const tint=new THREE.Color(theme.color).multiplyScalar(.47+.18*Math.sin(fi*2.399));
+  const tint=new THREE.Color(theme.color).multiplyScalar(.72+.23*Math.sin(fi*2.399));
+  const faceCenter=centerOfFace(face,verts),normal=normalOfFace(face,verts);
+  const refAxis=Math.abs(normal.z)>.92?new THREE.Vector3(0,1,0):new THREE.Vector3(0,0,1);
+  const U=new THREE.Vector3().crossVectors(refAxis,normal).normalize();
+  const V=new THREE.Vector3().crossVectors(normal,U).normalize();
+  const spread=avgEdge(face,verts)*1.65;
   const faceColor=[tint.r,tint.g,tint.b];
   for(let i=1;i<face.length-1;i++){
    for(const ix of [face[0],face[i],face[i+1]]){
     positions.push(...verts[ix]);colors.push(...faceColor);
+    const offset=v(verts[ix]).sub(faceCenter);
+    uvs.push(.5+offset.dot(U)/spread,.5+offset.dot(V)/spread);
    }
   }
  }
  const geometry=new THREE.BufferGeometry();
  geometry.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));
  geometry.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));
+ geometry.setAttribute('uv',new THREE.Float32BufferAttribute(uvs,2));
  geometry.computeVertexNormals();
  const group=new THREE.Group();
  const bodyMaterial=new THREE.MeshPhysicalMaterial({
-  color:0xffffff,vertexColors:true,
+  color:0xffffff,vertexColors:true,map:makeJewelTexture(theme),
   metalness:.12,roughness:.15,clearcoat:1,clearcoatRoughness:.04,
   transmission:.035,thickness:1.9,ior:1.52,transparent:false,
   envMapIntensity:.95,side:THREE.DoubleSide,flatShading:true,
