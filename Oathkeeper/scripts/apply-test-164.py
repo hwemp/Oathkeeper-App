@@ -29,8 +29,8 @@ for n in ('01','02','04','05','06','07','08','11','12','14'):
     if hashlib.sha256(catalog.read_bytes()).digest()!=hashlib.sha256(master.read_bytes()).digest():
         raise RuntimeError('Store catalog art and native Android launcher master disagree '+n)
     (dist/'art/store-icons').mkdir(parents=True, exist_ok=True)
-    for filename in ('icon-'+n+'.webp','launcher-'+n+'.webp'):
+    for filename in ('icon-'+n+'.webp',):
         shutil.copyfile(master,dist/'art/store-icons'/filename)
         if hashlib.sha256((dist/'art/store-icons'/filename).read_bytes()).digest()!=hashlib.sha256(master.read_bytes()).digest():
             raise RuntimeError('Written Store preview differs from native launcher reference '+filename)
-print('164 stylesheet installed; 10 icons are byte-identical to native launcher masters.')
+print('164 stylesheet installed; 10 canonical icon WebPs byte-match native launcher masters, without secondary aliases.')
