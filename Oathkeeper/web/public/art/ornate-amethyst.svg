@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 110 132" role="img" aria-label="Faceted violet amethyst in ornate gold setting">
+<defs>
+<linearGradient id="gold" x1=".05" y1="0" x2=".92" y2="1"><stop stop-color="#fff6cb"/><stop offset=".14" stop-color="#f6c46b"/><stop offset=".29" stop-color="#94521c"/><stop offset=".43" stop-color="#fff0a0"/><stop offset=".66" stop-color="#bd7a29"/><stop offset=".86" stop-color="#ffd57b"/><stop offset="1" stop-color="#754016"/></linearGradient>
+<linearGradient id="purple" x1=".18" y1=".05" x2=".88" y2="1"><stop stop-color="#ffe4ff"/><stop offset=".2" stop-color="#b63cff"/><stop offset=".48" stop-color="#6a0cba"/><stop offset=".7" stop-color="#30026e"/><stop offset=".92" stop-color="#a226fb"/><stop offset="1" stop-color="#e9b0ff"/></linearGradient>
+<radialGradient id="glow"><stop stop-color="#e78bff" stop-opacity=".75"/><stop offset=".55" stop-color="#8e1cf7" stop-opacity=".36"/><stop offset="1" stop-color="#7a15de" stop-opacity="0"/></radialGradient>
+<filter id="soft"><feGaussianBlur stdDeviation="4"/></filter>
+</defs>
+<ellipse cx="55" cy="66" rx="50" ry="59" fill="url(#glow)" filter="url(#soft)"/>
+<path d="M55 4 103 66 55 128 7 66Z" fill="#4c220a" stroke="url(#gold)" stroke-width="6" stroke-linejoin="miter"/>
+<path d="M55 12 95 66 55 119 15 66Z" fill="url(#purple)" stroke="#f5ca78" stroke-width="1.6"/>
+<path d="M55 14 54 66 17 65Z" fill="#efb4ff" fill-opacity=".67"/>
+<path d="M55 14 93 65 54 66Z" fill="#9e2beb" fill-opacity=".82"/>
+<path d="M17 65 54 66 55 117Z" fill="#32036f" fill-opacity=".85"/>
+<path d="M93 65 54 66 55 117Z" fill="#8b13c9" fill-opacity=".81"/>
+<path d="M55 14 76 45 54 66 33 45Z" fill="#f7a6ff" fill-opacity=".53"/>
+<path d="M17 65 33 45 54 66 55 117Z" fill="#571092" fill-opacity=".62"/>
+<path d="M93 65 76 45 54 66 55 117Z" fill="#b948ff" fill-opacity=".42"/>
+<path d="M55 14V117M15 66H95M33 45 55 66 76 45" stroke="#ffc6ff" stroke-width="1.5" stroke-opacity=".75" fill="none"/>
+<path d="m55 32 5 29 23 5-23 5-5 27-6-27-22-5 22-5Z" fill="#f5bcff" opacity=".29"/>
+<path d="M55 46 59 62 76 66 59 70 55 86 50 70 34 66 50 62Z" fill="#fff7ff" opacity=".83"/>
+<path d="M55 56 58 63 65 66 58 69 55 76 52 69 45 66 52 63Z" fill="#ffffff"/>
+<path d="M55 5 103 66 55 128 7 66" stroke="#fff2c1" stroke-width="1.8" fill="none" opacity=".64"/>
+<circle cx="34" cy="40" r="2" fill="#fff"/><circle cx="78" cy="80" r="1.7" fill="#fff"/>
+</svg>
