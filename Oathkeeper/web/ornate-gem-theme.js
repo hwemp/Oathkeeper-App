@@ -1,6 +1,6 @@
 /* Cosmetic gemstone switching; does not alter artwork, purchases or roll outcomes. */
 export const BACKGROUND_GEMS = Object.freeze({
-  "moonlit-citadel":"sapphire",
+  "moonlit-citadel":"amethyst",
   "ancient-ruins":"emerald",
   "enchanted-forest":"aquamarine",
   "dragons-crag":"ruby",
@@ -14,7 +14,7 @@ export const BACKGROUND_GEMS = Object.freeze({
 export const GEM_TYPES = Object.freeze(["sapphire","emerald","ruby","aquamarine","amethyst","citrine"]);
 export function gemForBackground(slug) {
   const key = String(slug || "").trim().toLowerCase().replaceAll("_","-");
-  return BACKGROUND_GEMS[key] || "sapphire";
+  return BACKGROUND_GEMS[key] || "amethyst";
 }
 export function selectedBackgroundSlug(doc) {
   const store = doc.querySelector(".store-page");
