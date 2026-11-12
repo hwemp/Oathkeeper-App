@@ -108,3 +108,35 @@
   .store-themed-footer button::after { background-size: 13px auto, 17px 20px, 17px 20px; }
   .bundle-offer::after { background-size: 24px auto, 44px 47px, 44px 47px; }
 }
+
+/* TEST 162: Build 144 uses invisible coordinates over baked-in fantasy art.
+   Preserve those original gilded frames and artwork. Do not draw a second
+   bulky rectangle around each hotspot; add only high-definition jewel accents
+   and fine edge filigree without intercepting interactions. */
+.ok-exact-store button.ok-hit::after {
+  inset: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  opacity: .94;
+  background-image:
+    var(--oath-button-gem-image),
+    url("./art/ornate-flourish-left.svg"),
+    url("./art/ornate-flourish-right.svg");
+  background-position: center top -4px, left center, right center;
+  background-size: clamp(11px,2.1vw,19px) auto, clamp(12px,2.6vw,26px) 24px, clamp(12px,2.6vw,26px) 24px;
+  background-repeat: no-repeat;
+}
+.ok-exact-store button.ok-hit[data-store-background]::after,
+.ok-exact-store button.ok-hit[data-store-dice]::after,
+.ok-exact-store button.ok-hit[data-store-icon]::after,
+.ok-exact-store button.ok-hit[data-store-bundle-background]::after,
+.ok-exact-store button.ok-hit[data-store-bundle-dice]::after {
+  background-image: var(--oath-button-gem-image);
+  background-size: 11px auto;
+  background-position: center top -6px;
+  opacity: .80;
+}
+.ok-exact-store button.ok-hit:is(:focus-visible,.ok-selected,[aria-pressed="true"])::after {
+  filter: drop-shadow(0 0 2px rgba(255,222,157,.7));
+}

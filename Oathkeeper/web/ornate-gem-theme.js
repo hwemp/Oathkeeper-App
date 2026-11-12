@@ -18,8 +18,11 @@ export function gemForBackground(slug) {
 }
 export function selectedBackgroundSlug(doc) {
   const store = doc.querySelector(".store-page");
-  if (store && store.querySelector('[data-store-category="backgrounds"].store-category-current')) {
-    const selected = store.querySelector('.store-background-tile[aria-pressed="true"], .store-background-tile.selected');
+  // Frozen Build 144 draws the store as a single high-resolution image with
+  // transparent .ok-hit controls. Newer source uses .store-background-tile.
+  // Both expose data-store-background; do not depend on either visual layout.
+  if (store && store.querySelector('[data-store-background]')) {
+    const selected = store.querySelector('[data-store-background][aria-pressed="true"], [data-store-background].selected, [data-store-background].ok-selected');
     const slug = selected?.getAttribute("data-store-background");
     if (slug && Object.hasOwn(BACKGROUND_GEMS,slug)) return slug;
   }
@@ -46,7 +49,7 @@ export function startGemTheme(doc) {
     const relevant = mutations.some(m =>
       m.type === "childList" ||
       (m.type === "attributes" &&
-       (m.target === doc.body || m.target.matches?.(".store-background-tile, [data-store-category]")))
+       (m.target === doc.body || m.target.matches?.("[data-store-background], [data-store-category], .store-background-tile")))
     );
     if (!relevant || pending) return;
     pending = true;
