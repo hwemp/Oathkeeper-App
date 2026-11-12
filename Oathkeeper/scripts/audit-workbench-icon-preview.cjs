@@ -13,6 +13,8 @@ const sleep=n=>new Promise(r=>setTimeout(r,n));
  const compiled=fs.readFileSync('dist/assets/main-FCw4hQ90.js','utf8');
  const s=compiled.slice(compiled.indexOf('function ay('),compiled.indexOf('function okPickGrid('));
  assert(s.includes('workbench-selected-launcher-art') && s.includes("const exactIcon='art/store-icons/'+master+'.webp'"),'Selected-preview master mapping not in frozen runtime');
+ assert(s.includes("img:'icons-workbench'"),'The old baked icon gallery is still being displayed');
+ assert(!s.includes('ok-icon-neutral-launcher')&&!s.includes('okNeutral(S,4'),'Obsolete special-case fifth icon overlay remains');
  assert(!s.includes("okImage(r.slug"),'Old baked icon preview still active in Store selection function');
  assert(!s.includes("okNeutral(S,4"),'Legacy preselected tile still references old art');
  const css=fs.readFileSync('dist/test164-overrides.css','utf8');
@@ -58,12 +60,23 @@ const sleep=n=>new Promise(r=>setTimeout(r,n));
     const selected=document.querySelector('.ok-exact-store[data-ok-category="icons"] .ok-icon-preview img.workbench-selected-launcher-art');
     const t=document.querySelector('[data-store-icon="'+slug+'"]');
     const root=document.querySelector('.ok-exact-store[data-ok-category="icons"] .ok-canvas');
+    const backing=root?.querySelector(':scope > img.ok-art');
+    const backingUrl=backing?new URL(backing.getAttribute('src'),document.baseURI).pathname:'';
+    const tileStyle=getComputedStyle(t);
+    const unselected=document.querySelector('[data-store-icon]:not(.ok-selected)');
+    const neutralStyle=unselected?getComputedStyle(unselected):null;
     const r=selected.getBoundingClientRect(),container=root.getBoundingClientRect();
     const src=new URL(selected.currentSrc||selected.getAttribute('src'),document.baseURI).pathname;
     const background=getComputedStyle(t,'::before').backgroundImage;
     return {src,background,alt:selected.alt,geometry:{w:r.width,h:r.height,x:r.x,y:r.y},
       region:{w:container.width,h:container.height},natural:{w:selected.naturalWidth,h:selected.naturalHeight},
       fit:getComputedStyle(selected).objectFit,
+      backingUrl,
+      tileFrame:tileStyle.borderRadius,
+      selectedGlow:tileStyle.boxShadow,
+      unselectedGlow:neutralStyle?.boxShadow||'',
+      iconTileCount:document.querySelectorAll('.ok-exact-store[data-ok-category="icons"] .ok-canvas > button[data-store-icon]').length,
+      oldNeutralLayers:document.querySelectorAll('.ok-exact-store[data-ok-category="icons"] .ok-icon-neutral-launcher').length,
       selectedCount:document.querySelectorAll('img.workbench-selected-launcher-art').length,
       pressed:t.getAttribute('aria-pressed'),bodyText:root.textContent.slice(-160)};
    },slug);
@@ -73,6 +86,11 @@ const sleep=n=>new Promise(r=>setTimeout(r,n));
    assert.equal(read.natural.h,1254);
    assert.equal(read.fit,'contain','Preview image must preserve the full square artwork '+slug);
    assert.equal(read.selectedCount,1,'Multiple preview image layers exist '+slug);
+   assert.equal(read.backingUrl,'/art/exact-store/icons-workbench.webp','Old fixed icon gallery backing still displayed');
+   assert.equal(read.iconTileCount,10,'Ten live master icon tiles are not present');
+   assert.equal(read.oldNeutralLayers,0,'Old black-background Chalice overlay is still present');
+   assert(read.selectedGlow!==read.unselectedGlow,'Selected tile lacks unique live glow');
+   assert(read.tileFrame.includes('15px'),'Selected tile gold frame shape is not uniform');
    assert.equal(read.pressed,'true','Store selection lost active semantics '+slug);
    assert(read.geometry.w>90&&read.geometry.h>90&&read.geometry.w<=read.region.w,'Selected icon is improperly sized '+slug);
    await page.screenshot({path:'preview-output/workbench-icon-'+id+'-after.png',fullPage:true});
