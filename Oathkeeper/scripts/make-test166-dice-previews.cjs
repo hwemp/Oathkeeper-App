@@ -100,13 +100,14 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
     await form.locator('button.dice-roll').click();
     const canvas=page.locator('#diceTabletop canvas');
     await canvas.waitFor({state:'visible',timeout:10000});
-    // Wait for real animated facets and asynchronously prepared D20 textures;
-    // a full canvas screenshot shrinks the die, so crop its native pixels.
+    // Capture nearly the full tabletop stage at 4x native resolution.
+    // A tight 164px crop cut off facets and numbers in the Store and Dice page.
+    // 300px wide preserves the complete die in its frame without upscaling.
     await page.waitForTimeout(1170);
     const capture=await canvas.evaluate(el=>{
      const rect=el.getBoundingClientRect();
      const ratio=el.width/Math.max(1,rect.width);
-     const cropWidth=Math.min(el.width,Math.round(164*ratio));
+     const cropWidth=Math.min(el.width,Math.round(300*ratio));
      const cropHeight=Math.min(el.height,Math.round(cropWidth*175/248));
      const x=Math.max(0,Math.min(el.width-cropWidth,Math.round(el.width*.5-cropWidth/2)));
      const y=Math.max(0,Math.min(el.height-cropHeight,Math.round(el.height*.55-cropHeight/2)));
