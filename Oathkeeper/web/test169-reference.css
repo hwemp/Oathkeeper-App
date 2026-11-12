@@ -1,0 +1,210 @@
+/* OATHKEEPER TEST 169 — ONE APPROVED REFERENCE SYSTEM
+ * Images derive from the archived artwork, not polygon previews.
+ * The original 144 animated canvas and original 12-frame Store GIF are
+ * restored by NOT loading 168 WebGL or the duplicate 166 bundle overlays.
+ * Never catch clicks with pseudo art. No alterations to RNG or purchasing.
+ */
+:root{
+ --oath169-frame:url("./art/ornate-nav-163.svg");
+ --oath169-gold:#efca86;
+ --oath169-violet:#8e2fca;
+}
+
+/* All engraved character-navigation plaques share the SAME purple-amethyst
+ * master. The selected background must never recolor this approved master. */
+html #nav button::before,
+html[data-oath-gem-theme] #nav button::before {
+ background-image:var(--oath169-frame)!important;
+ background-position:center!important;
+ background-size:100% 100%!important;
+}
+#nav button::after {content:none!important;display:none!important}
+
+/* Repair the actual editor control layout: scaled frame is not an excuse to
+ * let text collide with side gold scrollwork or upper/lower amethyst tips. */
+#journalEditor .row,
+#equipmentEditor .row {
+ display:flex!important;
+ align-items:center!important;
+ justify-content:center!important;
+ flex-wrap:wrap!important;
+ gap:12px!important;
+ padding-inline:4px!important;
+}
+#journalEditor .row button,
+#equipmentEditor .row button,
+:root[data-oath-gem-theme] #journalEditor .row button,
+:root[data-oath-gem-theme] #equipmentEditor .row button {
+ box-sizing:border-box!important;
+ flex:1 1 142px!important;
+ width:auto!important;
+ max-width:248px!important;
+ min-width:0!important;
+ min-height:72px!important;
+ display:flex!important;
+ align-items:center!important;
+ justify-content:center!important;
+ text-align:center!important;
+ vertical-align:middle!important;
+ overflow:visible!important;
+ white-space:normal!important;
+ overflow-wrap:normal!important;
+ font-family:Georgia,serif!important;
+ font-size:clamp(13px,3.4vw,19px)!important;
+ font-weight:600!important;
+ line-height:1.08!important;
+ letter-spacing:-.015em!important;
+ padding:21px 22px!important;
+ background:var(--oath169-frame) center / 100% 100% no-repeat!important;
+ background-color:transparent!important;
+ border:0!important;
+ border-radius:0!important;
+ box-shadow:none!important;
+ color:#f7dca0!important;
+ text-shadow:0 1px 2px #160b1d!important;
+ -webkit-text-fill-color:#f7dca0!important;
+}
+#journalEditor .row button::after,
+#journalEditor .row button::before,
+#equipmentEditor .row button::after,
+#equipmentEditor .row button::before {
+ content:none!important;display:none!important;
+}
+#equipmentEditor [data-draft-remove] {
+ width:44px!important;min-width:44px!important;height:44px!important;
+ flex:none!important;padding:0!important;
+ background:linear-gradient(145deg,#131628,#291633)!important;
+ border:2px solid #d4aa6e!important;border-radius:8px!important;
+ font-size:26px!important;line-height:1!important;
+}
+#equipmentEditor [data-draft-remove]::after,
+#equipmentEditor [data-draft-remove]::before{content:none!important;display:none!important}
+
+/* Extend the same engraved, amethyst-gold language to textual action controls,
+ * but do not place a second frame over baked Store art or icon thumbnails. */
+.dice-page .dice-submenu button,
+.dice-page .dice-controls button.dice-roll,
+#appMenu .menu-options button:not(.notification-bell),
+.card .row button:not([data-draft-remove]):not(.die-tile),
+.rules-desk .row button {
+ background-image:var(--oath169-frame)!important;
+ background-position:center!important;
+ background-repeat:no-repeat!important;
+ background-size:100% 100%!important;
+ background-color:transparent!important;
+ border:0!important;
+ color:#f6d797!important;
+ text-shadow:0 1px 2px #14071c!important;
+ box-shadow:none!important;
+ border-radius:0!important;
+ padding:13px 20px!important;
+ min-height:60px!important;
+ box-sizing:border-box!important;
+}
+.dice-page .dice-submenu button::after,
+.dice-page .dice-controls button.dice-roll::after,
+#appMenu .menu-options button:not(.notification-bell)::after {
+ content:none!important;display:none!important;
+}
+.dice-page .dice-submenu button:is(.selected,[aria-pressed="true"]),
+.dice-page .dice-controls button.dice-roll:is(:active,:focus-visible) {
+ filter:drop-shadow(0 0 4px #b85eff);
+}
+
+/* The entire background page is now one per-scene 941x1672 resource.
+ * There must be NO pasted scene image, letterboxed crop or old backdrop edge. */
+.ok-exact-store[data-ok-category="backgrounds"] .ok-canvas>.ok-art {
+ width:100%!important;height:100%!important;
+ object-fit:fill!important;object-position:center!important;
+}
+.ok-exact-store[data-ok-category="backgrounds"] .ok-replacement-preview,
+.ok-exact-store[data-ok-category="backgrounds"] .ok-bg-copy {
+ display:none!important;
+}
+
+/* An original 352x356 still taken from the exact user GIF's matching themed
+ * WebP animation, not generated 3D geometry. The actual artwork fills the
+ * interior of each clickable prepainted store tile. */
+.ok-exact-store[data-ok-category="dice"] button.ok-hit[data-store-dice]::before {
+ content:""!important;
+ display:block!important;
+ position:absolute!important;
+ inset:3px 3px 17px!important;
+ border-radius:3px!important;
+ pointer-events:none!important;
+ z-index:1!important;
+ background-color:#120e25!important;
+ background-position:center 47%!important;
+ background-size:cover!important;
+ background-repeat:no-repeat!important;
+ image-rendering:auto!important;
+}
+.ok-exact-store .ok-roll-box .ok-roll {
+ width:100%!important;height:100%!important;
+ object-fit:contain!important;object-position:center!important;
+ opacity:1!important;visibility:visible!important;
+}
+
+/* Restore the original vector/illustration art for each die shape and theme.
+ * No 2D-canvas-generated polygon captures, no WebGL impostor. */
+.dice-page .die-tile .reference-die {
+ display:block!important;
+ width:min(98%,150px)!important;
+ max-width:100%!important;
+ height:auto!important;
+ min-height:0!important;
+ aspect-ratio:1.35!important;
+ margin-inline:auto!important;
+ background-color:transparent!important;
+ background-size:contain!important;
+ background-position:center!important;
+ background-repeat:no-repeat!important;
+ image-rendering:auto!important;
+ transform:none!important;
+}
+.dice-page .percentile-art .reference-die,
+.dice-page .dice-special-grid .reference-die {
+ width:min(98%,175px)!important;aspect-ratio:1.35!important;
+ height:auto!important;
+}
+/* Applied set banner is the real illustrated die, with no odd 144 atlas crop. */
+.dice-applied-skin .dice-applied-art{
+ width:120px!important;max-width:32%!important;
+ min-width:85px!important;
+ height:116px!important;
+ background-size:contain!important;
+ background-repeat:no-repeat!important;
+ background-position:center!important;
+ transform:none!important;
+}
+
+/* The bundle items are now actual <img> tags whose source is the original
+ * animation's -still.webp, not pseudo-overlays hiding old polygon art. */
+.ok-exact-store .ok-bundle-grid [data-store-bundle-dice] > img.ok-art {
+ width:100%!important;
+ height:calc(100% - 21px)!important;
+ object-fit:contain!important;
+ object-position:center!important;
+ background:#140c20!important;
+ image-rendering:auto!important;
+}
+.ok-exact-store .ok-bundle-grid [data-store-bundle-dice] > .test166-bundle-live-art {
+ display:none!important;
+}
+.ok-exact-store .ok-bundle-grid [data-store-bundle-dice] .ok-pick-name {
+ bottom:0!important;
+ white-space:nowrap!important;
+}
+/* Text never straddles the Amethyst at the top or bottom of any editor frame. */
+@media(max-width:410px){
+ #journalEditor .row button,
+ #equipmentEditor .row button,
+ :root[data-oath-gem-theme] #journalEditor .row button,
+ :root[data-oath-gem-theme] #equipmentEditor .row button {
+  flex-basis:130px!important;
+  min-height:68px!important;
+  font-size:clamp(12px,3.2vw,16px)!important;
+  padding:20px 17px!important;
+ }
+ #journalEditor .row,#equipmentEditor .row{gap:8px!important}
+}
