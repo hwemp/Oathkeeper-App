@@ -1,4 +1,4 @@
-name: Oathkeeper TEST-BRANCH-163 - Background-Matched Gemstones and Lossless Art
+name: Oathkeeper TEST-BRANCH-163 - Original Scenes and Dice Skin Preview
 on:
   push:
     branches: [TEST-BRANCH-163]
@@ -222,4 +222,4 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           TAG="android-test-163-${{ github.run_number }}-${{ github.run_attempt }}"
-          gh release create "$TAG" output/* --target "${{ github.sha }}" --title "Oathkeeper TEST-BRANCH-163 — Background-Matched Vector Gemstones and Lossless HD Background Previews" --prerelease --latest=false --notes "Frozen Build 144 animation and original art preserved. Six vector gemstones match selected backgrounds. Ten original SVG backgrounds rendered into lossless 1600px masters. Isolated TEST 163 package; official APK unchanged. APK is for testing. Keep official Build 144 installed; back up character data before testing."
+          gh release create "$TAG" output/* --target "${{ github.sha }}" --title "Oathkeeper TEST-BRANCH-163 — Original Illustrated Scenes, Premium Navigation and Dice Preview" --prerelease --latest=false --notes "Frozen Build 144 3D rolling animation, game logic and original Store layout retained. Six premium vector gemstone colors match selected backgrounds. Ten original illustrated 508x360 WebP scenes are copied byte-for-byte instead of replacing them with unrelated SVG redraws. TEST 163 dice selection previews its color and materials visually without granting purchases. Native icon alias package bug corrected. Isolated TEST 163 package; official APK unchanged. Device-side checks and user approval still required."
