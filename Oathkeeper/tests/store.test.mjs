@@ -60,9 +60,8 @@ test('background catalog has ten distinct bundled images with one-tap previews',
   assert(SELECTED_BACKGROUNDS.every(x=>x.price===0.5&&x.priceCents===50&&x.currency==='USD'&&x.status==='preview_only'));
   for(const item of SELECTED_BACKGROUNDS){
     const image=await readFile(new URL('../web/public'+item.imagePath,import.meta.url));
-    assert(image.length>10000);
-    assert.equal(image.toString('ascii',0,4),'RIFF');
-    assert.equal(image.toString('ascii',8,12),'WEBP');
+    assert(image.length>7000);
+    assert.match(image.toString('utf8',0,300),/<svg[\s>]/);
     const html=storePage('elvenleaf',{category:'backgrounds',backgroundSlug:item.slug});
     assertOneTapSelection(html,'backgrounds');
     assert.equal((html.match(/data-store-background=/g)||[]).length,10);

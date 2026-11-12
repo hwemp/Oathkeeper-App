@@ -23,7 +23,7 @@ test('approved store reference: category artwork and full-size previews', () => 
     assert.match(page,/class="store-themed-footer"/);
   }
   const backgrounds=storePage('elvenleaf',{category:'backgrounds'});
-  assert.match(backgrounds,/style="--store-preview-backdrop:url\(&quot;\/art\/store-backgrounds\/moonlit-citadel.webp&quot;\)"/);
+  assert.match(backgrounds,/style="--store-preview-backdrop:url\(&quot;\/art\/store-backgrounds\/moonlit-citadel.svg&quot;\)"/);
   assert.match(backgrounds,/class="store-background-preview-title">Moonlit Citadel</);
   const icons=storePage('elvenleaf',{category:'icons'});
   assert.match(icons,/App Icons Collection/);
