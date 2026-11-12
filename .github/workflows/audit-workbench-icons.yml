@@ -81,6 +81,8 @@ jobs:
           python scripts/patch-test169-approved-source.py
           python scripts/apply-test170-buttons.py
           python scripts/apply-test171-gameplay.py
+          mkdir -p preview-output
+          cp dist/art/exact-store/icons.webp preview-output/workbench-baked-icons-page.webp
           node --check dist/assets/main-FCw4hQ90.js
           npm install --no-save --package-lock=false playwright@1.56.1
           npx playwright install --with-deps chromium
