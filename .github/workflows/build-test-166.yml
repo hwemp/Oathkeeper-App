@@ -147,6 +147,7 @@ jobs:
           done
           test -s preview-output/166-dice-parity-report.json
           test -s dist/test166-dice-parity.css
+          test -s dist/test166-bundle-overlay.js
           for slug in default dragonfire frostborne elvenleaf celestial abyssal gold-forged necrotic astral oceanic sunfire; do
             for sides in 3 4 6 8 10 12 20 50 100; do
               test -s "dist/art/test166-dice/${slug}/d${sides}.png"
@@ -239,6 +240,7 @@ jobs:
           unzip -Z1 "$APK" | grep -Fq 'assets/public/art/ornate-flourish-right.svg'
           unzip -Z1 "$APK" | grep -Fq 'assets/public/test164-overrides.css'
           unzip -Z1 "$APK" | grep -Fq 'assets/public/test166-dice-parity.css'
+          unzip -Z1 "$APK" | grep -Fq 'assets/public/test166-bundle-overlay.js'
           for slug in default dragonfire frostborne elvenleaf celestial abyssal gold-forged necrotic astral oceanic sunfire; do
             for sides in 3 4 6 8 10 12 20 50 100; do
               unzip -Z1 "$APK" | grep -Fq "assets/public/art/test166-dice/${slug}/d${sides}.png"
