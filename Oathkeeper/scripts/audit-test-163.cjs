@@ -90,6 +90,39 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
       findings.dice.push({slug,selected:await page.locator('[data-store-dice="'+slug+'"]').first().getAttribute('aria-pressed')});
       await shot('163-dice-choice-'+slug);
     }
+    // TEST 163: choose a paid-design preview without granting entitlement.
+    // Reload to the character tools and confirm the very same 144 dice roller
+    // receives the previewed skin; capture an actual mid-animation canvas.
+    await page.goto(base,{waitUntil:'domcontentloaded'});
+    if(await page.locator('#termsGate').isVisible().catch(()=>false)){
+      await page.locator('#termsAge').selectOption('teen');
+      await page.locator('#termsAgree').check();
+      await page.locator('#termsAccept').click();
+    }
+    await page.locator('#nav button[data-tab="Dice"]').click();
+    const previewDie=page.locator('.dice-applied-skin');
+    await previewDie.waitFor({timeout:10000});
+    assert.equal(await previewDie.getAttribute('data-applied-dice'),'astral','Store-selected dice must be the animated preview skin');
+    assert.match(await previewDie.innerText(),/preview only/i,'No purchase entitlement may be implied');
+    await page.locator('input[data-k="diceAnimation"]').check({force:true});
+    await page.locator('#diceForm button.dice-roll').click();
+    await page.locator('#diceTabletop canvas').waitFor({timeout:10000});
+    await page.waitForTimeout(300);
+    const canvasReport=await page.locator('#diceTabletop canvas').evaluate(canvas=>{
+      const ctx=canvas.getContext('2d'),data=ctx.getImageData(0,0,canvas.width,canvas.height).data;
+      let visible=0;for(let i=3;i<data.length;i+=4)if(data[i]>0)visible++;
+      return {width:canvas.width,height:canvas.height,visiblePixels:visible};
+    });
+    assert(canvasReport.width>0&&canvasReport.height>0&&canvasReport.visiblePixels>0,'Animated preview must render actual 144 canvas frames');
+    await shot('163-animated-astral-dice-roll');
+    await page.waitForFunction(()=>document.querySelector('#diceTabletop')?.dataset.state==='landed',null,{timeout:8000});
+    const total=await page.locator('.dice-result strong').innerText();
+    assert(/^[0-9,.-]+$/.test(total),'Original dice roll must still complete with a numeric result');
+    findings.dice.push({slug:'astral',animation:'landed',canvas:canvasReport,result:total});
+    // Return to original approved store view for the remaining screen checks.
+    await page.goto(base,{waitUntil:'domcontentloaded'});
+    await page.locator('#appMenu summary').click();
+    await page.locator('#appMenu button[data-tab="Store"]').click();
     await page.locator('[data-store-category="icons"]').first().click();
     await shot('163-actual-app-icons');
     await page.locator('[data-store-category="bundles"]').first().click();
