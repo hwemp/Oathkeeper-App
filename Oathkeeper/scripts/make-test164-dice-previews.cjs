@@ -21,6 +21,25 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
   page.on('pageerror',err=>problems.push(err.message));
   fs.mkdirSync('dist/art/test164-dice',{recursive:true});
   fs.mkdirSync('preview-output',{recursive:true});
+  // Click a genuinely exposed area of a selected hitbox using the normal
+  // pointer path. Never use force:true or el.click() to conceal overlapping
+  // Store controls. This also checks real user taps, not only DOM handlers.
+  const clickExposed=async(locator,slug)=>{
+   const p=await locator.evaluate(el=>{
+    const r=el.getBoundingClientRect();
+    const spots=[.5,.2,.8,.35,.65,.08,.92];
+    for(const fy of spots)for(const fx of spots){
+     const x=r.left+r.width*fx,y=r.top+r.height*fy;
+     if(x<0||y<0||x>=innerWidth||y>=innerHeight)continue;
+     const top=document.elementFromPoint(x,y);
+     if(top===el||el.contains(top))return {x,y};
+    }
+    return null;
+   });
+   if(!p)throw new Error(slug+': no uncovered pointer target. Correct overlapping gallery controls before release.');
+   await page.mouse.click(p.x,p.y);
+   return p;
+  };
   const open=async()=>{
    await page.goto(base,{waitUntil:'domcontentloaded'});
    if(await page.locator('#termsGate').isVisible().catch(()=>false)){
@@ -36,7 +55,8 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
    await page.locator('[data-store-category="dice"]').first().click();
    const tile=page.locator('[data-store-dice="'+slug+'"]').first();
    assert(await tile.count(),slug+': Store selection missing');
-   await tile.click();
+   const point=await clickExposed(tile,slug);
+   console.log('TEST 164 pointer-click area',slug,JSON.stringify(point));
    assert.equal(await tile.getAttribute('aria-pressed'),'true',slug+': Store selection not active');
    await open();
    await page.locator('#nav button[data-tab="Dice"]').click();
