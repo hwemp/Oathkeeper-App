@@ -208,3 +208,52 @@ html[data-oath-gem-theme] #nav button::before {
  }
  #journalEditor .row,#equipmentEditor .row{gap:8px!important}
 }
+
+
+/* The exact archived 12-frame GIF is the real Dice tab animation element;
+   the simplified old canvas is removed at source rather than covered. */
+#diceTabletop > .test169-approved-rolling-gif {
+ display:block!important;
+ max-width:min(100%,355px)!important;
+ max-height:355px!important;
+ width:auto!important;
+ height:auto!important;
+ aspect-ratio:352/356!important;
+ margin:0 auto!important;
+ object-fit:contain!important;
+ object-position:center!important;
+ border:0!important;
+ image-rendering:auto!important;
+ filter:none!important;
+}
+/* Unhide the name that the old baked bundle thumbnails drew internally.
+   New original-GIF stills are authored art only, so the live label belongs
+   on the same button, beneath the illustration. */
+.ok-exact-store .ok-bundle-grid [data-store-bundle-dice] .ok-pick-name {
+ position:absolute!important;
+ display:block!important;
+ z-index:4!important;
+ left:0!important;right:0!important;
+ bottom:0!important;top:auto!important;
+ width:100%!important;height:auto!important;
+ clip:auto!important;clip-path:none!important;
+ overflow:visible!important;
+ color:#ffe1a1!important;
+ font:600 clamp(8px,1.48cqw,12px)/1.15 Georgia,serif!important;
+ text-align:center!important;
+ text-transform:uppercase!important;
+ white-space:nowrap!important;
+ padding:2px 0!important;
+ background:linear-gradient(90deg,#100c1ded,#28112bef,#100c1ded)!important;
+ border-radius:0 0 5px 5px!important;
+ text-shadow:0 1px 2px #000!important;
+ pointer-events:none!important;
+}
+.ok-exact-store .ok-bundle-grid [data-store-bundle-dice] > img.ok-art {
+ display:block!important;
+ width:100%!important;
+ height:calc(100% - 16px)!important;
+ object-fit:contain!important;
+ object-position:center!important;
+ background:#140c20!important;
+}
