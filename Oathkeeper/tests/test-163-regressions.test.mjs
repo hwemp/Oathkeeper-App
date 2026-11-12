@@ -29,17 +29,15 @@ test('TEST 163: premium navigation uses one complete, independent vector border'
   assert.match(script,/ornate-nav-163\.svg/);
 });
 
-test('TEST 163: original detailed previews must not be swapped for simplified enlarged images',()=>{
-  const js=read('../web/ornate-gem-theme.js');
-  const begin=js.indexOf('export function repairMissingBackgroundPreviews');
-  const end=js.indexOf('export function updateGemTheme',begin);
-  assert(begin>=0 && end>begin);
-  const repair=js.slice(begin,end);
-  assert.doesNotMatch(repair, /\.setAttribute\(\s*["']src["']/);
-  assert.doesNotMatch(repair, /hires-store-backgrounds|\.svg2png|\.src\s*=/);
-  assert.match(repair,/return 0;/);
+test('TEST 163: preview substitutions use byte-exact illustrated source files',()=>{
+  const theme=read('../web/ornate-gem-theme.js');
+  const packager=read('../scripts/apply-ornate-buttons.py');
+  assert.match(theme,/approved-backgrounds/);
+  assert.doesNotMatch(theme,/hires-store-backgrounds/);
+  assert.match(packager,/shutil\.copyfile\(approved,destination\)/);
+  assert.match(packager,/sha256\(destination\) != sha256\(approved\)/);
+  assert.doesNotMatch(packager,/svg2png/);
 });
-
 test('TEST 163: dice RNG and rolling geometry remain unmodified from the protected branch',()=>{
   const js=read('../web/dice-tabletop.js');
   const app=read('../web/app.js');
