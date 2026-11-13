@@ -5,6 +5,8 @@ on:
     paths:
       - '.github/workflows/audit-workbench-buttons.yml'
       - 'Oathkeeper/web/test170-reference-buttons.css'
+      - 'Oathkeeper/web/test169-reference.css'
+      - 'Oathkeeper/web/test164-overrides.css'
       - 'Oathkeeper/web/test170-button-states.js'
       - 'Oathkeeper/scripts/audit-test170-reference.cjs'
       - 'Oathkeeper/scripts/audit-workbench-button-text.cjs'
@@ -37,6 +39,7 @@ jobs:
           npm ci
           node scripts/audit-workbench-source-alignment.mjs
           node --test tests/approved-icon-art.test.mjs
+          node --test tests/test170-master-buttons.test.mjs
       - name: Extract validated frozen runtime WITHOUT building APK
         run: |
           python - <<'PY'
