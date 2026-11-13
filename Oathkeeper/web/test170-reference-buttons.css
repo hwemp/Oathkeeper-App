@@ -51,10 +51,10 @@ html body .dm-workspace button.oath170-reference-button {
  word-break:normal!important;
  white-space:normal!important;
  font-family:Georgia,serif!important;
- font-size:clamp(13px,3.35vw,21px)!important;
+ font-size:var(--oath170-fit-size,clamp(13px,3.35vw,21px))!important;
  font-weight:600!important;
- line-height:1.12!important;
- padding:24px clamp(22px,12%,38px)!important;
+ line-height:var(--oath170-fit-leading,1.07)!important;
+ padding:0 clamp(16px,14%,35px)!important;
  border:0!important;
  border-radius:0!important;
  background-color:transparent!important;
@@ -105,9 +105,9 @@ html #nav button.oath170-reference-button {
  flex:0 0 calc((100% - 14px)/3)!important;
  min-height:73px!important;
  height:73px!important;
- padding:18px 8px!important;
- font-size:clamp(12px,3.6vw,20px)!important;
- white-space:nowrap!important;
+ padding:0 clamp(8px,11%,17px)!important;
+ font-size:var(--oath170-fit-size,clamp(12px,3.6vw,20px))!important;
+ white-space:normal!important;
  line-height:1!important;
  overflow:visible!important;
 }
@@ -132,8 +132,8 @@ html #appMenu .menu-options button.oath170-reference-button{
  min-height:75px!important;
  height:auto!important;
  margin:1px 0!important;
- padding:22px 22px!important;
- font-size:clamp(15px,3.75vw,20px)!important;
+ padding:0 clamp(19px,14%,38px)!important;
+ font-size:var(--oath170-fit-size,clamp(15px,3.75vw,20px))!important;
  line-height:1.1!important;
  text-align:center!important;
  background-size:100% 100%!important;
@@ -153,10 +153,10 @@ html #equipmentEditor button.oath170-reference-button{
  flex:1 1 160px!important;
  min-height:86px!important;
  margin:0!important;
- padding:24px 22px!important;
+ padding:0 clamp(17px,14%,36px)!important;
  white-space:normal!important;
- font-size:clamp(13px,3.4vw,19px)!important;
- line-height:1.12!important;
+ font-size:var(--oath170-fit-size,clamp(13px,3.4vw,19px))!important;
+ line-height:var(--oath170-fit-leading,1.07)!important;
  text-align:center!important;
 }
 html body .dice-page .dice-submenu button.oath170-reference-button{
@@ -199,14 +199,25 @@ html body .card .row:has(button.oath170-reference-button) > input{
  --oath170-button-selected:none;
 }
 @media(max-width:390px){
- html #nav button.oath170-reference-button{font-size:clamp(12px,3.45vw,17px)!important;min-height:69px!important;height:69px!important;padding:18px 6px!important}
- html #appMenu .menu-options button.oath170-reference-button{min-height:70px!important;font-size:15px!important;padding:19px 20px!important}
+ html #nav button.oath170-reference-button{font-size:var(--oath170-fit-size,clamp(12px,3.45vw,17px))!important;min-height:69px!important;height:69px!important;padding:0 clamp(8px,10%,14px)!important}
+ html #appMenu .menu-options button.oath170-reference-button{min-height:70px!important;font-size:var(--oath170-fit-size,15px)!important;padding:0 clamp(17px,13%,29px)!important}
  html body .card .row > button.oath170-reference-button,
  html body .dice-page .dice-submenu button.oath170-reference-button,
  html #journalEditor button.oath170-reference-button,
  html #equipmentEditor button.oath170-reference-button{
   min-height:83px!important;
-  font-size:clamp(12px,3.5vw,17px)!important;
-  padding:23px 19px!important;
+  font-size:var(--oath170-fit-size,clamp(12px,3.5vw,17px))!important;
+  padding:0 clamp(14px,13%,31px)!important;
  }
+}
+
+/* GOLD FRAME LABEL POLICY: The approved 420x260 SVG reserves a central
+ * label safety region. Font fitting is controlled by the single shared
+ * --oath170-fit-size variable (not inconsistent per-page overrides).
+ * Never stretch frame artwork, hide overflowing text or modify form fields. */
+html body .oath170-reference-button{
+  letter-spacing:var(--oath170-fit-tracking,-.014em)!important;
+  text-wrap:balance!important;
+  text-overflow:clip!important;
+  max-height:none!important;
 }
