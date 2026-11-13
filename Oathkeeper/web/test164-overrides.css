@@ -1,3 +1,9 @@
+/* WORKBENCH TYPOGRAPHY SOURCE-OF-TRUTH:
+ * Legacy rules in this file are now explicitly excluded from modern
+ * .oath170-reference-button controls. This is a targeted retirement of
+ * conflicting text/background rules, NOT another visual override layer.
+ * The canonical font, frame and fit controller are in the TEST 170 master.
+ */
 /* TEST-BRANCH-164, scoped style repair. 163's broad gem overlays are removed.
  * Only approved navigation gets a gem. Store art is explicitly derived from
  * existing rolling renderer captures and exact Android launcher master files. */
@@ -14,7 +20,7 @@
 #equipmentEditor [data-draft-remove]::after {
   content:none!important; display:none!important;
 }
-#appMenu .menu-options button:not(.notification-bell) {
+#appMenu .menu-options button:not(.notification-bell):not(.oath170-reference-button) {
   position:relative; padding-left:39px!important;
   border:1px solid rgba(215,174,99,.60)!important;
   border-radius:8px;
@@ -25,7 +31,7 @@
 #appMenu .menu-options button.account-menu-button {
   background:linear-gradient(145deg,#53202d,#80283c)!important;
 }
-#appMenu .menu-options button:not(.notification-bell)::after {
+#appMenu .menu-options button:not(.notification-bell):not(.oath170-reference-button)::after {
   content:""!important; display:block!important;
   position:absolute; inset:auto auto auto 11px!important;
   left:11px!important; top:50%!important;
@@ -51,8 +57,8 @@
 #nav button::before {pointer-events:none;}
 /* Editor actions match the four engraved character navigation plaques.
  * The original gold X is a plain glyph inside a clean, retained gold frame. */
-#journalEditor .row button,
-#equipmentEditor .row button {
+#journalEditor .row button:not(.oath170-reference-button),
+#equipmentEditor .row button:not(.oath170-reference-button) {
   min-height:55px!important;min-width:120px!important;
   padding:17px 16px 13px!important;
   font:600 17px/1.15 Georgia,serif!important;
@@ -61,24 +67,24 @@
   border:0!important;border-radius:0!important;box-shadow:none!important;
   text-shadow:0 1px 2px #130918;
 }
-:root[data-oath-gem-theme="sapphire"] #journalEditor .row button,
-:root[data-oath-gem-theme="sapphire"] #equipmentEditor .row button {
+:root[data-oath-gem-theme="sapphire"] #journalEditor .row button:not(.oath170-reference-button),
+:root[data-oath-gem-theme="sapphire"] #equipmentEditor .row button:not(.oath170-reference-button) {
   background-image:url("./art/ornate-nav-sapphire-163.svg")!important;
 }
-:root[data-oath-gem-theme="emerald"] #journalEditor .row button,
-:root[data-oath-gem-theme="emerald"] #equipmentEditor .row button {
+:root[data-oath-gem-theme="emerald"] #journalEditor .row button:not(.oath170-reference-button),
+:root[data-oath-gem-theme="emerald"] #equipmentEditor .row button:not(.oath170-reference-button) {
   background-image:url("./art/ornate-nav-emerald-163.svg")!important;
 }
-:root[data-oath-gem-theme="ruby"] #journalEditor .row button,
-:root[data-oath-gem-theme="ruby"] #equipmentEditor .row button {
+:root[data-oath-gem-theme="ruby"] #journalEditor .row button:not(.oath170-reference-button),
+:root[data-oath-gem-theme="ruby"] #equipmentEditor .row button:not(.oath170-reference-button) {
   background-image:url("./art/ornate-nav-ruby-163.svg")!important;
 }
-:root[data-oath-gem-theme="aquamarine"] #journalEditor .row button,
-:root[data-oath-gem-theme="aquamarine"] #equipmentEditor .row button {
+:root[data-oath-gem-theme="aquamarine"] #journalEditor .row button:not(.oath170-reference-button),
+:root[data-oath-gem-theme="aquamarine"] #equipmentEditor .row button:not(.oath170-reference-button) {
   background-image:url("./art/ornate-nav-aquamarine-163.svg")!important;
 }
-:root[data-oath-gem-theme="citrine"] #journalEditor .row button,
-:root[data-oath-gem-theme="citrine"] #equipmentEditor .row button {
+:root[data-oath-gem-theme="citrine"] #journalEditor .row button:not(.oath170-reference-button),
+:root[data-oath-gem-theme="citrine"] #equipmentEditor .row button:not(.oath170-reference-button) {
   background-image:url("./art/ornate-nav-citrine-163.svg")!important;
 }
 #equipmentEditor [data-draft-remove] {
