@@ -41,7 +41,7 @@ const sleep=n=>new Promise(r=>setTimeout(r,n));
    const canvas=page.locator('.ok-exact-store[data-ok-category="'+category+'"] .ok-canvas').first();
    await canvas.waitFor({state:'visible',timeout:12000});
    await page.evaluate(()=>document.body.removeAttribute('data-store-paid-background'));
-   await page.waitForFunction(()=>document.documentElement.dataset.oathGemTheme==='amethyst',{},{timeout:8000});
+   await page.waitForFunction(()=>document.documentElement.dataset.oathGemTheme==='amethyst',null,{timeout:8000});
    await canvas.locator('img.ok-art').first().evaluate(async e=>{await e.decode()});
    const before='preview-output/workbench-store-'+category+'-amethyst.png';
    const after='preview-output/workbench-store-'+category+'-emerald.png';
@@ -55,7 +55,7 @@ const sleep=n=>new Promise(r=>setTimeout(r,n));
      webkitMask:getComputedStyle(e,'::after').webkitMaskImage
    }));
    assert.equal(computed.opacity,'1','Applied theme has no gem overlay');
-   assert(/workbench-store-gem-masks\\/|workbench-store-gem-masks\//.test(computed.mask+' '+computed.webkitMask),
+   assert((computed.mask+' '+computed.webkitMask).includes('workbench-store-gem-masks/'+category+'.png'),
     'Wrong visual mask: '+JSON.stringify(computed));
    await canvas.screenshot({path:after});
    // Evaluate on decoded screenshot PNGs against the actual masks. Target
