@@ -1,0 +1,9 @@
+path_or_glob,origin_or_author,license_or_permission,evidence_reference,verified_by,status,notes
+web/public/art/*,UNKNOWN,UNKNOWN,,,UNVERIFIED,Expand to one row per shipped asset and retain proof of rights
+web/public/art/store-backgrounds/*,UNKNOWN,UNKNOWN,,,UNVERIFIED,Individually inspect backgrounds and their source images
+web/public/art/store-icons/*,UNKNOWN,UNKNOWN,,,UNVERIFIED,Match actual launcher art and document illustrator/generator/source rights
+web/public/fonts/gothic.ttf,UNKNOWN,UNKNOWN,,,UNVERIFIED,Compare with bundled OFL and exact font family
+assets/icon-only.png,UNKNOWN,UNKNOWN,,,UNVERIFIED,Verify commercial rights and no protected brand/logo confusion
+web/public/vendor/*,THIRD_PARTY,REVIEW,, ,UNVERIFIED,Check PDFJS-LICENSE.txt and bundled versions
+store/play-icon-512.png,UNKNOWN,UNKNOWN,,,UNVERIFIED,Check marketing and trademark similarity
+store/play-feature-graphic.png,UNKNOWN,UNKNOWN,,,UNVERIFIED,Check artwork authorship and marketing rights
