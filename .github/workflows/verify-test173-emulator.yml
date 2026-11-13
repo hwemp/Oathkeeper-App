@@ -1,0 +1,51 @@
+name: Oathkeeper Test 173 Android Emulator Verification — no new APK
+on:
+  workflow_dispatch:
+  push:
+    branches: [OATHKEEPER-VISUAL-WORKBENCH]
+    paths:
+      - '.github/workflows/verify-test173-emulator.yml'
+      - 'Oathkeeper/scripts/verify-test173-emulator.sh'
+permissions:
+  contents: read
+jobs:
+  emulator:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download actual published signed TEST 173 APK with checksum
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/oath-apk" "$GITHUB_WORKSPACE/device-report"
+          gh release download android-test-173-1-2 --repo "${{ github.repository }}" \
+            --pattern 'Oathkeeper-TEST-BRANCH-173.apk' --pattern 'SHA256SUMS.txt' --dir "$RUNNER_TEMP/oath-apk"
+          (cd "$RUNNER_TEMP/oath-apk" && sha256sum -c SHA256SUMS.txt)
+          test -s "$RUNNER_TEMP/oath-apk/Oathkeeper-TEST-BRANCH-173.apk"
+      - name: Enable virtualization for Android emulator
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
+            | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Install, launch, verify native alias and capture phone-size screenshots
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          ram-size: 2048M
+          heap-size: 512M
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
+          disable-animations: true
+          script: bash Oathkeeper/scripts/verify-test173-emulator.sh "$RUNNER_TEMP/oath-apk/Oathkeeper-TEST-BRANCH-173.apk" "$GITHUB_WORKSPACE/device-report"
+      - name: Publish emulator screenshots, native and failure logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: OATHKEEPER-TEST173-ANDROID-EMULATOR-DEVICE-EVIDENCE
+          path: device-report/*
+          retention-days: 14
+          if-no-files-found: warn
