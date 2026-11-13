@@ -120,7 +120,7 @@ function boot(){
   const schedule=()=>{
     if(pending)return;
     pending=true;
-    requestAnimationFrame(()=>{pending=false;synchronize(document)});
+    queueMicrotask(()=>{pending=false;synchronize(document)});
   };
   if(typeof ResizeObserver!=='undefined')
     referenceResizeObserver=new ResizeObserver(()=>schedule());
