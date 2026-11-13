@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 260" role="img" aria-label="Gothic gold button with faceted __THEME__ gems: __STATE__" fill="none">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 260" role="img" aria-label="Gothic gold button with one top faceted __THEME__ gem: __STATE__" fill="none">
 <defs>
  <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fffbd7"/><stop offset=".12" stop-color="#d8a24d"/><stop offset=".28" stop-color="#7e3815"/><stop offset=".42" stop-color="#ffdc7f"/><stop offset=".62" stop-color="#aa6c2c"/><stop offset=".8" stop-color="#ffe3a0"/><stop offset="1" stop-color="#653115"/></linearGradient>
  <linearGradient id="inner" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#231229"/><stop offset=".47" stop-color="#100b1c"/><stop offset="1" stop-color="#251124"/></linearGradient>
@@ -36,6 +36,6 @@
 <use href="#flourish" transform="translate(381 183) scale(-1 -1)"/>
 <path d="M92 93Q135 72 189 80M231 80Q285 72 328 93M92 168Q135 187 189 180M231 180Q285 187 328 168" stroke="url(#gold)" stroke-width="2.2" stroke-linecap="round"/>
 <use href="#gemstone" transform="translate(210 49)"/>
-<use href="#gemstone" transform="translate(210 211) scale(.83 .83)"/>
+<path d="M165 205 Q188 214 208 208 Q230 214 253 205" fill="none" stroke="url(#shine)" stroke-width="3" stroke-linecap="round"/><path d="M179 214 Q210 225 241 214" fill="none" stroke="url(#gold)" stroke-width="2.2" stroke-linecap="round"/><circle cx="210" cy="213" r="3.4" fill="#ffde9e" stroke="#a66a2c" stroke-width="1"/>
 <g opacity="__GLOW__" filter="url(#glow)" stroke="#ffcf78" stroke-width="7"><path d="M26 105Q13 131 26 160M394 105Q407 131 394 160M42 174Q92 204 148 179M272 179Q328 204 378 174"/></g>
 </svg>
