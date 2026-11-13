@@ -59,6 +59,17 @@ function labelFitsGoldInterior(button,rect){
 
 function fitGoldButtonText(button){
   if(!button.isConnected || button.closest('.ok-exact-store,.store-themed-footer'))return;
+  // Preserve the full player-facing label while using two deliberate lines
+  // in the existing narrow DM plaque. No actions, ARIA labels, frames or
+  // button dimensions are changed.
+  const normalizedLabel=button.textContent.trim().replace(/\s+/g,' ');
+  if(normalizedLabel==='Manage player stats & initiative' &&
+     !button.querySelector('.oath170-two-line-label') && button.childElementCount===0){
+    const span=document.createElement('span');
+    span.className='oath170-two-line-label';
+    span.textContent='Manage player stats\n& initiative';
+    button.replaceChildren(span);
+  }
   const rect=button.getBoundingClientRect();
   if(rect.width<60 || rect.height<42)return;
   const key=rect.width.toFixed(1)+'x'+rect.height.toFixed(1)+':'+button.textContent.trim();
