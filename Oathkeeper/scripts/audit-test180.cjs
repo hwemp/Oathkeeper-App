@@ -138,7 +138,11 @@ const delay=ms=>new Promise(r=>setTimeout(r,ms));
   await page.locator('#diceTabletop').screenshot({path:'preview-output/180-true-d100.png'});
 
   // TEST 180: the HP value is above two equal-width, aligned action buttons.
-  await page.locator('#nav button[data-tab="Overview"]').first().click({force:true});
+  // At mobile width the desktop #nav is intentionally hidden. Enter Overview
+  // through the visible app menu, as a real phone user would.
+  const menu=page.locator('#appMenu');
+  if (!(await menu.evaluate(el=>el.open))) await menu.locator('summary').click();
+  await menu.locator('button[data-tab="Overview"]').click();
   const layout=await page.locator('#hpAmount').evaluate(input=>{
     const card=input.closest('section');
     const damage=card?.querySelector('button[data-action="damage"]');
@@ -167,4 +171,4 @@ const delay=ms=>new Promise(r=>setTimeout(r,ms));
   },null,2));
   console.log('TEST 180 visual QA PASS: 10 bundle dice, ten matching launcher masters, ten full background previews, dynamic result-labelled illustrated die faces.');
  }finally{await browser?.close();server.kill()}
-})().catch(e=>{console.error('TEST 179 FAILED',e.stack||e);process.exitCode=1});
+})().catch(e=>{console.error('TEST 180 FAILED',e.stack||e);process.exitCode=1});
