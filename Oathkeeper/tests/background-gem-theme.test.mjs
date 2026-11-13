@@ -26,24 +26,28 @@ test('every gemstone variant is a vector and is used by the same overlay',()=>{
  assert.match(css,/pointer-events:\s*none/);
  assert.doesNotMatch(css,/\b(?:image-rendering|object-fit|animation)\s*:/);
 });
-test('previews change gem locally without applying a paid background',()=>{
+test('a background preview does not replace the applied gemstone until the scene is applied',()=>{
  let attrs={};
+ let appliedSlug='elder-grove';
  const applied={
-   getAttribute:key=>key==='data-store-paid-background'?'elder-grove':null,
+   getAttribute:key=>key==='data-store-paid-background'?appliedSlug:null,
    style:{getPropertyValue:()=>''}
  };
- const btn={getAttribute:key=>key==='data-store-background'?'dragons-crag':null};
- const store={querySelector:selector=>selector.includes('[data-store-background]')?btn:null,querySelectorAll:()=>[]};
+ const preview={getAttribute:key=>key==='data-store-background'?'dragons-crag':null};
+ const store={querySelector:selector=>selector.includes('[data-store-background]')?preview:null,querySelectorAll:()=>[]};
  const doc={
    querySelector:selector=>selector==='.store-page'?store:null,
    body:applied,
    documentElement:{getAttribute:key=>attrs[key],setAttribute:(key,v)=>attrs[key]=v}
  };
- assert.equal(selectedBackgroundSlug(doc),'dragons-crag');
+ assert.equal(selectedBackgroundSlug(doc),'elder-grove');
+ assert.equal(updateGemTheme(doc),'emerald');
+ assert.equal(attrs['data-oath-gem-theme'],'emerald');
+ appliedSlug='dragons-crag';
  assert.equal(updateGemTheme(doc),'ruby');
  assert.equal(attrs['data-oath-gem-theme'],'ruby');
  store.querySelector=()=>null;
- assert.equal(updateGemTheme(doc),'emerald'); // after leaving preview, verified applied background wins
+ assert.equal(updateGemTheme(doc),'ruby');
 });
 
 test('all ten illustrated scenes use their approved WebP originals, not new vector redraws',()=>{
