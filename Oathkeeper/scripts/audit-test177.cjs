@@ -68,6 +68,7 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
   for(const slug of SCENES){
    await page.locator('[data-store-background="'+slug+'"]').first().click({force:true});
    const scene=page.locator('.ok-exact-store[data-ok-category="backgrounds"] .ok-canvas>img.ok-art');
+   await scene.evaluate(async e=>{await e.decode();});
    const state=await scene.evaluate(e=>({src:e.getAttribute('src'),width:e.naturalWidth,height:e.naturalHeight}));
    assert(state.src.includes('/test169-bg/'+slug+'.webp') && state.width===941 && state.height===1672,
     'Wrong per-scene page '+slug+' '+JSON.stringify(state));
