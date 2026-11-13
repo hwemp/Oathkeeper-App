@@ -29,7 +29,16 @@ const widths=[360,393,412];
       top:box.top+box.height*.34,bottom:box.bottom-box.height*.34};
     const label=b.textContent.trim().replace(/\s+/g,' ').slice(0,100);
     const readable=label!=='Manage player stats & initiative'||parseFloat(cs.fontSize)>=12.5;
-    return {label,readable,selector:b.id||b.dataset.tab||b.dataset.action||b.parentElement?.id||b.className,
+    const debug=label==='Manage player stats & initiative'?{
+      outerHTML:b.outerHTML.slice(0,1800),
+      wrapped:b.querySelector('.oath170-two-line-label')!==null,
+      sizeVariable:b.style.getPropertyValue('--oath170-fit-size'),
+      leadingVariable:b.style.getPropertyValue('--oath170-fit-leading'),
+      children:[...b.childNodes].map(n=>({type:n.nodeType,tag:n.nodeName,text:n.textContent.slice(0,130)})),
+      computedWhiteSpace:cs.whiteSpace,
+      innerHTML:b.innerHTML.slice(0,1000)
+    }:undefined;
+    return {label,readable,debug,selector:b.id||b.dataset.tab||b.dataset.action||b.parentElement?.id||b.className,
       x:box.x,y:box.y,w:box.width,h:box.height,tx:r.x,ty:r.y,tw:r.width,th:r.height,
       safe,background:cs.backgroundImage,fontSize:cs.fontSize,
       good:box.width>=60&&box.height>=60&&r.width>0&&r.height>0&&
