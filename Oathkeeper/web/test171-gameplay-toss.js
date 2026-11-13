@@ -35,16 +35,10 @@ function createRoll(stage,result,onComplete,skin){
     caption:'D'+result.sides,
     index
   })));
-  // Official percentile gameplay consists of one tens and one ones die for
-  // each roll, while the secure result remains untouched.
-  if(result.sides===100 && result.mode==='official'){
-    const percentDice=[];
-    resultFaces.slice(0,2).forEach((r,index)=>{
-      percentDice.push({geometry:10,face:Number(r.tens)||0,caption:'Tens',index:index*2});
-      percentDice.push({geometry:10,face:Number(r.ones)||0,caption:'Ones',index:index*2+1});
-    });
-    dice.splice(0,dice.length,...previewNodes(percentDice));
-  }
+  // TEST 180: show one actual D100-shaped illustrated die for each percentile
+  // roll, including official mode. The dice engine still decides tens, ones,
+  // value and total; this renderer displays ONLY the resolved result.
+  // The original selected-skin artwork/roll animation is unchanged.
   if(!dice.length){
     onComplete();return ()=>{};
   }
