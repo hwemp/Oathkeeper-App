@@ -224,7 +224,7 @@ html body .oath170-reference-button{
 
 /* One authored two-line label stays inside the same approved gold plaque.
  * No graphic rescale, icon change, or hidden truncation is allowed. */
-html body button.oath170-reference-button > .oath170-two-line-label{
+html body button.oath170-reference-button .oath170-two-line-label{
   display:inline-block!important;
   max-width:100%!important;
   font:inherit!important;
