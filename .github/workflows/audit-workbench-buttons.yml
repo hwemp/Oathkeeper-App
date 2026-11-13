@@ -32,6 +32,8 @@ jobs:
           python-version: '3.12'
       - name: Check authoritative source and icon files
         run: |
+          node --check scripts/audit-workbench-button-text.cjs
+          node --check web/test170-button-states.js
           npm ci
           node scripts/audit-workbench-source-alignment.mjs
           node --test tests/approved-icon-art.test.mjs
