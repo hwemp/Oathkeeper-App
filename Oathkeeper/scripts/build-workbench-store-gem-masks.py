@@ -13,6 +13,8 @@ import numpy as np
 ROOT=Path(__file__).resolve().parent.parent
 ART=ROOT/"dist"/"art"/"exact-store"
 OUTPUT=ROOT/"dist"/"art"/"workbench-store-gem-masks"
+OVERLAYS=ROOT/"dist"/"art"/"workbench-store-gem-overlays"
+THEME_COLORS={"sapphire":(63,143,229),"emerald":(32,195,122),"ruby":(219,65,97),"aquamarine":(58,210,209),"citrine":(234,192,73)}
 # center x, center y, half-width, half-height in original page pixels
 # The header, collection title, selection-frame tip and footer jewels are UI.
 # Treasure-pile crystals are depicted merchandise; do not recolor scenery.
@@ -31,6 +33,7 @@ POSITIONS={
 EXPECTED={"backgrounds":(941,1672),"dice":(941,1672),"icons":(887,1774)}
 def main():
  OUTPUT.mkdir(parents=True,exist_ok=True)
+ OVERLAYS.mkdir(parents=True,exist_ok=True)
  for category,(name,positions) in POSITIONS.items():
   source=ART/name
   if not source.is_file(): raise RuntimeError("Missing protected Store source "+str(source))
@@ -72,5 +75,25 @@ def main():
     raise RuntimeError("Store mask leaks outside isolated gemstones")
    if np.count_nonzero(a>128)<200:
     raise RuntimeError("Store mask opacity missing on gemstone")
-  print(f"STORE GEM MASK: {category}: {np.count_nonzero(mask)} isolated violet UI pixels, RGBA transparency verified; original art untouched")
+  # Produce fully transparent, separately colorized overlays: no CSS mask,
+  # multiply blend, solid pseudo background, or page-wide color layer.
+  # Gold/cloth/background pixels have alpha 0 by construction.
+  brightness=(np.max(data,axis=2).astype(np.float32)/255.0)
+  facet_scale=(0.52+0.74*brightness)[:,:,None]
+  for theme,base in THEME_COLORS.items():
+   original_rgb=np.array(base,dtype=np.float32).reshape(1,1,3)
+   colored=np.clip(original_rgb*facet_scale,0,255).astype(np.uint8)
+   overlay=np.zeros((im.height,im.width,4),dtype=np.uint8)
+   overlay[:,:,:3]=colored
+   overlay[:,:,3]=alpha
+   overlay_file=OVERLAYS/(theme+"-"+category+".png")
+   Image.fromarray(overlay,"RGBA").save(overlay_file,"PNG",optimize=True)
+   with Image.open(overlay_file) as check:
+    if check.mode!="RGBA":raise RuntimeError("Overlay lost transparency "+str(overlay_file))
+    a=np.asarray(check.getchannel("A"),dtype=np.uint8)
+    if np.count_nonzero(a>8)>max(7000,im.width*im.height*.01):
+     raise RuntimeError("Overlay would tint the Store background "+str(overlay_file))
+    if np.count_nonzero(a>128)<200:
+     raise RuntimeError("Overlay missing gemstone "+str(overlay_file))
+  print(f"STORE GEM OVERLAYS: {category}: 5 colors with transparent untouched backdrop; {np.count_nonzero(mask)} gem pixels; original art intact")
 if __name__=="__main__": main()
