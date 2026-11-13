@@ -156,3 +156,33 @@ html body .ok-exact-store[data-ok-category="backgrounds"] .ok-canvas > img.ok-ar
 @media(prefers-reduced-motion:reduce){
   #diceTabletop .test171-die > .test179-true-face{transition:none!important}
 }
+
+
+/* TEST 180 — scoped visual corrections; launcher master source untouched.
+   Keep one continuous image edge within each gold frame; no secondary
+   clipped-corner border, mask or inner outline. */
+html body .ok-exact-store[data-ok-category="icons"] .ok-canvas > button.ok-hit[data-store-icon] {
+  border-radius:10%!important;
+  overflow:hidden!important;
+  background-clip:padding-box!important;
+}
+html body .ok-exact-store[data-ok-category="icons"] .ok-canvas > button.ok-hit[data-store-icon]::before {
+  inset:-1px!important;
+  border:0!important;
+  border-radius:0!important;
+  background-size:120% 120%!important;
+  background-position:50% 50%!important;
+  box-shadow:none!important;
+  outline:0!important;
+  clip-path:none!important;
+}
+html body .ok-exact-store[data-ok-category="icons"] .ok-icon-preview.ok-icon-launcher-master > img.workbench-selected-launcher-art {
+  object-fit:cover!important;
+  transform:scale(1.14)!important;
+}
+/* Tone down the preview-only bloom; do not mutate purchased assets, rolling
+   GIF frames, or dice values. */
+html body .ok-exact-store[data-ok-category="dice"] .ok-dice-preview img,
+html body .ok-exact-store[data-ok-category="dice"] [data-store-dice] img {
+  filter:brightness(.88) contrast(1.08) saturate(.96)!important;
+}
