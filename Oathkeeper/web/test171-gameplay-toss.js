@@ -73,6 +73,17 @@ function createRoll(stage,result,onComplete,skin){
     shadow.className='test171-contact-shadow';
     shadow.setAttribute('aria-hidden','true');
     wrap.appendChild(shadow);
+    // TEST 179: the settled face is the real dice engine outcome, not the
+    // fixed number painted on the approved illustrated still. During motion
+    // the original scene remains untouched; after landing a faceted numbered
+    // center is composited directly ON the illustrated die.
+    const trueFace=document.createElement('span');
+    trueFace.className='test179-true-face';
+    trueFace.dataset.rollFace=String(die.face);
+    trueFace.textContent=String(die.face);
+    trueFace.setAttribute('aria-hidden','true');
+    wrap.dataset.rollFace=String(die.face);
+    wrap.appendChild(trueFace);
     field.appendChild(wrap);
     elements.push({wrap,art,die,index});
   }
@@ -98,6 +109,9 @@ function createRoll(stage,result,onComplete,skin){
       // The settled artwork is still the approved illustrated die. The actual
       // rolled face is always exposed separately from secure result.rolls.
       art.src=getArt(slug,geometryFor(die),false);
+      wrap.classList.add('test179-face-settled');
+      wrap.setAttribute('role','img');
+      wrap.setAttribute('aria-label','D'+geometryFor(die)+' showing actual rolled face '+String(die.face));
       wrap.style.transform='';
     }
     const lines=resultFaces.map((r,index)=>{
