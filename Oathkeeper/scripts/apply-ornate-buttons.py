@@ -40,7 +40,7 @@ def main():
         if Path(required) not in original_hashes:
             raise RuntimeError(f"Missing frozen Build 144 artifact: {required}")
     style = (SOURCE / STYLESHEET).read_bytes()
-    if b"ornate-amethyst.svg" not in style or b"pointer-events: none" not in style:
+    if b"canonical-gems/amethyst.svg" not in style or b"pointer-events: none" not in style:
         raise RuntimeError("Button overlay must use the SVG gemstone and not block controls")
     (DIST / STYLESHEET).write_bytes(style)
     (DIST / "art").mkdir(parents=True, exist_ok=True)
@@ -49,6 +49,10 @@ def main():
         if not original.is_file() or not original.read_bytes().startswith(b"<svg"):
             raise RuntimeError(f"Missing valid vector art: {original}")
         shutil.copyfile(original, DIST / "art" / name)
+    # These generated faces are the same cut geometry used in the approved
+    # master button and 171 tabletop; never render the old standalone diamond.
+    import subprocess,sys
+    subprocess.run([sys.executable,str(ROOT/"scripts/generate-workbench-canonical-gems.py")],check=True)
     html = index.read_text(encoding="utf-8")
     if STYLESHEET not in html:
         link = f'<link rel="stylesheet" href="./{STYLESHEET}" data-oathkeeper-test161="ornate-buttons">'
