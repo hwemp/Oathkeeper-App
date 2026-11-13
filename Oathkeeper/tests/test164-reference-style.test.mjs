@@ -17,7 +17,8 @@ test('notification and equipment X are plain with preserved gold border',()=>{
 test('visual master mapping covers 10 animated dice and 10 launcher icons',()=>{
  for(const s of ['dragonfire','frostborne','elvenleaf','celestial','abyssal','gold-forged','necrotic','astral','oceanic','sunfire'])
    assert.ok(css.includes('test164-dice/'+s+'.png'));
- for(const n of ['01','02','04','05','06','07','08','11','12','14'])
+ for(const n of ['01','02','04','05','06','07','08','11','12','14']){
    assert.ok(css.includes('icon-'+n+'.webp'));
    assert.ok(!css.includes('launcher-'+n+'.webp'), 'no obsolete Store icon alias');
+ }
 });
