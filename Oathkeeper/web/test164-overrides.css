@@ -104,7 +104,7 @@
   -webkit-text-fill-color:#f5d28b!important;
   font:700 27px/1 Georgia,serif!important;
 }
-#equipmentEditor [data-action="draft-add"]{
+#equipmentEditor [data-action="draft-add"]:not(.oath170-reference-button){
   border:1px solid #cba663!important;
   background:linear-gradient(145deg,#15192c,#241630)!important;
   color:#f6d995!important;
