@@ -1,0 +1,28 @@
+/* First-launch modal safe-area correction for Android WebView.
+ * Original frozen Store/144 artwork, age choices and acceptance rules remain
+ * untouched. Only height calculation/scroll containment is changed.
+ */
+html body .terms-gate{
+ box-sizing:border-box!important;
+ height:100dvh!important;
+ min-height:0!important;
+ padding-top:max(14px,env(safe-area-inset-top,0px))!important;
+ padding-bottom:max(14px,env(safe-area-inset-bottom,0px))!important;
+ padding-left:max(12px,env(safe-area-inset-left,0px))!important;
+ padding-right:max(12px,env(safe-area-inset-right,0px))!important;
+}
+html body .terms-gate .terms-scroll{
+ box-sizing:border-box!important;
+ flex:0 1 auto!important;
+ min-height:0!important;
+ max-height:100%!important;
+ overflow-y:auto!important;
+ overscroll-behavior:contain!important;
+ -webkit-overflow-scrolling:touch;
+}
+html body .terms-gate .terms-prose{
+ min-height:0!important;
+}
+@media(max-height:700px){
+ html body .terms-gate .terms-prose{max-height:26dvh!important;}
+}
