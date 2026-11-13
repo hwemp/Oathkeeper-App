@@ -26,7 +26,7 @@ def main():
         wrapper.remove();
         stage.classList.remove("workbench-mesh-stage");
         return previous.play(stage, result, onComplete, skin);'''
-    if text.count(old)!=1 or text.count("const previous = globalThis.OathkeeperTabletop171;")!=1:
+    if text.count(old)!=1 or text.count("var previous = globalThis.OathkeeperTabletop171;")!=1:
         raise RuntimeError("Unexpected frozen gameplay adapter; refuse unsafe patch")
     code.write_text(text.replace(old,replacement,1),encoding="utf-8")
     if 'return previous.play(stage, result, onComplete, skin);' not in code.read_text():
