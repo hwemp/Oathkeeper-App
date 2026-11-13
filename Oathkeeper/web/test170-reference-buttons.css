@@ -284,3 +284,57 @@ html body button.oath170-reference-button[data-oath170-frame="wide"]{
 html body button.oath170-reference-button[data-oath170-frame="wide"]:is(.oath170-reference-selected,.active,.selected,[aria-pressed="true"],[aria-current="page"],:focus-visible,:active):not(:disabled){
  background-image:var(--oath170-button-wide-selected)!important;
 }
+
+/* WORKBENCH HD SCENE TILES: source-resolution 1600px vector renderings,
+ * never the old 508px previews. Contain preserves the entire scene inside
+ * the original painted selection square. Native Store click mapping intact. */
+.ok-exact-store button.ok-hit[data-store-background="moonlit-citadel"]::before{
+ background-image:url("./art/workbench-hd-scenes/moonlit-citadel.webp")!important;
+ background-size:contain!important;
+ background-position:center!important;
+}
+.ok-exact-store button.ok-hit[data-store-background="ancient-ruins"]::before{
+ background-image:url("./art/workbench-hd-scenes/ancient-ruins.webp")!important;
+ background-size:contain!important;
+ background-position:center!important;
+}
+.ok-exact-store button.ok-hit[data-store-background="enchanted-forest"]::before{
+ background-image:url("./art/workbench-hd-scenes/enchanted-forest.webp")!important;
+ background-size:contain!important;
+ background-position:center!important;
+}
+.ok-exact-store button.ok-hit[data-store-background="dragons-crag"]::before{
+ background-image:url("./art/workbench-hd-scenes/dragons-crag.webp")!important;
+ background-size:contain!important;
+ background-position:center!important;
+}
+.ok-exact-store button.ok-hit[data-store-background="shadow-marsh"]::before{
+ background-image:url("./art/workbench-hd-scenes/shadow-marsh.webp")!important;
+ background-size:contain!important;
+ background-position:center!important;
+}
+.ok-exact-store button.ok-hit[data-store-background="celestial-plains"]::before{
+ background-image:url("./art/workbench-hd-scenes/celestial-plains.webp")!important;
+ background-size:contain!important;
+ background-position:center!important;
+}
+.ok-exact-store button.ok-hit[data-store-background="crystal-caverns"]::before{
+ background-image:url("./art/workbench-hd-scenes/crystal-caverns.webp")!important;
+ background-size:contain!important;
+ background-position:center!important;
+}
+.ok-exact-store button.ok-hit[data-store-background="elder-grove"]::before{
+ background-image:url("./art/workbench-hd-scenes/elder-grove.webp")!important;
+ background-size:contain!important;
+ background-position:center!important;
+}
+.ok-exact-store button.ok-hit[data-store-background="mystic-lake"]::before{
+ background-image:url("./art/workbench-hd-scenes/mystic-lake.webp")!important;
+ background-size:contain!important;
+ background-position:center!important;
+}
+.ok-exact-store button.ok-hit[data-store-background="eternal-keep"]::before{
+ background-image:url("./art/workbench-hd-scenes/eternal-keep.webp")!important;
+ background-size:contain!important;
+ background-position:center!important;
+}
