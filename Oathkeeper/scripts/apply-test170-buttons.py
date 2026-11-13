@@ -46,6 +46,38 @@ def main():
    path=destination/(theme+"-"+state+".svg")
    path.write_text(svg,encoding="utf-8")
    if path.stat().st_size<2500:raise RuntimeError("Incomplete button "+str(path))
+   # Proportionate side-anchored expansion: keep BOTH original 150px side
+   # ornaments and the approved 70x100 facet shape pixel-perfect in SVG space.
+   # Only stretch the empty central 120px plaque panel for longer labels.
+   # This avoids default SVG meet-letterboxing (47 actual CI violations).
+   defs_end=svg.index("</defs>")+len("</defs>")
+   definitions=svg[svg.index("<defs>"):defs_end]
+   body=svg[defs_end:svg.rfind("</svg>")]
+   top='<use href="#gemstone" transform="translate(210 49)"/>'
+   bottom='<use href="#gemstone" transform="translate(210 211) scale(.83 .83)"/>'
+   if body.count(top)!=1 or body.count(bottom)!=1:
+    raise RuntimeError("Expected exactly two approved gems")
+   body=body.replace(top,"").replace(bottom,"")
+   cut='<clipPath id="oath-left"><rect width="150" height="260"/></clipPath>' + \
+       '<clipPath id="oath-center"><rect x="150" width="120" height="260"/></clipPath>' + \
+       '<clipPath id="oath-right"><rect x="270" width="150" height="260"/></clipPath>'
+   definitions=definitions.replace("</defs>",cut+"</defs>")
+   for label,extra in (("medium",140),("wide",420)):
+    stretch=(120+extra)/120
+    shift=150*(1-stretch)
+    width=420+extra
+    render=('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+str(width)+' 260" fill="none">' +
+     definitions+
+     '<g clip-path="url(#oath-left)">'+body+'</g>'+
+     '<g transform="translate('+str(shift)+' 0) scale('+str(stretch)+' 1)"><g clip-path="url(#oath-center)">'+body+'</g></g>'+
+     '<g transform="translate('+str(extra)+' 0)"><g clip-path="url(#oath-right)">'+body+'</g></g>'+
+     '<use href="#gemstone" transform="translate('+str(210+extra/2)+' 49)"/>'+
+     '<use href="#gemstone" transform="translate('+str(210+extra/2)+' 211) scale(.83 .83)"/>'+
+     '</svg>')
+    ET.fromstring(render)
+    if render.count('<use href="#gemstone"')!=2:
+     raise RuntimeError("Duplicate gemstone on "+label)
+    (destination/(theme+"-"+state+"-"+label+".svg")).write_text(render,encoding="utf-8")
  shutil.copyfile(css,DIST/"test170-reference-buttons.css")
  shutil.copyfile(script,DIST/"test170-button-states.js")
  index=DIST/"index.html"
