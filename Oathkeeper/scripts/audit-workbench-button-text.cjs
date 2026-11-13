@@ -35,7 +35,7 @@ const widths=[360,393,412];
        r.top>=safe.top-1.25&&r.bottom<=safe.bottom+1.25&&
        b.dataset.oath170TextFit==='ok' && cs.backgroundImage.includes('test170-buttons') &&
        parseFloat(cs.fontSize)>=10.5};
-   })));
+   }));
    for(const item of results){report.push({width:page.viewportSize().width,screen:label,...item});if(!item.good)failures.push({width:page.viewportSize().width,screen:label,...item});}
   };
   const open=async(width)=>{
