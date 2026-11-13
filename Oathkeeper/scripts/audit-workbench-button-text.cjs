@@ -29,7 +29,8 @@ const widths=[360,393,412];
     // A wide, short CSS background box does not imply the SVG itself fills
     // that entire box: SVG preserveAspectRatio letterboxes the actual frame.
     // Fit the label to the PAINTED plaque, not the HTML button hit target.
-    const svgWidth=420,svgHeight=260;
+    const variant=b.dataset.oath170Frame||'standard';
+    const svgWidth=variant==='wide'?840:variant==='medium'?560:420,svgHeight=260;
     const scale=Math.min(box.width/svgWidth,box.height/svgHeight);
     const paintWidth=svgWidth*scale,paintHeight=svgHeight*scale;
     const painted={left:box.left+(box.width-paintWidth)/2,
@@ -52,7 +53,7 @@ const widths=[360,393,412];
     }:undefined;
     return {label,readable,debug,selector:b.id||b.dataset.tab||b.dataset.action||b.parentElement?.id||b.className,
       x:box.x,y:box.y,w:box.width,h:box.height,tx:r.x,ty:r.y,tw:r.width,th:r.height,
-      safe,painted,background:cs.backgroundImage,backgroundSize:cs.backgroundSize,fontSize:cs.fontSize,
+      safe,painted,variant,background:cs.backgroundImage,backgroundSize:cs.backgroundSize,fontSize:cs.fontSize,
       good:box.width>=60&&box.height>=60&&r.width>0&&r.height>0&&
        r.left>=safe.left-1.25&&r.right<=safe.right+1.25&&
        r.top>=safe.top-1.25&&r.bottom<=safe.bottom+1.25&&
