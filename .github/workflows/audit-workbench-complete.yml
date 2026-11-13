@@ -73,21 +73,23 @@ jobs:
           python -m pip install --disable-pip-version-check Pillow cairosvg numpy
           python scripts/apply-ornate-buttons.py
           python scripts/apply-test-164.py
+          npm install --no-save --package-lock=false playwright@1.56.1
+          npx playwright install --with-deps chromium
           python scripts/build-test169-reference-assets.py
           python scripts/patch-test169-approved-source.py
+          # Run historical tests at the exact appropriate renderer milestone.
+          node scripts/audit-test169-reference.cjs
           python scripts/apply-test170-buttons.py
+          node scripts/audit-test170-reference.cjs
           python scripts/apply-test171-gameplay.py
+          node scripts/audit-test171-gameplay.cjs
           python scripts/normalize-workbench-icons-page.py
           python scripts/apply-workbench-icon-preview.py
           node scripts/build-workbench-gameplay-mesh.cjs
           test -s dist/art/canonical-gems/amethyst.svg
           test -s dist/workbench-gameplay-mesh.js
-          npm install --no-save --package-lock=false playwright@1.56.1
-          npx playwright install --with-deps chromium
       - name: Check live UI geometry, all launcher icons, gems, background scenes and dice
         run: |
-          node scripts/audit-test169-reference.cjs
-          node scripts/audit-test170-reference.cjs
           node scripts/audit-workbench-button-text.cjs
           node scripts/audit-workbench-icon-preview.cjs
           node scripts/audit-workbench-gems.cjs
