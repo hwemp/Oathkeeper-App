@@ -56,10 +56,13 @@ def fit_reference(src,size):
 def scene_page(base,slug):
  if slug=="moonlit-citadel":
   return base.copy() # Preserve the already-approved, high-resolution default.
- source=ART/"workbench-hd-scenes"/(slug+".webp")
- if not source.is_file():raise RuntimeError("Missing vector-master scene "+slug)
+ # The only verified richly illustrated source is the approved 508x360
+ # WebP. The 1600px SVG concept art is a FLAT redraw and visually regressed
+ # the original. Protect these illustrated pixels instead of fake HD claims.
+ source=ART/"approved-backgrounds"/(slug+".webp")
+ if not source.is_file():raise RuntimeError("Missing approved illustrated scene "+slug)
  image=Image.open(source).convert("RGB")
- if image.size!=(1600,1125):raise RuntimeError("Scene must be true 1600x1125 vector raster "+slug)
+ if image.size!=(508,360):raise RuntimeError("Approved image unexpectedly changed "+slug)
  result=base.copy();rect=(38,675,903,1082)
  w,h=rect[2]-rect[0],rect[3]-rect[1]
  # Preserve the ENTIRE scene with its original aspect ratio. No stretching,
@@ -153,7 +156,8 @@ def dice_art():
     out=out.filter(ImageFilter.UnsharpMask(radius=1.2,percent=125,threshold=3))
    out.save(directory/("d"+str(sides)+".webp"),"WEBP",quality=94,method=6)
 def main():
- vector_scenes()
+ # Never substitute unapproved low-detail vector concepts for the
+ # illustrated scenes in the actually packaged Store.
  page=ART/"exact-store"/"backgrounds.webp"
  if not page.is_file():raise RuntimeError("Frozen 144 store master absent")
  master=ROLL/"astral-original.gif"
