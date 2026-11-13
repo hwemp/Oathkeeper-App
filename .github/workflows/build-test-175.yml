@@ -362,7 +362,9 @@ jobs:
           path: Oathkeeper/output/*
           if-no-files-found: error
           retention-days: 30
-      - name: Verify signed Android 15 APK at NATIVE resolution (never resize System UI)
+      - name: Install image inspection dependency for visible-WebView acceptance
+        run: python3 -m pip install --disable-pip-version-check Pillow
+      - name: Verify Android 15 APK visibly renders Oathkeeper at NATIVE resolution
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 35
@@ -373,7 +375,7 @@ jobs:
           heap-size: 768M
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
           disable-animations: true
-          script: bash Oathkeeper/scripts/verify-stable-android-apk.sh "$GITHUB_WORKSPACE/Oathkeeper/output/Oathkeeper-TEST-BRANCH-175.apk" "com.harrisonwaters.oathkeeper.test175" "$GITHUB_WORKSPACE/Oathkeeper/device-report"
+          script: bash Oathkeeper/scripts/verify-visible-android-apk.sh "$GITHUB_WORKSPACE/Oathkeeper/output/Oathkeeper-TEST-BRANCH-175.apk" "com.harrisonwaters.oathkeeper.test175" "$GITHUB_WORKSPACE/Oathkeeper/device-report"
       - name: Publish actual Android UI/device evidence (not a release)
         if: always()
         uses: actions/upload-artifact@v4
