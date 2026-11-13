@@ -14,23 +14,23 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 42
     steps:
-      - name: Require complete successful Test 179 Android 15 workflow
+      - name: Require independent Android 15 device verification of exact Test 179 APK
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           for attempt in $(seq 1 140); do
-            status=$(gh run view 43466045603 --repo "$GITHUB_REPOSITORY" --json status --jq '.status')
-            conclusion=$(gh run view 43466045603 --repo "$GITHUB_REPOSITORY" --json conclusion --jq '.conclusion')
+            status=$(gh run view 43470103847 --repo "$GITHUB_REPOSITORY" --json status --jq '.status')
+            conclusion=$(gh run view 43470103847 --repo "$GITHUB_REPOSITORY" --json conclusion --jq '.conclusion')
             if [[ "$status" == "completed" ]]; then
               if [[ "$conclusion" != "success" ]]; then
-                echo "Test 179 did not pass final Android evidence: $conclusion"
+                echo "Independent signed-APK Android 15 verification did not pass: $conclusion"
                 exit 1
               fi
-              echo "Test 179 completed successfully including Android device evidence."
+              echo "The EXACT signed Test 179 APK independently passed Android 15 device verification (same APK, no rebuild)."
               exit 0
             fi
-            echo "QA not yet finished; not publishing without verified result (check $attempt)"
+            echo "Independent device QA not yet finished; not publishing without verified result (check $attempt)"
             sleep 15
           done
           echo 'QA timeout; release withheld'
@@ -69,5 +69,5 @@ jobs:
             --target 38da33f9aaf6c10b5b815b9947b399b80b735fea \
             --prerelease \
             --title "Oathkeeper Test 179 — Four-Issue QA APK" \
-            --notes "Test 179 debug-only Android test build based on owner-approved 178. New framed bundle dice images; Android/Store icon fit; repaired crop composition of ten original 508x360 background scenes; illustrated gameplay die results correctly displayed on their settled front face. All 10 Store animated dice set assets retained. No billing activation or app store production approval. The original background source files are 508x360; enlarging them does not create genuine high-definition scene details. APK SHA-256: ffbab24739cdf9cf72370d6f605b3554d4c9af5facbb52883dbda0f45c392db1. This is a test pending owner visual acceptance; 178 remains approved baseline." \
+            --notes "Test 179 debug-only Android test build based on owner-approved 178. New framed bundle dice images; Android/Store icon fit; repaired crop composition of ten original 508x360 background scenes; illustrated gameplay die results correctly displayed on their settled front face. All 10 Store animated dice set assets retained. No billing activation or app store production approval. The original background source files are 508x360; enlarging them does not create genuine high-definition scene details. APK SHA-256: ffbab24739cdf9cf72370d6f605b3554d4c9af5facbb52883dbda0f45c392db1. Independent Android 15 native verification of the exact same signed APK is mandatory (run 43470103847); original combined workflow encountered an emulator OS Process system ANR. This is a test pending owner visual acceptance; 178 remains approved baseline." \
             release/Oathkeeper-TEST-BRANCH-179.apk release/SHA256SUMS.txt
