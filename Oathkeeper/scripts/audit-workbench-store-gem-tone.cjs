@@ -86,9 +86,9 @@ print(json.dumps({"gem_pixels_changed":inside_changed,"non_gem_pixels_changed":o
     await live.waitFor({state:'visible',timeout:10000});
     const stable=await live.evaluate(async img=>{
       const src=(img.getAttribute('src')||'').split('?')[0];
-      if(!/\\.webp$/.test(src)||src.endsWith('-still.webp'))
+      if(!/\.webp$/.test(src)||src.endsWith('-still.webp'))
         throw Error('Unexpected archived dice animation path '+src);
-      img.setAttribute('src',src.replace(/\\.webp$/,'-still.webp'));
+      img.setAttribute('src',src.replace(/\.webp$/,'-still.webp'));
       await img.decode();
       return img.getAttribute('src');
     });
