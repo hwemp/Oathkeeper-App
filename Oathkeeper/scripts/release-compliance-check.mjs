@@ -35,7 +35,7 @@ check('checkout-default-off', pricing && !/checkoutEnabled\s*:\s*true/.test(pric
 const privacy = exists('web/privacy.html') ? read('web/privacy.html') : '';
 record('REVIEW','privacy-accuracy','Review actual SDKs, community, support diagnostics, billing and backups; current prose says Store empty although Store previews exist.');
 if (/Account deletion and password recovery are not available/.test(privacy))
-  record('BLOCK','account-deletion','Community account deletion/password recovery are explicitly unavailable; do not enable account creation publicly until fixed and tested.');
+  record('REVIEW','account-deletion','Account deletion/recovery are unavailable: permitted only for an evidence-backed offline-only build without account creation. Online community must remain disabled until server-side deletion and privacy compliance pass.');
 record('REVIEW','age-assurance','Current first-launch age range is self-declared. It is not identity assurance or verified parental consent; require separate backend review.');
 record('REVIEW','third-party-art','Verify licensed original source and commercial distribution rights for ALL art, SVGs, fonts, audio, screenshots, dice GIFs, and logo variants; see asset-rights-register.csv.');
 record('REVIEW','dnd-ip','Compare every embedded rule, name, art asset and layout against SRD 5.2.1 and original artwork. Official D&D Beyond content linked to is not necessarily licensed to copy.');
