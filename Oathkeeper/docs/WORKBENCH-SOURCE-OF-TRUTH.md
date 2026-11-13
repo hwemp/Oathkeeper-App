@@ -31,14 +31,14 @@ Status: WORKBENCH / NOT APPROVED / NO APK. Retain approved original release and 
 ## Existing conflict hotspots: NOT FIXED YET
 
 - The frozen Store uses a baked page image with transparent clickable regions. The workbench icon-only repair now neutralizes the stale baked selected state, renders all ten thumbnails and enlarged previews from Android launcher masters, and corrects the icon-07/08 display-name mapping. Verified in browser-only GitHub Actions run 43322313829; automated browser verification passed; the user subsequently authorized advancing to the next repair, without a separate declaration of pixel-perfect visual acceptance.
-- CSS from TEST 164, TEST 169 and TEST 170 targets overlapping menu, navigation and editor button selectors. We must consolidate these rather than add a fourth conflicting layer.
+- Workbench button typography repair now excludes TEST 164/169 legacy selector effects from current `.oath170-reference-button` controls, so the TEST 170 shared CSS/controller owns typography. Other unapproved visual differences (e.g., gemstone geometry, Store bottom navigation artwork) are retained separately for ledger entries #3/#5; final whole-app code consolidation still pending.
 - TEST 169 has object-fit:fill for a baked background page. New backgrounds must use proper frame cropping/containment instead.
 - TEST 171 is a tabletop-motion prototype, not the final full 3D accurate-face game roller.
 
 ## Repair ledger (one at a time)
 
 1. Launcher App Icons tile vs selected preview vs Android icon — TECHNICAL CHECKS PASSED (10/10); user explicitly authorized continuing repairs on Nov 12, 2026, without separately confirming pixel-perfect visual acceptance. Evidence: https://github.com/hwemp/Oathkeeper-App/actions/runs/43322313829 (screenshots in OATHKEEPER-WORKBENCH-ICON-PREVIEWS-NO-APK). Do not count technical verification as final visual acceptance.
-2. Button fonts fit frame — ACTIVE. Audit the shared TEST 170 button master and text geometry on 360/393/412 px screens; correct the authoritative CSS without stacking another override. Do not change gem shape or any other pending feature.
+2. Button fonts fit frame — **TECHNICAL REPAIR COMPLETE, AWAITING USER VISUAL APPROVAL**. Browser-only run https://github.com/hwemp/Oathkeeper-App/actions/runs/43352985797 PASS: 222 measured ornate-button labels on 360/393/412 px screens, 0 violations; the long DM `Manage player stats & initiative` label now wraps to two legible lines at 13.5px. Retired conflicting TEST 164/169 button selectors; retained gold SVG artwork and control behaviors. Screenshots: artifact `OATHKEEPER-WORKBENCH-BUTTON-TEXT-PREVIEWS-NO-APK`, see `button-text-menu-393.png`, `button-text-dm-393.png`, `button-text-journal-393.png`. NO APK. Do not start gemstone issue #3 until user reviews/approves.
 3. Single approved faceted gemstone design — pending.
 4. Unique high-definition backgrounds properly inside frames — pending.
 5. Consistent navigation/interface icon family — pending.
