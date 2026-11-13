@@ -232,3 +232,55 @@ html body button.oath170-reference-button .oath170-two-line-label{
   white-space:pre-line!important;
   text-align:center!important;
 }
+
+/* Responsive gold plaque uses one conserved MASTER: side ornaments and both
+ * faceted gems preserve shape; only center spacer widens. Never scale the
+ * raster screenshots or place double gemstone overlays on controls. */
+:root{
+ --oath170-button-medium-normal:url("./art/test170-buttons/amethyst-normal-medium.svg");
+ --oath170-button-medium-selected:url("./art/test170-buttons/amethyst-selected-medium.svg");
+ --oath170-button-wide-normal:url("./art/test170-buttons/amethyst-normal-wide.svg");
+ --oath170-button-wide-selected:url("./art/test170-buttons/amethyst-selected-wide.svg");
+}
+:root[data-oath-gem-theme="sapphire"]{
+ --oath170-button-medium-normal:url("./art/test170-buttons/sapphire-normal-medium.svg");
+ --oath170-button-medium-selected:url("./art/test170-buttons/sapphire-selected-medium.svg");
+ --oath170-button-wide-normal:url("./art/test170-buttons/sapphire-normal-wide.svg");
+ --oath170-button-wide-selected:url("./art/test170-buttons/sapphire-selected-wide.svg");
+}
+:root[data-oath-gem-theme="emerald"]{
+ --oath170-button-medium-normal:url("./art/test170-buttons/emerald-normal-medium.svg");
+ --oath170-button-medium-selected:url("./art/test170-buttons/emerald-selected-medium.svg");
+ --oath170-button-wide-normal:url("./art/test170-buttons/emerald-normal-wide.svg");
+ --oath170-button-wide-selected:url("./art/test170-buttons/emerald-selected-wide.svg");
+}
+:root[data-oath-gem-theme="ruby"]{
+ --oath170-button-medium-normal:url("./art/test170-buttons/ruby-normal-medium.svg");
+ --oath170-button-medium-selected:url("./art/test170-buttons/ruby-selected-medium.svg");
+ --oath170-button-wide-normal:url("./art/test170-buttons/ruby-normal-wide.svg");
+ --oath170-button-wide-selected:url("./art/test170-buttons/ruby-selected-wide.svg");
+}
+:root[data-oath-gem-theme="aquamarine"]{
+ --oath170-button-medium-normal:url("./art/test170-buttons/aquamarine-normal-medium.svg");
+ --oath170-button-medium-selected:url("./art/test170-buttons/aquamarine-selected-medium.svg");
+ --oath170-button-wide-normal:url("./art/test170-buttons/aquamarine-normal-wide.svg");
+ --oath170-button-wide-selected:url("./art/test170-buttons/aquamarine-selected-wide.svg");
+}
+:root[data-oath-gem-theme="citrine"]{
+ --oath170-button-medium-normal:url("./art/test170-buttons/citrine-normal-medium.svg");
+ --oath170-button-medium-selected:url("./art/test170-buttons/citrine-selected-medium.svg");
+ --oath170-button-wide-normal:url("./art/test170-buttons/citrine-normal-wide.svg");
+ --oath170-button-wide-selected:url("./art/test170-buttons/citrine-selected-wide.svg");
+}
+html body button.oath170-reference-button[data-oath170-frame="medium"]{
+ background-image:var(--oath170-button-medium-normal)!important;
+}
+html body button.oath170-reference-button[data-oath170-frame="medium"]:is(.oath170-reference-selected,.active,.selected,[aria-pressed="true"],[aria-current="page"],:focus-visible,:active):not(:disabled){
+ background-image:var(--oath170-button-medium-selected)!important;
+}
+html body button.oath170-reference-button[data-oath170-frame="wide"]{
+ background-image:var(--oath170-button-wide-normal)!important;
+}
+html body button.oath170-reference-button[data-oath170-frame="wide"]:is(.oath170-reference-selected,.active,.selected,[aria-pressed="true"],[aria-current="page"],:focus-visible,:active):not(:disabled){
+ background-image:var(--oath170-button-wide-selected)!important;
+}
