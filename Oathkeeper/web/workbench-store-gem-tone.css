@@ -1,0 +1,50 @@
+/* Store UI gemstone-tone alignment with the applied background.
+ * The 144 source image stays byte-identical and every painted gold ornament,
+ * dice tile, selected icon, treasury crystal, and checkout region is untouched.
+ * The monochrome original-coordinate masks tint ONLY embedded UI diamonds.
+ * A Store PREVIEW is not an applied background; it may not recolor anything.
+ */
+html { --oath-store-gem-color:#b450df; --oath-store-gem-opacity:0; }
+html[data-oath-gem-theme="sapphire"] {--oath-store-gem-color:#3f8fe5;--oath-store-gem-opacity:1}
+html[data-oath-gem-theme="emerald"] {--oath-store-gem-color:#20c37a;--oath-store-gem-opacity:1}
+html[data-oath-gem-theme="ruby"] {--oath-store-gem-color:#db4161;--oath-store-gem-opacity:1}
+html[data-oath-gem-theme="aquamarine"] {--oath-store-gem-color:#3ad2d1;--oath-store-gem-opacity:1}
+html[data-oath-gem-theme="citrine"] {--oath-store-gem-color:#eac049;--oath-store-gem-opacity:1}
+html[data-oath-gem-theme="amethyst"] {--oath-store-gem-opacity:0}
+html body .ok-exact-store .ok-canvas {
+ position:relative!important;
+ isolation:isolate;
+}
+/* This colour-only overlay has no mouse/touch hitbox and no new visible art
+ * outside the mask. Original gem cut geometry and highlights remain. */
+html body .ok-exact-store .ok-canvas::after {
+ content:"";
+ display:block;
+ position:absolute;
+ inset:0;
+ z-index:4;
+ pointer-events:none!important;
+ background:var(--oath-store-gem-color);
+ opacity:var(--oath-store-gem-opacity);
+ mix-blend-mode:color;
+ -webkit-mask-size:100% 100%;
+ mask-size:100% 100%;
+ -webkit-mask-position:center;
+ mask-position:center;
+ -webkit-mask-repeat:no-repeat;
+ mask-repeat:no-repeat;
+}
+html body .ok-exact-store[data-ok-category="backgrounds"] .ok-canvas::after{
+ -webkit-mask-image:url("./art/workbench-store-gem-masks/backgrounds.png");
+ mask-image:url("./art/workbench-store-gem-masks/backgrounds.png");
+}
+html body .ok-exact-store[data-ok-category="dice"] .ok-canvas::after{
+ -webkit-mask-image:url("./art/workbench-store-gem-masks/dice.png");
+ mask-image:url("./art/workbench-store-gem-masks/dice.png");
+}
+html body .ok-exact-store[data-ok-category="icons"] .ok-canvas::after{
+ -webkit-mask-image:url("./art/workbench-store-gem-masks/icons.png");
+ mask-image:url("./art/workbench-store-gem-masks/icons.png");
+}
+/* Bundles are NOT altered: their distinct illustrated sheets are still
+ * under audit; do not pretend they were corrected or place art over them. */
