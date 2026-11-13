@@ -67,9 +67,11 @@ html body .ok-exact-store[data-ok-category="dice"] .ok-roll-box .ok-roll{
  width:100%!important;
  height:100%!important;
  max-width:none!important;
- transform:none!important;
+ transform:scale(1.45)!important;
+ transform-origin:center!important;
  object-fit:contain!important;
  object-position:center!important;
- -webkit-mask-image:radial-gradient(ellipse 25% 51% at 50% 50%,#000 45%,#000e 58%,#0009 71%,transparent 99%)!important;
- mask-image:radial-gradient(ellipse 25% 51% at 50% 50%,#000 45%,#000e 58%,#0009 71%,transparent 99%)!important;
+ mix-blend-mode:screen!important;
+ -webkit-mask-image:radial-gradient(ellipse 22% 52% at 50% 50%,#000 24%,#000e 40%,#0008 61%,transparent 91%)!important;
+ mask-image:radial-gradient(ellipse 22% 52% at 50% 50%,#000 24%,#000e 40%,#0008 61%,transparent 91%)!important;
 }
