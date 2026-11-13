@@ -101,7 +101,7 @@ html body .ok-exact-store[data-ok-category="backgrounds"] .ok-canvas > img.ok-ar
   overflow:visible!important;
   color:#ffdfa0!important;
   -webkit-text-fill-color:#ffdfa0!important;
-  font:700 clamp(14px,7cqw,47px)/1 Georgia,serif!important;
+  font:700 clamp(26px,15cqw,51px)/1 Georgia,serif!important;
   letter-spacing:-.05em!important;
   text-shadow:0 0 1px #fff0be,0 1px 3px #310c55,0 3px 5px #10071b!important;
   background:none!important;
@@ -148,10 +148,10 @@ html body .ok-exact-store[data-ok-category="backgrounds"] .ok-canvas > img.ok-ar
 }
 #diceTabletop .test171-die[data-die-geometry="100"] > .test179-true-face {
   left:34%!important;top:43%!important;width:32%!important;height:23%!important;
-  font-size:clamp(13px,6cqw,39px)!important;
+  font-size:clamp(22px,12cqw,38px)!important;
 }
 #diceTabletop .test171-die-field:has(.test171-die:nth-child(2)) .test171-die .test179-true-face{
-  font-size:clamp(12px,5cqw,30px)!important;
+  font-size:clamp(14px,11cqw,30px)!important;
 }
 @media(prefers-reduced-motion:reduce){
   #diceTabletop .test171-die > .test179-true-face{transition:none!important}
