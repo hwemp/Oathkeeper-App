@@ -1,0 +1,109 @@
+/* Test 177: correct only measured display failures from Android screenshots.
+   Keep the approved gold frames, six gemstone themes, store GIF, purchases,
+   original 10 Android launcher masters and all game rules unchanged. */
+
+/* Existing glyph fitting can leave a visually oversized label after the
+   font loads on a real phone. Constrain the final computed font to the
+   plaque's painted central label region, not the wider click rectangle. */
+html body button.oath170-reference-button{
+  font-size:min(var(--oath170-fit-size,16px),16px)!important;
+  line-height:1.05!important;
+  letter-spacing:-.035em!important;
+  overflow-wrap:normal!important;
+  word-break:keep-all!important;
+  text-align:center!important;
+}
+html #nav button.oath170-reference-button{
+  font-size:min(var(--oath170-fit-size,15px),15px)!important;
+  min-height:81px!important;
+  height:81px!important;
+  padding-inline:16%!important;
+  line-height:1.03!important;
+}
+html #appMenu .menu-options{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:stretch!important;
+  gap:10px!important;
+  padding:10px 9px 20px!important;
+  overflow-x:hidden!important;
+}
+html #appMenu .menu-options button.oath170-reference-button{
+  flex:0 0 auto!important;
+  box-sizing:border-box!important;
+  min-height:88px!important;
+  height:88px!important;
+  margin:0!important;
+  padding-inline:17%!important;
+  font-size:min(var(--oath170-fit-size,15px),15px)!important;
+  line-height:1.05!important;
+}
+html body .card .row>button.oath170-reference-button,
+html body .dice-page .dice-submenu button.oath170-reference-button,
+html #journalEditor button.oath170-reference-button,
+html #equipmentEditor button.oath170-reference-button{
+  min-height:90px!important;
+  padding-inline:15%!important;
+  font-size:min(var(--oath170-fit-size,15px),15px)!important;
+}
+html body .card .row:has(>button.oath170-reference-button){
+  gap:12px!important;
+  align-items:center!important;
+}
+html body .oath170-reference-button .oath170-two-line-label{
+  max-width:75%!important;
+}
+@media(max-width:390px){
+  html #nav button.oath170-reference-button{
+    min-height:77px!important;
+    height:77px!important;
+    font-size:min(var(--oath170-fit-size,13.5px),13.5px)!important;
+  }
+  html #appMenu .menu-options button.oath170-reference-button{
+    min-height:84px!important;
+    height:84px!important;
+    font-size:min(var(--oath170-fit-size,14px),14px)!important;
+  }
+}
+
+/* Fill the inner artwork square with canonical Android launcher imagery.
+   Do NOT resample, recrop, replace or touch launcher icon source resources.
+   The original artwork has ~7% black margin; enlarging its VIEW ONLY leaves
+   the full icon design visible while avoiding the user's 'tiny icons' bug. */
+.ok-exact-store[data-ok-category="icons"] .ok-canvas>button.ok-hit[data-store-icon]{
+  overflow:hidden!important;
+  border-radius:14px!important;
+}
+.ok-exact-store[data-ok-category="icons"] .ok-canvas>button.ok-hit[data-store-icon]::before{
+  inset:2px!important;
+  border-radius:10px!important;
+  background-size:116% 116%!important;
+  background-position:center center!important;
+}
+.ok-exact-store[data-ok-category="icons"] .ok-icon-preview.ok-icon-launcher-master{
+  overflow:hidden!important;
+  border-radius:12%!important;
+}
+.ok-exact-store[data-ok-category="icons"] .ok-icon-preview.ok-icon-launcher-master>img.workbench-selected-launcher-art{
+  object-fit:cover!important;
+  object-position:center!important;
+  transform:scale(1.13)!important;
+  transform-origin:center!important;
+}
+
+/* Individual replacement artwork fills the actual gold-frame interior.
+   No CSS 'contain' letterbox, blurred side curtain or inherited dark box.
+   Each tile has a unique generated image path injected by the packager. */
+.ok-exact-store[data-ok-category="backgrounds"] button.ok-hit[data-store-background]::before{
+  inset:8px!important;
+  border-radius:8px!important;
+  background-size:cover!important;
+  background-position:center center!important;
+  background-color:transparent!important;
+  box-shadow:none!important;
+  image-rendering:auto!important;
+}
+/* Never add an overlay to the baked full-page Store image itself. */
+.ok-exact-store[data-ok-category="backgrounds"] .ok-canvas>.ok-art{
+  object-fit:fill!important;
+}
