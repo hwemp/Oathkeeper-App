@@ -35,7 +35,7 @@ jobs:
           npm test
           npm run catalog
           node scripts/audit-workbench-source-alignment.mjs
-          python -m py_compile scripts/build-test169-reference-assets.py scripts/apply-test170-buttons.py scripts/apply-workbench-icon-preview.py
+          python -m py_compile scripts/build-test169-reference-assets.py scripts/apply-test170-buttons.py scripts/apply-workbench-icon-preview.py scripts/build-workbench-store-gem-masks.py scripts/apply-workbench-store-gem-tone.py
       - name: Extract original frozen 144 web payload, SHA verified
         run: |
           python - <<'PY'
@@ -87,6 +87,10 @@ jobs:
           python scripts/apply-workbench-icon-preview.py
           node scripts/build-workbench-gameplay-mesh.cjs
           python scripts/apply-workbench-firstlaunch-safe-area.py
+          # Apply only the reversible STORE gem visual experiment AFTER all
+          # historical renderer baselines were captured and verified.
+          python scripts/apply-workbench-store-gem-tone.py
+          test -s dist/workbench-store-gem-tone.css
           test -s dist/workbench-firstlaunch-safe-area.css
           test -s dist/art/canonical-gems/amethyst.svg
           test -s dist/workbench-gameplay-mesh.js
@@ -97,6 +101,8 @@ jobs:
           node scripts/audit-workbench-gems.cjs
           node scripts/audit-workbench-gameplay-mesh.cjs
           node scripts/audit-workbench-firstlaunch-safe-area.cjs
+          node --check scripts/audit-workbench-store-gem-tone.cjs
+          node scripts/audit-workbench-store-gem-tone.cjs
           python - <<'PY'
           from PIL import Image
           from pathlib import Path
