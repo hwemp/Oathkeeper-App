@@ -86,6 +86,8 @@ jobs:
           python scripts/normalize-workbench-icons-page.py
           python scripts/apply-workbench-icon-preview.py
           node scripts/build-workbench-gameplay-mesh.cjs
+          python scripts/apply-workbench-firstlaunch-safe-area.py
+          test -s dist/workbench-firstlaunch-safe-area.css
           test -s dist/art/canonical-gems/amethyst.svg
           test -s dist/workbench-gameplay-mesh.js
       - name: Check live UI geometry, all launcher icons, gems, background scenes and dice
@@ -94,6 +96,7 @@ jobs:
           node scripts/audit-workbench-icon-preview.cjs
           node scripts/audit-workbench-gems.cjs
           node scripts/audit-workbench-gameplay-mesh.cjs
+          node scripts/audit-workbench-firstlaunch-safe-area.cjs
           python - <<'PY'
           from PIL import Image
           from pathlib import Path
