@@ -54,10 +54,11 @@ def main():
    definitions=svg[svg.index("<defs>"):defs_end]
    body=svg[defs_end:svg.rfind("</svg>")]
    top='<use href="#gemstone" transform="translate(210 49)"/>'
-   bottom='<use href="#gemstone" transform="translate(210 211) scale(.83 .83)"/>'
-   if body.count(top)!=1 or body.count(bottom)!=1:
-    raise RuntimeError("Expected exactly two approved gems")
-   body=body.replace(top,"").replace(bottom,"")
+   # TEST 178: the user approved ONE gemstone at the top of each plaque;
+   # the bottom is finished with the master SVG's gold filigree instead.
+   if body.count(top)!=1 or 'translate(210 211)' in body:
+    raise RuntimeError("Expected exactly one approved top gemstone")
+   body=body.replace(top,"")
    cut='<clipPath id="oath-left"><rect width="150" height="260"/></clipPath>' + \
        '<clipPath id="oath-center"><rect x="150" width="120" height="260"/></clipPath>' + \
        '<clipPath id="oath-right"><rect x="270" width="150" height="260"/></clipPath>'
@@ -72,10 +73,9 @@ def main():
      '<g transform="translate('+str(shift)+' 0) scale('+str(stretch)+' 1)"><g clip-path="url(#oath-center)">'+body+'</g></g>'+
      '<g transform="translate('+str(extra)+' 0)"><g clip-path="url(#oath-right)">'+body+'</g></g>'+
      '<use href="#gemstone" transform="translate('+str(210+extra/2)+' 49)"/>'+
-     '<use href="#gemstone" transform="translate('+str(210+extra/2)+' 211) scale(.83 .83)"/>'+
      '</svg>')
     ET.fromstring(render)
-    if render.count('<use href="#gemstone"')!=2:
+    if render.count('<use href="#gemstone"')!=1:
      raise RuntimeError("Duplicate gemstone on "+label)
     (destination/(theme+"-"+state+"-"+label+".svg")).write_text(render,encoding="utf-8")
  shutil.copyfile(css,DIST/"test170-reference-buttons.css")
