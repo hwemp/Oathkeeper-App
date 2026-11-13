@@ -217,6 +217,15 @@ jobs:
         run: |
           python -m py_compile scripts/apply-test179-final-defects.py
           python scripts/apply-test179-final-defects.py
+          python -m pip install --disable-pip-version-check opencv-python-headless
+          python -m py_compile scripts/apply-test179-clean-faces.py
+          python scripts/apply-test179-clean-faces.py
+          test -s preview-output/179-numberless-gameplay-art-report.json
+          for slug in dragonfire frostborne elvenleaf celestial abyssal gold-forged necrotic astral oceanic sunfire; do
+            for sides in 3 4 6 8 10 12 20 50 100; do
+              test -s "dist/art/test179-clean-faces/$slug/d$sides.webp"
+            done
+          done
           node --check dist/assets/main-FCw4hQ90.js
           node --check dist/test171-gameplay-toss.js
           test -s dist/test179-final-defects.css
