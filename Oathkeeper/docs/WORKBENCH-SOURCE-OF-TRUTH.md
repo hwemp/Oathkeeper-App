@@ -10,7 +10,7 @@ Status: WORKBENCH / NOT APPROVED / NO APK. Retain approved original release and 
 4. Confirm all affected screens refer to the same current approved resources. For App Icons this includes Store tile, selected enlarged preview and actual Android launcher resource.
 5. Test images, computed styles, button text bounding boxes and selected/unselected states in browser captures at 360, 393 and 412 CSS pixels; verify proper Android safe-area spacing.
 6. Run the non-APK read-only source audit at scripts/audit-workbench-source-alignment.mjs. Its strict mode must block release while old/conflicting paths remain.
-7. Present before/after screenshots and functional test evidence. The user must explicitly approve each issue.
+7. Present before/after screenshots and functional test evidence. On Nov 12, 2026 the user granted standing authorization to proceed with forward repairs, fixes and touch-ups without requesting separate permission at each stage. This is authorization to work, NOT visual approval. Keep visual acceptance explicitly unverified until the user reviews the previews or APK; never infer it from tests.
 8. Only after ALL issues are approved, publish ONE new isolated APK for device testing. Never publish an APK from the active workbench before then.
 
 ## Sources of truth
@@ -38,8 +38,8 @@ Status: WORKBENCH / NOT APPROVED / NO APK. Retain approved original release and 
 ## Repair ledger (one at a time)
 
 1. Launcher App Icons tile vs selected preview vs Android icon — TECHNICAL CHECKS PASSED (10/10); user explicitly authorized continuing repairs on Nov 12, 2026, without separately confirming pixel-perfect visual acceptance. Evidence: https://github.com/hwemp/Oathkeeper-App/actions/runs/43322313829 (screenshots in OATHKEEPER-WORKBENCH-ICON-PREVIEWS-NO-APK). Do not count technical verification as final visual acceptance.
-2. Button fonts fit frame — **TECHNICAL REPAIR COMPLETE, AWAITING USER VISUAL APPROVAL**. Browser-only run https://github.com/hwemp/Oathkeeper-App/actions/runs/43352985797 PASS: 222 measured ornate-button labels on 360/393/412 px screens, 0 violations; the long DM `Manage player stats & initiative` label now wraps to two legible lines at 13.5px. Retired conflicting TEST 164/169 button selectors; retained gold SVG artwork and control behaviors. Screenshots: artifact `OATHKEEPER-WORKBENCH-BUTTON-TEXT-PREVIEWS-NO-APK`, see `button-text-menu-393.png`, `button-text-dm-393.png`, `button-text-journal-393.png`. NO APK. Do not start gemstone issue #3 until user reviews/approves.
-3. Single approved faceted gemstone design — pending.
+2. Button fonts fit frame — **TECHNICAL REPAIR COMPLETE; VISUAL ACCEPTANCE UNVERIFIED; STANDING AUTHORIZATION TO PROCEED**. Browser-only run https://github.com/hwemp/Oathkeeper-App/actions/runs/43352985797 PASS: 222 measured ornate-button labels on 360/393/412 px screens, 0 violations; the long DM `Manage player stats & initiative` label now wraps to two legible lines at 13.5px. Retired conflicting TEST 164/169 button selectors; retained gold SVG artwork and control behaviors. Screenshots: artifact `OATHKEEPER-WORKBENCH-BUTTON-TEXT-PREVIEWS-NO-APK`, see `button-text-menu-393.png`, `button-text-dm-393.png`, `button-text-journal-393.png`. NO APK. Standing user authorization permits proceeding to gemstone issue #3 while retaining button visual acceptance as unverified.
+3. Single approved faceted gemstone design — NEXT AUTHORIZED REPAIR; source inspection and preview verification pending.
 4. Unique high-definition backgrounds properly inside frames — pending.
 5. Consistent navigation/interface icon family — pending.
 6. Android safe area and text-overlap verification — pending.
