@@ -17,17 +17,8 @@ export function gemForBackground(slug) {
   return BACKGROUND_GEMS[key] || "amethyst";
 }
 export function selectedBackgroundSlug(doc) {
-  const store = doc.querySelector(".store-page");
-  // Frozen Build 144 draws the store as a single high-resolution image with
-  // transparent .ok-hit controls. Newer source uses .store-background-tile.
-  // Both expose data-store-background; do not depend on either visual layout.
-  if (store && store.querySelector('[data-store-background]')) {
-    const selected = store.querySelector('[data-store-background][aria-pressed="true"], [data-store-background].selected, [data-store-background].ok-selected');
-    const slug = selected?.getAttribute("data-store-background");
-    if (slug && Object.hasOwn(BACKGROUND_GEMS,slug)) return slug;
-  }
-  // Only a verified, applied background becomes the permanent global theme.
-  // Previewing a paid store background never grants ownership or applies it.
+  // The applied background is authoritative. Store selection is a preview,
+  // not a theme change: browsing an unowned scene must not recolor buttons.
   const applied = doc.body?.getAttribute("data-store-paid-background");
   if (applied && Object.hasOwn(BACKGROUND_GEMS,applied)) return applied;
   const activeImage = doc.body?.style?.getPropertyValue("--oathkeeper-paid-background") || "";
