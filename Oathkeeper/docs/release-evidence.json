@@ -1,0 +1,26 @@
+{
+  "title": "Oathkeeper release proof register",
+  "audit_date": "2026-11-13",
+  "important": "All false until actually verified. Setting true does not certify legal compliance; attach proofs. Never put personal credentials or secrets in this file.",
+  "checks": {
+    "copyright_assets_verified": false,
+    "trademark_review_completed": false,
+    "legal_policy_review_completed": false,
+    "privacy_public_https_verified": false,
+    "support_contact_verified": false,
+    "terms_reviewed_and_accepted_flow_tested": false,
+    "community_disabled_or_moderated_and_tested": false,
+    "age_and_child_safety_review_completed": false,
+    "deletion_and_recovery_tested_if_accounts_enabled": false,
+    "payments_disabled_or_store_billing_tested": false,
+    "play_console_declarations_completed": false,
+    "apple_connect_declarations_completed": false,
+    "android_release_aab_signed_and_tested": false,
+    "ios_archive_testflight_tested": false,
+    "real_device_accessibility_qa_completed": false,
+    "official_branding_no_affiliation_verified": false,
+    "store_listing_images_and_claims_verified": false,
+    "release_approval_recorded": false
+  },
+  "proofs": {}
+}
