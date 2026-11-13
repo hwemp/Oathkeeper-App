@@ -30,14 +30,14 @@ Status: WORKBENCH / NOT APPROVED / NO APK. Retain approved original release and 
 
 ## Existing conflict hotspots: NOT FIXED YET
 
-- The frozen Store is painted as a complete page image with transparent clickable regions. TEST 164 superimposes separate images over icon hotspots; enlarged selected preview may still come from the older baked art. Matching file hashes by themselves cannot prove matching UI.
+- The frozen Store uses a baked page image with transparent clickable regions. The workbench icon-only repair now neutralizes the stale baked selected state, renders all ten thumbnails and enlarged previews from Android launcher masters, and corrects the icon-07/08 display-name mapping. Verified in browser-only GitHub Actions run 43322313829; user visual acceptance is pending.
 - CSS from TEST 164, TEST 169 and TEST 170 targets overlapping menu, navigation and editor button selectors. We must consolidate these rather than add a fourth conflicting layer.
 - TEST 169 has object-fit:fill for a baked background page. New backgrounds must use proper frame cropping/containment instead.
 - TEST 171 is a tabletop-motion prototype, not the final full 3D accurate-face game roller.
 
 ## Repair ledger (one at a time)
 
-1. Launcher App Icons tile vs selected preview vs Android icon — IN PROGRESS, not approved.
+1. Launcher App Icons tile vs selected preview vs Android icon — TECHNICAL CHECKS PASSED (10/10), VISUAL REVIEW READY; **AWAITING EXPLICIT USER APPROVAL**. Evidence: https://github.com/hwemp/Oathkeeper-App/actions/runs/43322313829 (screenshots in OATHKEEPER-WORKBENCH-ICON-PREVIEWS-NO-APK). Do NOT start issue #2 or release APK until user confirms.
 2. Button fonts fit frame — pending.
 3. Single approved faceted gemstone design — pending.
 4. Unique high-definition backgrounds properly inside frames — pending.
