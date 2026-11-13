@@ -20,18 +20,21 @@ const widths=[360,393,412];
   const page=await browser.newPage({viewport:{width:393,height:852},deviceScaleFactor:2});
   const failures=[],report=[];
   const audit=async(label)=>{
+   await page.waitForTimeout(180);
    const results=await page.locator('button.oath170-reference-button:visible').evaluateAll(buttons=>buttons.map(b=>{
     const box=b.getBoundingClientRect(),range=document.createRange();
     range.selectNodeContents(b);const r=range.getBoundingClientRect();
     const cs=getComputedStyle(b);
-    const safe={left:box.left+box.width*.10,right:box.right-box.width*.10,
-      top:box.top+box.height*.275,bottom:box.bottom-box.height*.275};
+    const safe={left:box.left+box.width*.155,right:box.right-box.width*.155,
+      top:box.top+box.height*.34,bottom:box.bottom-box.height*.34};
     return {label:b.textContent.trim().replace(/\\s+/g,' ').slice(0,100),selector:b.id||b.dataset.tab||b.dataset.action||b.parentElement?.id||b.className,
       x:box.x,y:box.y,w:box.width,h:box.height,tx:r.x,ty:r.y,tw:r.width,th:r.height,
       safe,background:cs.backgroundImage,fontSize:cs.fontSize,
       good:box.width>=60&&box.height>=60&&r.width>0&&r.height>0&&
-       r.left>=safe.left-2&&r.right<=safe.right+2&&
-       r.top>=safe.top-2&&r.bottom<=safe.bottom+2};
+       r.left>=safe.left-1.25&&r.right<=safe.right+1.25&&
+       r.top>=safe.top-1.25&&r.bottom<=safe.bottom+1.25&&
+       b.dataset.oath170TextFit==='ok' && cs.backgroundImage.includes('test170-buttons') &&
+       parseFloat(cs.fontSize)>=10.5};
    })));
    for(const item of results){report.push({width:page.viewportSize().width,screen:label,...item});if(!item.good)failures.push({width:page.viewportSize().width,screen:label,...item});}
   };
@@ -59,6 +62,18 @@ const widths=[360,393,412];
    await page.locator('#appMenu button[data-action="edit-equipment"]').click();
    await audit('equipment');
    await page.screenshot({path:'preview-output/button-text-equipment-'+width+'.png',fullPage:true});
+
+   await open(width);
+   await page.locator('#appMenu summary').click();
+   await page.locator('#appMenu button[data-tab="My profile"]').click();
+   await audit('profile');
+   await page.screenshot({path:'preview-output/button-text-profile-'+width+'.png',fullPage:true});
+   await open(width);
+   await page.locator('#appMenu summary').click();
+   await page.locator('#appMenu button[data-tab="DM"]').scrollIntoViewIfNeeded();
+   await page.locator('#appMenu button[data-tab="DM"]').click();
+   await audit('dm');
+   await page.screenshot({path:'preview-output/button-text-dm-'+width+'.png',fullPage:true});
    await open(width);
    await page.locator('#nav button[data-tab="Dice"]').click();
    await audit('dice');
