@@ -1,0 +1,111 @@
+name: Oathkeeper Workbench Full Source & UI Regression — NO APK
+on:
+  push:
+    branches: [OATHKEEPER-VISUAL-WORKBENCH]
+    paths:
+      - '.github/workflows/audit-workbench-complete.yml'
+      - 'Oathkeeper/web/**'
+      - 'Oathkeeper/scripts/**'
+      - 'Oathkeeper/tests/**'
+permissions:
+  contents: read
+concurrency:
+  group: oathkeeper-workbench-full-audit
+  cancel-in-progress: true
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: Oathkeeper
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Source syntax, model, catalog and icon-master parity
+        run: |
+          npm ci
+          npm run check
+          npm run typecheck
+          npm test
+          npm run catalog
+          node scripts/audit-workbench-source-alignment.mjs
+          python -m py_compile scripts/build-test169-reference-assets.py scripts/apply-test170-buttons.py scripts/apply-workbench-icon-preview.py
+      - name: Extract original frozen 144 web payload, SHA verified
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,shutil,stat,zipfile
+          root=Path("..").resolve()
+          chunks=sorted((root/".build142").glob("payload.part*.bin"))
+          assert [p.name for p in chunks]==[f"payload.part{i:02d}.bin" for i in range(10)]
+          archive=Path("/tmp/oathkeeper-full-ui-original.zip")
+          digest=hashlib.sha256()
+          with archive.open("wb") as out:
+              for chunk in chunks:
+                  with chunk.open("rb") as reader:
+                      while data:=reader.read(1024*1024):
+                          out.write(data);digest.update(data)
+          assert digest.hexdigest()=="c83a657ab68b900b724b75c45b6d5d2256e69192a1d62e922279422fb0fb0b05"
+          dist=Path("dist")
+          if dist.exists():shutil.rmtree(dist)
+          dist.mkdir()
+          with zipfile.ZipFile(archive) as z:
+              for info in z.infolist():
+                  assert info.filename.startswith("web-assets/")
+                  relative=Path(info.filename).relative_to("web-assets")
+                  assert not relative.is_absolute() and ".." not in relative.parts
+                  assert not stat.S_ISLNK(info.external_attr>>16)
+                  target=dist/relative
+                  if info.is_dir():target.mkdir(parents=True,exist_ok=True)
+                  elif relative!=Path("."):
+                      target.parent.mkdir(parents=True,exist_ok=True)
+                      with z.open(info) as src,target.open("wb") as dst:shutil.copyfileobj(src,dst)
+          assert (dist/"index.html").is_file()
+          PY
+      - name: Reconstruct source-only assets without replacing archived roll art
+        run: |
+          python -m pip install --disable-pip-version-check Pillow cairosvg numpy
+          python scripts/apply-ornate-buttons.py
+          python scripts/apply-test-164.py
+          python scripts/build-test169-reference-assets.py
+          python scripts/patch-test169-approved-source.py
+          python scripts/apply-test170-buttons.py
+          python scripts/apply-test171-gameplay.py
+          python scripts/normalize-workbench-icons-page.py
+          python scripts/apply-workbench-icon-preview.py
+          node scripts/build-workbench-gameplay-mesh.cjs
+          test -s dist/art/canonical-gems/amethyst.svg
+          test -s dist/workbench-gameplay-mesh.js
+          npm install --no-save --package-lock=false playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Check live UI geometry, all launcher icons, gems, background scenes and dice
+        run: |
+          node scripts/audit-test169-reference.cjs
+          node scripts/audit-test170-reference.cjs
+          node scripts/audit-workbench-button-text.cjs
+          node scripts/audit-workbench-icon-preview.cjs
+          node scripts/audit-workbench-gems.cjs
+          node scripts/audit-workbench-gameplay-mesh.cjs
+          python - <<'PY'
+          from PIL import Image
+          from pathlib import Path
+          for slug in ('moonlit-citadel','ancient-ruins','enchanted-forest','dragons-crag','shadow-marsh','celestial-plains','crystal-caverns','elder-grove','mystic-lake','eternal-keep'):
+              p=Path('dist/art/workbench-hd-scenes')/(slug+'.webp')
+              assert p.exists()
+              with Image.open(p) as image:assert image.size==(1600,1125),(p,image.size)
+          print('All 10 scenes rendered at 1600x1125 without stretching')
+          PY
+      - name: Upload test results and UI screenshots — not an APK
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: OATHKEEPER-WORKBENCH-COMPLETE-UI-QA-NO-APK
+          path: Oathkeeper/preview-output/*
+          retention-days: 14
+          if-no-files-found: warn
