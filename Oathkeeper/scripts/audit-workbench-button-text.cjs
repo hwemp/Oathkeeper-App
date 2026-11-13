@@ -25,8 +25,20 @@ const widths=[360,393,412];
     const box=b.getBoundingClientRect(),range=document.createRange();
     range.selectNodeContents(b);const r=range.getBoundingClientRect();
     const cs=getComputedStyle(b);
-    const safe={left:box.left+box.width*.155,right:box.right-box.width*.155,
-      top:box.top+box.height*.34,bottom:box.bottom-box.height*.34};
+    // The image has a 420x260 viewBox with default xMidYMid meet.
+    // A wide, short CSS background box does not imply the SVG itself fills
+    // that entire box: SVG preserveAspectRatio letterboxes the actual frame.
+    // Fit the label to the PAINTED plaque, not the HTML button hit target.
+    const svgWidth=420,svgHeight=260;
+    const scale=Math.min(box.width/svgWidth,box.height/svgHeight);
+    const paintWidth=svgWidth*scale,paintHeight=svgHeight*scale;
+    const painted={left:box.left+(box.width-paintWidth)/2,
+      top:box.top+(box.height-paintHeight)/2,
+      width:paintWidth,height:paintHeight};
+    painted.right=painted.left+paintWidth;
+    painted.bottom=painted.top+paintHeight;
+    const safe={left:painted.left+painted.width*.155,right:painted.right-painted.width*.155,
+      top:painted.top+painted.height*.34,bottom:painted.bottom-painted.height*.34};
     const label=b.textContent.trim().replace(/\s+/g,' ').slice(0,100);
     const readable=label!=='Manage player stats & initiative'||parseFloat(cs.fontSize)>=12.5;
     const debug=label==='Manage player stats & initiative'?{
@@ -40,7 +52,7 @@ const widths=[360,393,412];
     }:undefined;
     return {label,readable,debug,selector:b.id||b.dataset.tab||b.dataset.action||b.parentElement?.id||b.className,
       x:box.x,y:box.y,w:box.width,h:box.height,tx:r.x,ty:r.y,tw:r.width,th:r.height,
-      safe,background:cs.backgroundImage,fontSize:cs.fontSize,
+      safe,painted,background:cs.backgroundImage,backgroundSize:cs.backgroundSize,fontSize:cs.fontSize,
       good:box.width>=60&&box.height>=60&&r.width>0&&r.height>0&&
        r.left>=safe.left-1.25&&r.right<=safe.right+1.25&&
        r.top>=safe.top-1.25&&r.bottom<=safe.bottom+1.25&&
@@ -91,7 +103,7 @@ const widths=[360,393,412];
    await page.screenshot({path:'preview-output/button-text-dice-'+width+'.png',fullPage:true});
   }
   fs.writeFileSync('preview-output/workbench-button-text-report.json',JSON.stringify({total:report.length,failures,report},null,2));
-  console.log('WORKBENCH BUTTON TEXT: '+report.length+' labels measured, '+failures.length+' violations at 360/393/412');
+  console.log('WORKBENCH PAINTED-FRAME BUTTON TEXT: '+report.length+' labels measured, '+failures.length+' violations at 360/393/412');
   if(failures.length){console.error(JSON.stringify(failures.slice(0,25),null,2));process.exitCode=1}
  }finally{if(browser)await browser.close();server.kill()}
 })().catch(e=>{console.error('WORKBENCH BUTTON AUDIT FAILED',e.stack||e);process.exitCode=1});
