@@ -27,14 +27,16 @@ const widths=[360,393,412];
     const cs=getComputedStyle(b);
     const safe={left:box.left+box.width*.155,right:box.right-box.width*.155,
       top:box.top+box.height*.34,bottom:box.bottom-box.height*.34};
-    return {label:b.textContent.trim().replace(/\\s+/g,' ').slice(0,100),selector:b.id||b.dataset.tab||b.dataset.action||b.parentElement?.id||b.className,
+    const label=b.textContent.trim().replace(/\s+/g,' ').slice(0,100);
+    const readable=label!=='Manage player stats & initiative'||parseFloat(cs.fontSize)>=12.5;
+    return {label,readable,selector:b.id||b.dataset.tab||b.dataset.action||b.parentElement?.id||b.className,
       x:box.x,y:box.y,w:box.width,h:box.height,tx:r.x,ty:r.y,tw:r.width,th:r.height,
       safe,background:cs.backgroundImage,fontSize:cs.fontSize,
       good:box.width>=60&&box.height>=60&&r.width>0&&r.height>0&&
        r.left>=safe.left-1.25&&r.right<=safe.right+1.25&&
        r.top>=safe.top-1.25&&r.bottom<=safe.bottom+1.25&&
        b.dataset.oath170TextFit==='ok' && cs.backgroundImage.includes('test170-buttons') &&
-       parseFloat(cs.fontSize)>=10.5};
+       parseFloat(cs.fontSize)>=10.5 && readable};
    }));
    for(const item of results){report.push({width:page.viewportSize().width,screen:label,...item});if(!item.good)failures.push({width:page.viewportSize().width,screen:label,...item});}
   };
