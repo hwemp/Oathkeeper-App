@@ -97,11 +97,14 @@ jobs:
           python - <<'PY'
           from PIL import Image
           from pathlib import Path
+          import hashlib
           for slug in ('moonlit-citadel','ancient-ruins','enchanted-forest','dragons-crag','shadow-marsh','celestial-plains','crystal-caverns','elder-grove','mystic-lake','eternal-keep'):
-              p=Path('dist/art/workbench-hd-scenes')/(slug+'.webp')
-              assert p.exists()
-              with Image.open(p) as image:assert image.size==(1600,1125),(p,image.size)
-          print('All 10 scenes rendered at 1600x1125 without stretching')
+              source=Path('web/public/art/store-backgrounds')/(slug+'.webp')
+              target=Path('dist/art/approved-backgrounds')/(slug+'.webp')
+              assert target.is_file()
+              assert hashlib.sha256(source.read_bytes()).digest()==hashlib.sha256(target.read_bytes()).digest(),slug
+              with Image.open(target) as image:assert image.size==(508,360),(target,image.size)
+          print('All 10 original high-detail illustrated scenes byte-exact; no flat vector replacements')
           PY
       - name: Upload test results and UI screenshots — not an APK
         if: always()
