@@ -23,18 +23,17 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Inspect original TEST173 installed web files without rebuilding
+      - name: Inspect original TEST174 installed web files without rebuilding
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          mkdir -p /tmp/oath-173-qa
-          gh release download android-test-173-1-2 \
-            --repo "${{ github.repository }}" --pattern 'Oathkeeper-TEST-BRANCH-173.apk' \
-            --dir /tmp/oath-173-qa
+          mkdir -p /tmp/oath-174-qa
+          gh run download 43375748325 --repo "${{ github.repository }}" \
+            --name Oathkeeper-TEST-BRANCH-174 --dir /tmp/oath-174-qa
           python - <<'PY'
           from pathlib import Path
           import zipfile,shutil
-          apk=Path('/tmp/oath-173-qa/Oathkeeper-TEST-BRANCH-173.apk')
+          apk=Path('/tmp/oath-174-qa/Oathkeeper-TEST-BRANCH-174.apk')
           dest=Path('dist')
           dest.mkdir(exist_ok=True)
           with zipfile.ZipFile(apk) as archive:
@@ -49,9 +48,13 @@ jobs:
                       target.parent.mkdir(parents=True,exist_ok=True)
                       with archive.open(info) as src,target.open('wb') as out:shutil.copyfileobj(src,out)
           assert (dest/'index.html').is_file() and (dest/'assets/main-FCw4hQ90.js').is_file()
-          print('Extracted actual signed TEST173 web runtime for focused modal QA')
+          print('Extracted actual signed TEST174 web runtime for focused modal QA')
           PY
-          python scripts/apply-workbench-firstlaunch-safe-area.py
+          # Test the REVISED stylesheet against the actual signed Test174 runtime.
+          # The original Test174 APK already carries the old CSS; replace only
+          # the extracted CSS file, never mutate a signed artifact.
+          cp web/workbench-firstlaunch-safe-area.css dist/workbench-firstlaunch-safe-area.css
+          grep -Fq 'workbench-firstlaunch-safe-area.css' dist/index.html
       - name: Run actual 360/393/412 phone safe-area acceptance
         run: |
           npm ci
