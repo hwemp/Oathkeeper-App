@@ -30,15 +30,15 @@ Status: WORKBENCH / NOT APPROVED / NO APK. Retain approved original release and 
 
 ## Existing conflict hotspots: NOT FIXED YET
 
-- The frozen Store uses a baked page image with transparent clickable regions. The workbench icon-only repair now neutralizes the stale baked selected state, renders all ten thumbnails and enlarged previews from Android launcher masters, and corrects the icon-07/08 display-name mapping. Verified in browser-only GitHub Actions run 43322313829; user visual acceptance is pending.
+- The frozen Store uses a baked page image with transparent clickable regions. The workbench icon-only repair now neutralizes the stale baked selected state, renders all ten thumbnails and enlarged previews from Android launcher masters, and corrects the icon-07/08 display-name mapping. Verified in browser-only GitHub Actions run 43322313829; automated browser verification passed; the user subsequently authorized advancing to the next repair, without a separate declaration of pixel-perfect visual acceptance.
 - CSS from TEST 164, TEST 169 and TEST 170 targets overlapping menu, navigation and editor button selectors. We must consolidate these rather than add a fourth conflicting layer.
 - TEST 169 has object-fit:fill for a baked background page. New backgrounds must use proper frame cropping/containment instead.
 - TEST 171 is a tabletop-motion prototype, not the final full 3D accurate-face game roller.
 
 ## Repair ledger (one at a time)
 
-1. Launcher App Icons tile vs selected preview vs Android icon — TECHNICAL CHECKS PASSED (10/10), VISUAL REVIEW READY; **AWAITING EXPLICIT USER APPROVAL**. Evidence: https://github.com/hwemp/Oathkeeper-App/actions/runs/43322313829 (screenshots in OATHKEEPER-WORKBENCH-ICON-PREVIEWS-NO-APK). Do NOT start issue #2 or release APK until user confirms.
-2. Button fonts fit frame — pending.
+1. Launcher App Icons tile vs selected preview vs Android icon — TECHNICAL CHECKS PASSED (10/10); user explicitly authorized continuing repairs on Nov 12, 2026, without separately confirming pixel-perfect visual acceptance. Evidence: https://github.com/hwemp/Oathkeeper-App/actions/runs/43322313829 (screenshots in OATHKEEPER-WORKBENCH-ICON-PREVIEWS-NO-APK). Do not count technical verification as final visual acceptance.
+2. Button fonts fit frame — ACTIVE. Audit the shared TEST 170 button master and text geometry on 360/393/412 px screens; correct the authoritative CSS without stacking another override. Do not change gem shape or any other pending feature.
 3. Single approved faceted gemstone design — pending.
 4. Unique high-definition backgrounds properly inside frames — pending.
 5. Consistent navigation/interface icon family — pending.
