@@ -87,10 +87,15 @@ const themes=['amethyst','sapphire','emerald','ruby','aquamarine','citrine'];
   await page.locator('#appMenu button[data-tab="Store"]').click();
   await page.locator('[data-store-category="backgrounds"]').first().click();
   await page.locator('[data-store-background="ancient-ruins"]').first().click({force:true});
+  // Store browsing is preview-only. Background gems follow APPLIED art,
+  // not unowned previews; the old TEST 170 expectation caused CI timeouts.
+  assert.equal(await page.locator('html').getAttribute('data-oath-gem-theme'),'amethyst',
+    'A Store preview must not change the applied button gemstone');
+  await page.evaluate(()=>document.body.setAttribute('data-store-paid-background','ancient-ruins'));
   await page.waitForFunction(()=>document.documentElement.dataset.oathGemTheme==='emerald',null,{timeout:10000});
   assert((await bg(page.locator('#nav [data-tab="Powers"]'))).includes('emerald-normal.svg'),
-    'Unselected frame gemstone did not follow new emerald background');
-  await page.screenshot({path:'preview-output/170-emerald-theme-background.png',fullPage:true});
+    'Unselected button gemstone did not follow the applied emerald background');
+  await page.screenshot({path:'preview-output/170-emerald-applied-theme.png',fullPage:true});
 
   // Editor buttons render in the same family; label must not overlap jewels.
   await open();
