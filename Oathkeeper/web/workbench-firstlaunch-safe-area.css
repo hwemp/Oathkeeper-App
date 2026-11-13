@@ -26,3 +26,20 @@ html body .terms-gate .terms-prose{
 @media(max-height:700px){
  html body .terms-gate .terms-prose{max-height:26dvh!important;}
 }
+
+/* Android 15 native screenshot showed the final Reject action starting below
+ * the opening frame. Limit the INNER scrollable policy text on phone screens,
+ * NOT the age/consent buttons, so both decisions are visible on initial load.
+ * All full legal text remains readable by scrolling inside .terms-prose.
+ */
+@media(max-width:480px){
+ html body .terms-gate .terms-prose{
+  max-height:clamp(118px,21dvh,196px)!important;
+  overflow-y:auto!important;
+ }
+ html body .terms-gate .terms-scroll{
+  max-height:calc(100dvh - 32px)!important;
+  overflow-y:auto!important;
+  overscroll-behavior:contain!important;
+ }
+}
