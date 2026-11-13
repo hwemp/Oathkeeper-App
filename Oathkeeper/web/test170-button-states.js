@@ -46,10 +46,15 @@ function visibleLabelRects(button){
 }
 
 function labelFitsGoldInterior(button,rect){
-  const left=rect.left+rect.width*.155;
-  const right=rect.right-rect.width*.155;
-  const top=rect.top+rect.height*.34;
-  const bottom=rect.bottom-rect.height*.34;
+  // SVG meet can letterbox inside background-size:100% 100%. Calculate the
+  // actual painted frame, including which proportionate master was chosen.
+  const frame=button.dataset.oath170Frame||'standard';
+  const svgW=frame==='wide'?840:frame==='medium'?560:420;
+  const ratio=Math.min(rect.width/svgW,rect.height/260);
+  const w=svgW*ratio,h=260*ratio;
+  const x=rect.left+(rect.width-w)/2,y=rect.top+(rect.height-h)/2;
+  const left=x+w*.155,right=x+w*.845;
+  const top=y+h*.34,bottom=y+h*.66;
   const spans=visibleLabelRects(button);
   if(!spans.length)return true;
   const slack=1.25;
@@ -92,6 +97,9 @@ function fitGoldButtonText(button){
   }
   const rect=button.getBoundingClientRect();
   if(rect.width<60 || rect.height<42)return;
+  const aspect=rect.width/rect.height;
+  const frame=aspect>=2.65?'wide':aspect>=1.77?'medium':'standard';
+  if(button.dataset.oath170Frame!==frame)button.dataset.oath170Frame=frame;
   const key=rect.width.toFixed(1)+'x'+rect.height.toFixed(1)+':'+button.textContent.trim();
   if(textFitCache.get(button)===key && button.dataset.oath170TextFit==='ok')return;
   const max=button.closest('#nav')?20:button.closest('#appMenu')?20:21;
