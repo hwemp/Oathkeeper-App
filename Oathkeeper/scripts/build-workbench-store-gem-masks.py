@@ -55,8 +55,22 @@ def main():
    if np.count_nonzero(crop)<12:
     raise RuntimeError(f"Mask missing gem at {category} ({cx},{cy})")
   if np.count_nonzero(mask)>17000:raise RuntimeError("Mask includes unrelated artwork")
+  # CRITICAL: CSS mask-image uses PNG ALPHA, not black/white luminance.
+  # A grayscale L-mode PNG has opaque alpha and recolors the WHOLE Store.
+  # Save a REAL RGBA mask: untouched pixels have zero alpha.
   mask_im=Image.fromarray(mask,"L").filter(ImageFilter.GaussianBlur(.45))
+  alpha=np.asarray(mask_im,dtype=np.uint8)
+  rgba=np.zeros((im.height,im.width,4),dtype=np.uint8)
+  rgba[:,:,:3]=255
+  rgba[:,:,3]=alpha
   file=OUTPUT/(category+".png")
-  mask_im.save(file,"PNG",optimize=True)
-  print(f"STORE GEM MASK: {category}: {np.count_nonzero(mask)} violet gemstone-only pixels; original art untouched")
+  Image.fromarray(rgba,"RGBA").save(file,"PNG",optimize=True)
+  with Image.open(file) as check:
+   if check.mode!="RGBA":raise RuntimeError("CSS mask does not carry alpha")
+   a=np.asarray(check.getchannel("A"),dtype=np.uint8)
+   if np.count_nonzero(a>8)>max(7000,im.width*im.height*.01):
+    raise RuntimeError("Store mask leaks outside isolated gemstones")
+   if np.count_nonzero(a>128)<200:
+    raise RuntimeError("Store mask opacity missing on gemstone")
+  print(f"STORE GEM MASK: {category}: {np.count_nonzero(mask)} isolated violet UI pixels, RGBA transparency verified; original art untouched")
 if __name__=="__main__": main()
