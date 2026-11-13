@@ -1,0 +1,53 @@
+name: Publish exact approved Test 178 debug APK
+on:
+  push:
+    branches:
+      - OATHKEEPER-VISUAL-WORKBENCH
+    paths:
+      - .github/workflows/publish-approved-baseline-178.yml
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  publish-approved-178:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Download previously verified original Test 178 APK
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p release
+          gh run download 43450890593 -R "$GITHUB_REPOSITORY" -n Oathkeeper-TEST-BRANCH-178 -D release
+          test -s release/Oathkeeper-TEST-BRANCH-178.apk
+          test -s release/SHA256SUMS.txt
+
+      - name: Require exact owner-approved APK checksum (no rebuild or redesign)
+        run: |
+          set -euo pipefail
+          cd release
+          printf '%s\n' '0930210d1813bef0a47cbedab4c9269abcb4bbf4ae8271ec56e1bfef345f8477  Oathkeeper-TEST-BRANCH-178.apk' | sha256sum --check -
+          grep -Fx '0930210d1813bef0a47cbedab4c9269abcb4bbf4ae8271ec56e1bfef345f8477  Oathkeeper-TEST-BRANCH-178.apk' SHA256SUMS.txt
+
+      - name: Publish explicitly labeled debug-only GitHub prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          TAG=oathkeeper-approved-baseline-178
+          if gh release view "$TAG" -R "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "The approved baseline release already exists; preserving it without replacement."
+            exit 0
+          fi
+          gh release create "$TAG" \
+            --repo "$GITHUB_REPOSITORY" \
+            --target ec24dfe1e2a28fd955e11aab018bb58ed3b99e3c \
+            --prerelease \
+            --title "Oathkeeper Test 178 — Approved Development Foundation" \
+            --notes "Owner-approved replacement for Build 144 as the active future development baseline. Exact unchanged, SHA-256-verified Test 178 debug APK from successful Actions run 43450890593. NOT a Google Play release, signed production app, or final store compliance approval. Start subsequent tests from OATHKEEPER-APPROVED-BASELINE-178. Package ID: com.harrisonwaters.oathkeeper.test178." \
+            release/Oathkeeper-TEST-BRANCH-178.apk \
+            release/SHA256SUMS.txt
