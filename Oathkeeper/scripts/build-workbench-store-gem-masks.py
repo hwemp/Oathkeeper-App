@@ -18,8 +18,9 @@ OUTPUT=ROOT/"dist"/"art"/"workbench-store-gem-masks"
 # Treasure-pile crystals are depicted merchandise; do not recolor scenery.
 POSITIONS={
  "backgrounds": ("test169-bg/moonlit-citadel.webp", [
-   (471,30,18,25),(471,276,17,17),(472,691,12,12),
-   (472,1080,11,12),(470,1528,17,20)]),
+   # The two small frame diamonds at y=691/1080 are GOLD, not purple
+   # gemstones. Exclude them rather than recoloring just 2-8 pixels.
+   (471,30,18,25),(471,276,17,17),(470,1528,17,20)]),
  "dice": ("dice.webp", [
    (470,30,17,24),(471,300,18,23),(472,812,16,18),
    (472,1259,16,19),(472,1472,18,23)]),
