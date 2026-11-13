@@ -211,3 +211,7 @@ html body .dice-page #diceTabletop.test171-gameplay-stage{
  }
  #diceTabletop .test171-rune-ring{box-shadow:none!important}
 }
+
+/* Until the Test 179 final overlay stylesheet loads, older 171/177-only
+   audit stages do not show unstyled extra numerals in the artwork layout. */
+#diceTabletop .test171-die > .test179-true-face{display:none!important}
