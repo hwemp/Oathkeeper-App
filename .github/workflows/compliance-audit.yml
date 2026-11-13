@@ -1,0 +1,35 @@
+name: Oathkeeper non-release compliance audit
+on:
+  push:
+    branches: ['compliance-release-audit-*']
+    paths:
+      - 'Oathkeeper/scripts/release-compliance-check.mjs'
+      - 'Oathkeeper/docs/**'
+      - '.github/workflows/compliance-audit.yml'
+  pull_request:
+    paths:
+      - 'Oathkeeper/scripts/release-compliance-check.mjs'
+      - 'Oathkeeper/docs/**'
+      - '.github/workflows/compliance-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    name: Static compliance evidence audit (not release approval)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    defaults:
+      run:
+        working-directory: Oathkeeper
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Analyze terms, privacy, license notice, API, payment state and evidence
+        run: node scripts/release-compliance-check.mjs --audit
+      - name: Explain fail-closed public release
+        run: |
+          echo 'Audit mode reports missing legal/manual release evidence without approving a release.'
+          echo 'Use node scripts/release-compliance-check.mjs --release to BLOCK production when evidence is missing.'
