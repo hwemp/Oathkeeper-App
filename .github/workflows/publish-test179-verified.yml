@@ -1,0 +1,43 @@
+name: Publish verified Oathkeeper Test 179 APK
+on:
+  push:
+    branches: [TEST-179-DEVICE-VERIFY]
+    paths:
+      - '.github/workflows/publish-test179-verified.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Verify independent Android 15 run succeeded
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          result="$(gh api repos/"$GITHUB_REPOSITORY"/actions/runs/43478300729 --jq '.conclusion')"
+          test "$result" = success
+          mkdir -p "$RUNNER_TEMP/independent" "$RUNNER_TEMP/apk"
+          gh run download 43478300729 --repo "$GITHUB_REPOSITORY" --name OATHKEEPER-TEST179-INDEPENDENT-ANDROID-EVIDENCE --dir "$RUNNER_TEMP/independent"
+          grep -Fq 'APK installed: yes' "$RUNNER_TEMP/independent/summary.txt"
+          grep -Fq 'Screenshot: real Oathkeeper artwork visibly rendered' "$RUNNER_TEMP/independent/summary.txt"
+          grep -Fq 'All 10 launcher aliases: enable/disable from app UID' "$RUNNER_TEMP/independent/summary.txt"
+          test -s "$RUNNER_TEMP/independent/native-device.png"
+          test -s "$RUNNER_TEMP/independent/native-ui.xml"
+          gh run download 43466045603 --repo "$GITHUB_REPOSITORY" --name Oathkeeper-TEST-BRANCH-179 --dir "$RUNNER_TEMP/apk"
+          (cd "$RUNNER_TEMP/apk" && sha256sum -c SHA256SUMS.txt)
+          printf '%s\n' 'ffbab24739cdf9cf72370d6f605b3554d4c9af5facbb52883dbda0f45c392db1  Oathkeeper-TEST-BRANCH-179.apk' | (cd "$RUNNER_TEMP/apk" && sha256sum -c -)
+          echo 'Exact signed APK and independent Android 15 device verification passed.'
+      - name: Publish downloadable verified APK prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tag=oathkeeper-test-179-qa
+          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release tag already exists; refusing to overwrite or silently replace signed APK."
+            exit 1
+          fi
+          gh release create "$tag" "$RUNNER_TEMP/apk/Oathkeeper-TEST-BRANCH-179.apk" "$RUNNER_TEMP/apk/SHA256SUMS.txt" --repo "$GITHUB_REPOSITORY" --target 3ce80322438b3ea0791470021d8952271d3c01ef --title 'Oathkeeper Test 179 — Android 15 independently verified' --prerelease --notes 'The exact Test 179 signed APK from build run 43466045603 passed independent Android 15 install, native-resolution visible launch, UI hierarchy, and launcher alias smoke tests in run 43478300729. SHA256: ffbab24739cdf9cf72370d6f605b3554d4c9af5facbb52883dbda0f45c392db1. This is a TEST APK, not a production release. Actual in-app icon selection and Samsung launcher appearance still require user testing.'
