@@ -1,3 +1,9 @@
+/* WORKBENCH TYPOGRAPHY SOURCE-OF-TRUTH:
+ * Legacy rules in this file are now explicitly excluded from modern
+ * .oath170-reference-button controls. This is a targeted retirement of
+ * conflicting text/background rules, NOT another visual override layer.
+ * The canonical font, frame and fit controller are in the TEST 170 master.
+ */
 /* OATHKEEPER TEST 169 — ONE APPROVED REFERENCE SYSTEM
  * Images derive from the archived artwork, not polygon previews.
  * The original 144 animated canvas and original 12-frame Store GIF are
@@ -31,10 +37,10 @@ html[data-oath-gem-theme] #nav button::before {
  gap:12px!important;
  padding-inline:4px!important;
 }
-#journalEditor .row button,
-#equipmentEditor .row button,
-:root[data-oath-gem-theme] #journalEditor .row button,
-:root[data-oath-gem-theme] #equipmentEditor .row button {
+#journalEditor .row button:not(.oath170-reference-button),
+#equipmentEditor .row button:not(.oath170-reference-button),
+:root[data-oath-gem-theme] #journalEditor .row button:not(.oath170-reference-button),
+:root[data-oath-gem-theme] #equipmentEditor .row button:not(.oath170-reference-button) {
  box-sizing:border-box!important;
  flex:1 1 142px!important;
  width:auto!important;
@@ -64,10 +70,10 @@ html[data-oath-gem-theme] #nav button::before {
  text-shadow:0 1px 2px #160b1d!important;
  -webkit-text-fill-color:#f7dca0!important;
 }
-#journalEditor .row button::after,
-#journalEditor .row button::before,
-#equipmentEditor .row button::after,
-#equipmentEditor .row button::before {
+#journalEditor .row button:not(.oath170-reference-button)::after,
+#journalEditor .row button:not(.oath170-reference-button)::before,
+#equipmentEditor .row button:not(.oath170-reference-button)::after,
+#equipmentEditor .row button:not(.oath170-reference-button)::before {
  content:none!important;display:none!important;
 }
 #equipmentEditor [data-draft-remove] {
@@ -82,11 +88,11 @@ html[data-oath-gem-theme] #nav button::before {
 
 /* Extend the same engraved, amethyst-gold language to textual action controls,
  * but do not place a second frame over baked Store art or icon thumbnails. */
-.dice-page .dice-submenu button,
-.dice-page .dice-controls button.dice-roll,
-#appMenu .menu-options button:not(.notification-bell),
-.card .row button:not([data-draft-remove]):not(.die-tile),
-.rules-desk .row button {
+.dice-page .dice-submenu button:not(.oath170-reference-button),
+.dice-page .dice-controls button.dice-roll:not(.oath170-reference-button),
+#appMenu .menu-options button:not(.notification-bell):not(.oath170-reference-button),
+.card .row button:not([data-draft-remove]):not(.die-tile):not(.oath170-reference-button),
+.rules-desk .row button:not(.oath170-reference-button) {
  background-image:var(--oath169-frame)!important;
  background-position:center!important;
  background-repeat:no-repeat!important;
@@ -101,13 +107,13 @@ html[data-oath-gem-theme] #nav button::before {
  min-height:60px!important;
  box-sizing:border-box!important;
 }
-.dice-page .dice-submenu button::after,
-.dice-page .dice-controls button.dice-roll::after,
-#appMenu .menu-options button:not(.notification-bell)::after {
+.dice-page .dice-submenu button:not(.oath170-reference-button)::after,
+.dice-page .dice-controls button.dice-roll:not(.oath170-reference-button)::after,
+#appMenu .menu-options button:not(.notification-bell):not(.oath170-reference-button)::after {
  content:none!important;display:none!important;
 }
-.dice-page .dice-submenu button:is(.selected,[aria-pressed="true"]),
-.dice-page .dice-controls button.dice-roll:is(:active,:focus-visible) {
+.dice-page .dice-submenu button:not(.oath170-reference-button):is(.selected,[aria-pressed="true"]),
+.dice-page .dice-controls button.dice-roll:not(.oath170-reference-button):is(:active,:focus-visible) {
  filter:drop-shadow(0 0 4px #b85eff);
 }
 
@@ -197,10 +203,10 @@ html[data-oath-gem-theme] #nav button::before {
 }
 /* Text never straddles the Amethyst at the top or bottom of any editor frame. */
 @media(max-width:410px){
- #journalEditor .row button,
- #equipmentEditor .row button,
- :root[data-oath-gem-theme] #journalEditor .row button,
- :root[data-oath-gem-theme] #equipmentEditor .row button {
+ #journalEditor .row button:not(.oath170-reference-button),
+ #equipmentEditor .row button:not(.oath170-reference-button),
+ :root[data-oath-gem-theme] #journalEditor .row button:not(.oath170-reference-button),
+ :root[data-oath-gem-theme] #equipmentEditor .row button:not(.oath170-reference-button) {
   flex-basis:130px!important;
   min-height:68px!important;
   font-size:clamp(12px,3.2vw,16px)!important;
