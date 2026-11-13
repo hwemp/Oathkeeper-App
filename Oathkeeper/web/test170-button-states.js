@@ -34,7 +34,7 @@ function visibleLabelRects(button){
   while((node=walker.nextNode())){
     if(!node.textContent || !node.textContent.trim())continue;
     const parent=node.parentElement;
-    if(!parent || parent.closest('.sr-only,[aria-hidden="true"]'))continue;
+    if(!parent || parent.closest('.sr-only,svg'))continue;
     const range=document.createRange();
     range.selectNodeContents(node);
     for(const r of range.getClientRects()){
