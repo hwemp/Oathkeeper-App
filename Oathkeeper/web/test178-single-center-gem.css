@@ -49,3 +49,27 @@
  pointer-events:none!important;
 }
 /* The mobile scroll and control geometry are deliberately unchanged. */
+
+/* Test 178: Store dice preview uses the frozen 12-frame artwork, with a
+ * non-destructive oval transparency mask at the source-image boundaries.
+ * This removes the rigid square-image edge inside the full-width gold frame
+ * while leaving every GIF/WebP frame and timing byte-for-byte unchanged. */
+html body .ok-exact-store[data-ok-category="dice"] .ok-roll-box{
+ overflow:hidden!important;
+ background:
+   radial-gradient(ellipse 43% 76% at 50% 47%,var(--accent),transparent 83%),
+   radial-gradient(ellipse 75% 80% at 50% 50%,var(--bg),#071020 100%)!important;
+}
+html body .ok-exact-store[data-ok-category="dice"] .ok-roll-box .ok-roll{
+ display:block!important;
+ left:0!important;
+ top:0!important;
+ width:100%!important;
+ height:100%!important;
+ max-width:none!important;
+ transform:none!important;
+ object-fit:contain!important;
+ object-position:center!important;
+ -webkit-mask-image:radial-gradient(ellipse 25% 51% at 50% 50%,#000 45%,#000e 58%,#0009 71%,transparent 99%)!important;
+ mask-image:radial-gradient(ellipse 25% 51% at 50% 50%,#000 45%,#000e 58%,#0009 71%,transparent 99%)!important;
+}
