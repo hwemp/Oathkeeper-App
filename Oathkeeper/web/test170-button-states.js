@@ -65,6 +65,13 @@ function fitGoldButtonText(button){
   if(textFitCache.get(button)===key && button.dataset.oath170TextFit==='ok')return;
   const max=button.closest('#nav')?20:button.closest('#appMenu')?20:21;
   const min=10.5;
+  // Longer descriptive action labels must remain legible in two lines.
+  // Compact their line spacing rather than shrinking the entire frame or
+  // reducing text to tiny unreadable lettering.
+  const plainLabel=button.textContent.trim().replace(/\s+/g,' ');
+  if(plainLabel.length>=23)
+    button.style.setProperty('--oath170-fit-leading','1.0');
+  else button.style.removeProperty('--oath170-fit-leading');
   const setSize=font=>button.style.setProperty('--oath170-fit-size',font.toFixed(2)+'px');
   // Prefer full-size readable labels; only scale when actual text crosses
   // a gemstone/flourish boundary. Binary search limits forced reflows.
