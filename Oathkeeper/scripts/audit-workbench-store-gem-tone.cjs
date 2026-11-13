@@ -77,6 +77,23 @@ print(json.dumps({"gem_pixels_changed":inside_changed,"non_gem_pixels_changed":o
    const canvas=page.locator('.ok-exact-store[data-ok-category="'+cat+'"] .ok-canvas').first();
    await canvas.waitFor({state:'visible',timeout:15000});
    await canvas.locator('img.ok-art').first().evaluate(async e=>{await e.decode()});
+   // Stabilize ONLY the screenshot test. A rolling animated WebP changes
+   // ~30k pixels between captures, falsely suggesting gold trim changed.
+   // Freeze the same selected dice design on its archived original still.
+   // This does NOT alter the app, GIF, animation code or live roll outcomes.
+   if(cat==='dice'){
+    const live=canvas.locator('.ok-roll-box img.ok-roll').first();
+    await live.waitFor({state:'visible',timeout:10000});
+    const stable=await live.evaluate(async img=>{
+      const src=(img.getAttribute('src')||'').split('?')[0];
+      if(!/\\.webp$/.test(src)||src.endsWith('-still.webp'))
+        throw Error('Unexpected archived dice animation path '+src);
+      img.setAttribute('src',src.replace(/\\.webp$/,'-still.webp'));
+      await img.decode();
+      return img.getAttribute('src');
+    });
+    assert(stable.endsWith('-still.webp'),'Dice screenshot was not frozen');
+   }
    await page.evaluate(()=>document.body.removeAttribute('data-store-paid-background'));
    await page.waitForFunction(()=>document.documentElement.dataset.oathGemTheme==='amethyst',null,{timeout:8000});
    const base='preview-output/store-'+cat+'-original.png';
