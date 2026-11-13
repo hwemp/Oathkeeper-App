@@ -54,9 +54,7 @@ jobs:
             adb wait-for-device
             timeout 160 bash -c 'until [ "$(adb shell getprop sys.boot_completed | tr -d "\r")" = 1 ]; do sleep 3; done'
             sleep 35
-            bash Oathkeeper/scripts/verify-visible-android-apk.sh \
-              "$RUNNER_TEMP/test179/Oathkeeper-TEST-BRANCH-179.apk" \
-              "com.harrisonwaters.oathkeeper.test179" "$GITHUB_WORKSPACE/native-report"
+            bash Oathkeeper/scripts/verify-visible-android-apk.sh "$RUNNER_TEMP/test179/Oathkeeper-TEST-BRANCH-179.apk" "com.harrisonwaters.oathkeeper.test179" "$GITHUB_WORKSPACE/native-report"
 
       - name: Upload independent emulator screenshot and QA evidence
         if: always()
