@@ -1,0 +1,127 @@
+/* OATHKEEPER TEST 179: only the owner's four blocking repairs.
+   Do not recolor the Store, mutate the approved rolling GIF, change navigation,
+   reset paid entitlements, or create secondary ornamental gems. */
+
+/* 1. Bundle dice: the actual painted die, not its 352px black margins,
+   fills the usable gold frame. One live image, one live name, one border. */
+html body .ok-exact-store .ok-bundle-grid [data-store-bundle-dice]{
+  isolation:isolate!important;
+  overflow:hidden!important;
+  background:radial-gradient(ellipse at 50% 57%,#3c1c4c 0%,#100e25 67%,#070b17 100%)!important;
+}
+html body .ok-exact-store .ok-bundle-grid [data-store-bundle-dice] > img.ok-art{
+  position:absolute!important;
+  display:block!important;
+  left:0!important;
+  top:0!important;
+  width:100%!important;
+  height:calc(100% - 17px)!important;
+  max-width:none!important;
+  object-fit:cover!important;
+  object-position:50% 50%!important;
+  padding:0!important;
+  margin:0!important;
+  transform:none!important;
+  background:transparent!important;
+  border:0!important;
+  border-radius:8px 8px 0 0!important;
+  box-shadow:none!important;
+}
+html body .ok-exact-store .ok-bundle-grid [data-store-bundle-dice] .ok-pick-name{
+  z-index:6!important;
+  bottom:0!important;
+  height:17px!important;
+  line-height:15px!important;
+  padding:1px 0!important;
+}
+html body .ok-exact-store .ok-bundle-grid [data-store-bundle-background] > img.ok-art{
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  object-position:center!important;
+}
+
+/* 2. Canonical launcher master stays intact. In Store: render the SAME art,
+   framed by the selected icon's click rectangle, rather than a second
+   undersized framed icon or a misaligned enlarged preview. */
+html body .ok-exact-store[data-ok-category="icons"] .ok-canvas > button.ok-hit[data-store-icon]{
+  overflow:hidden!important;
+  border-radius:13%!important;
+}
+html body .ok-exact-store[data-ok-category="icons"] .ok-canvas > button.ok-hit[data-store-icon]::before{
+  display:block!important;
+  inset:0!important;
+  border:0!important;
+  border-radius:10%!important;
+  background-size:112% 112%!important;
+  background-position:center!important;
+  box-shadow:none!important;
+}
+html body .ok-exact-store[data-ok-category="icons"] .ok-icon-preview.ok-icon-launcher-master{
+  border-radius:12%!important;
+  overflow:hidden!important;
+}
+html body .ok-exact-store[data-ok-category="icons"] .ok-icon-preview.ok-icon-launcher-master > img.workbench-selected-launcher-art{
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  object-position:center!important;
+  transform:scale(1.10)!important;
+  transform-origin:center!important;
+}
+
+/* 3. Never apply a second dark blur atop the framed background page.
+   Rebuilt full background page images are source-composited at 941x1672. */
+html body .ok-exact-store[data-ok-category="backgrounds"] .ok-canvas > img.ok-art{
+  width:100%!important;height:100%!important;object-fit:fill!important;
+  filter:none!important;backdrop-filter:none!important;
+}
+
+/* 4. The STOPPED die visibly bears the REAL rolled face. Original selected
+   illustrated dice and exact Store animation remain as their own masters.
+   A centered faceted glyph covers the old hard-coded still-image numeral. */
+#diceTabletop .test171-die > .test179-true-face {
+  position:absolute!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  top:33%!important;left:31%!important;
+  width:38%!important;height:34%!important;
+  z-index:7!important;
+  opacity:0!important;
+  pointer-events:none!important;
+  transform:scale(.83)!important;
+  color:#ffe5aa!important;
+  -webkit-text-fill-color:#ffe5aa!important;
+  font:800 clamp(19px,7.3cqw,42px)/1 Georgia,serif!important;
+  letter-spacing:-.05em!important;
+  text-shadow:0 2px 2px #090615,0 0 5px #e7ae64a6!important;
+  background:radial-gradient(ellipse at 44% 28%,#622a86 0%,#39165c 43%,#1b113d 89%)!important;
+  clip-path:polygon(50% 0%,93% 22%,100% 53%,90% 77%,50% 100%,10% 77%,0 53%,7% 22%)!important;
+  box-shadow:inset 0 0 9px #03030b,0 0 9px #eec6708f!important;
+  transition:opacity .10s ease,transform .10s ease!important;
+}
+#diceTabletop .test171-die.test179-face-settled > .test179-true-face{
+  opacity:1!important;transform:scale(1)!important;
+}
+#diceTabletop .test171-die[data-die-geometry="3"] > .test179-true-face{
+  top:49%!important;left:37%!important;width:35%!important;height:26%!important;
+}
+#diceTabletop .test171-die[data-die-geometry="4"] > .test179-true-face{
+  top:36%!important;left:35%!important;width:30%!important;height:32%!important;
+}
+#diceTabletop .test171-die[data-die-geometry="6"] > .test179-true-face{
+  top:35%!important;left:32%!important;width:35%!important;height:34%!important;
+}
+#diceTabletop .test171-die[data-die-geometry="50"] > .test179-true-face,
+#diceTabletop .test171-die[data-die-geometry="100"] > .test179-true-face{
+  left:25%!important;width:50%!important;
+}
+#diceTabletop .test171-die-field:has(.test171-die:nth-child(2)) .test171-die .test179-true-face{
+  font-size:clamp(14px,4.8cqw,28px)!important;
+}
+@media(prefers-reduced-motion:reduce){
+  #diceTabletop .test171-die > .test179-true-face{transition:none!important}
+}
