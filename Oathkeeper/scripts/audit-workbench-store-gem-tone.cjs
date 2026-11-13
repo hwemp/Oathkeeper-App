@@ -68,7 +68,10 @@ a=np.asarray(Image.open(before).convert("RGB"),dtype=np.int16)
 b=np.asarray(Image.open(after).convert("RGB"),dtype=np.int16)
 assert a.shape==b.shape,(a.shape,b.shape)
 h,w=a.shape[:2]
-m=Image.open(mask_path).convert("L").resize((w,h),Image.Resampling.BILINEAR)
+raw=Image.open(mask_path)
+assert raw.mode=="RGBA",("CSS alpha mask required",raw.mode)
+assert np.count_nonzero(np.asarray(raw.getchannel("A"))>8)<int(raw.width*raw.height*.01), "Mask touches >1% of source art"
+m=raw.getchannel("A").resize((w,h),Image.Resampling.BILINEAR)
 m=m.filter(ImageFilter.MaxFilter(5))
 inside=np.asarray(m)>8
 difference=np.max(np.abs(a-b),axis=2)
