@@ -64,11 +64,31 @@ function fitGoldButtonText(button){
   // button dimensions are changed.
   const normalizedLabel=button.textContent.trim().replace(/\s+/g,' ');
   if(normalizedLabel==='Manage player stats & initiative' &&
-     !button.querySelector('.oath170-two-line-label') && button.childElementCount===0){
-    const span=document.createElement('span');
-    span.className='oath170-two-line-label';
-    span.textContent='Manage player stats\n& initiative';
-    button.replaceChildren(span);
+     !button.querySelector('.oath170-two-line-label')){
+    const walker=document.createTreeWalker(button,NodeFilter.SHOW_TEXT);
+    let node;let found=null;
+    while((node=walker.nextNode())){
+      if(node.parentElement?.closest('.sr-only,svg'))continue;
+      if(node.textContent.trim().replace(/\s+/g,' ')===normalizedLabel){
+        found=node;break;
+      }
+    }
+    if(found){
+      const span=document.createElement('span');
+      span.className='oath170-two-line-label';
+      span.textContent='Manage player stats\n& initiative';
+      found.parentNode.replaceChild(span,found);
+    }else{
+      // Some frozen screen versions nest the entire label in a gold-text
+      // wrapper. Update its TEXT only, preserving button/action/container.
+      const target=[...button.querySelectorAll('span')].find(el=>
+        !el.querySelector('svg') &&
+        el.textContent.trim().replace(/\s+/g,' ')===normalizedLabel);
+      if(target){
+        target.classList.add('oath170-two-line-label');
+        target.textContent='Manage player stats\n& initiative';
+      }
+    }
   }
   const rect=button.getBoundingClientRect();
   if(rect.width<60 || rect.height<42)return;
