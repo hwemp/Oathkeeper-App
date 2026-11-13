@@ -1,6 +1,6 @@
 # Oathkeeper — one source of truth per visual feature
 
-Status: WORKBENCH / NOT APPROVED / NO APK. Retain approved original release and TEST 171.
+Status: WORKBENCH / AUTOMATED QA; user explicitly authorized execution without step-by-step approvals. Retain protected Build 144 and original release. Test 172 is superseded due lower-quality vector Store background art. TEST 173 restores the approved illustrated backgrounds and has a separate isolated Android identity.
 
 ## Mandatory process
 
@@ -11,7 +11,7 @@ Status: WORKBENCH / NOT APPROVED / NO APK. Retain approved original release and 
 5. Test images, computed styles, button text bounding boxes and selected/unselected states in browser captures at 360, 393 and 412 CSS pixels; verify proper Android safe-area spacing.
 6. Run the non-APK read-only source audit at scripts/audit-workbench-source-alignment.mjs. Its strict mode must block release while old/conflicting paths remain.
 7. Present before/after screenshots and functional test evidence. On Nov 12, 2026 the user granted standing authorization to proceed with forward repairs, fixes and touch-ups without requesting separate permission at each stage. This is authorization to work, NOT visual approval. Keep visual acceptance explicitly unverified until the user reviews the previews or APK; never infer it from tests.
-8. Only after ALL issues are approved, publish ONE new isolated APK for device testing. Never publish an APK from the active workbench before then.
+8. Per user's Nov 12 instruction, individual visual approval is no longer a prerequisite to executing work or preparing a test APK. Run source, screenshot, browser and Android package verification first; publish separately numbered isolated TEST APK builds. This authorizes tests, NOT overwriting the approved Build 144 release. Keep any known visual regressions explicitly disclosed and do not promote a defective build.
 
 ## Sources of truth
 
@@ -50,3 +50,13 @@ A successful build or asset checksum does not count as user visual approval.
 ## Additional source-screen discrepancy found in manual screenshot review
 
 The visual menu screenshot has glyphs (notably Edit Equipment) extending beyond the visible painted gold plaque, despite the earlier 222-label audit's zero violations. Root cause to verify before approval: the SVG retains its native 420x260 viewBox aspect ratio when used as a CSS background in much wider and shorter buttons, so the visible plaque can be letterboxed inside the full HTML hit area. Bounding the text by the full HTML button rectangle is not equivalent to bounding it by the painted plaque. Update the font audit to use the effective painted SVG rectangle, and repair the live font fit without changing the approved gold frame art. This is a regression checkpoint; do not call #2 visually complete based on the old numeric audit.
+
+## Nov 12–13 automated integration and source protection record
+
+- Gold-frame fitting: successful GitHub Actions run [43369851203](https://github.com/hwemp/Oathkeeper-App/actions/runs/43369851203) verifies 222 actual painted-frame label boxes, 0 overlaps at 360/393/412px; original test falsely checked entire HTML hit targets.
+- Launcher icon parity: 10/10 master/Store selected previews byte-verified in merged full audit [43370934194](https://github.com/hwemp/Oathkeeper-App/actions/runs/43370934194).
+- Canonical six gems: master-derived facet geometry on the live button controls verified; Store baked artwork still has older noncanonical jewels and remains an admitted cosmetic discrepancy.
+- Gameplay: real 3D numbered-face canvas geometry through the protected source renderer, true D100 100 distinct mesh faces; original GIF is unchanged and gameplay RNG/roll values are provided by original game engine. 393px browser screenshot and result checks passed in [43370934194](https://github.com/hwemp/Oathkeeper-App/actions/runs/43370934194). Physical Android validation remains to be done.
+- **Background art regression caught in actual screenshots despite passing numerical pixel-size tests.** Previous 1600px vector scenes were flat concept illustrations, visually inferior to the original rich WebPs. Removed them from the live Store and reinstated all 10 byte-identical original illustrated WebP masters, with proportional preview composition rather than stretched or flat redrawing. Do not claim a 1600px original from these 508x360 illustrations. Truly higher-resolution faithful masters are not yet verified or available. This finding supersedes Test 172; Test 173 is the corrected, isolated build.
+- Navigation consistency across all baked Store art, Android safe-area validation on real device, and fidelity of any proposed true-HD replacement artwork remain open checks. The user waived intermediate approvals, not the requirement to disclose unresolved technical work.
+- Do not delete the protected approved release, original dice Store GIF, launcher art masters, source dice logic, character save history, pricing gate or legal age restrictions.
