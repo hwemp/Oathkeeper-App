@@ -79,48 +79,79 @@ html body .ok-exact-store[data-ok-category="backgrounds"] .ok-canvas > img.ok-ar
   filter:none!important;backdrop-filter:none!important;
 }
 
-/* 4. The STOPPED die visibly bears the REAL rolled face. Original selected
-   illustrated dice and exact Store animation remain as their own masters.
-   A centered faceted glyph covers the old hard-coded still-image numeral. */
+/* 4. Settled die has no fixed printed number in its clean illustrated
+   WEBP. Show only the authentic value on the illustrated crystal facet.
+   No opaque plate, diamond patch, polygon or rectangle over the artwork. */
+#diceTabletop .test171-die {
+  container-type:inline-size;
+}
 #diceTabletop .test171-die > .test179-true-face {
-  position:absolute!important;
   display:flex!important;
+  position:absolute!important;
   align-items:center!important;
   justify-content:center!important;
-  top:33%!important;left:31%!important;
-  width:38%!important;height:34%!important;
+  left:38%!important;
+  top:38%!important;
+  width:24%!important;
+  height:25%!important;
+  box-sizing:border-box!important;
+  pointer-events:none!important;
   z-index:7!important;
   opacity:0!important;
-  pointer-events:none!important;
-  transform:scale(.83)!important;
-  color:#ffe5aa!important;
-  -webkit-text-fill-color:#ffe5aa!important;
-  font:800 clamp(19px,7.3cqw,42px)/1 Georgia,serif!important;
+  overflow:visible!important;
+  color:#ffdfa0!important;
+  -webkit-text-fill-color:#ffdfa0!important;
+  font:700 clamp(14px,7cqw,47px)/1 Georgia,serif!important;
   letter-spacing:-.05em!important;
-  text-shadow:0 2px 2px #090615,0 0 5px #e7ae64a6!important;
-  background:radial-gradient(ellipse at 44% 28%,#622a86 0%,#39165c 43%,#1b113d 89%)!important;
-  clip-path:polygon(50% 0%,93% 22%,100% 53%,90% 77%,50% 100%,10% 77%,0 53%,7% 22%)!important;
-  box-shadow:inset 0 0 9px #03030b,0 0 9px #eec6708f!important;
-  transition:opacity .10s ease,transform .10s ease!important;
+  text-shadow:0 0 1px #fff0be,0 1px 3px #310c55,0 3px 5px #10071b!important;
+  background:none!important;
+  background-color:transparent!important;
+  border:none!important;
+  border-radius:0!important;
+  outline:none!important;
+  clip-path:none!important;
+  box-shadow:none!important;
+  filter:none!important;
+  transform:scale(.96)!important;
+  transform-origin:center!important;
+  transition:opacity .12s ease!important;
 }
-#diceTabletop .test171-die.test179-face-settled > .test179-true-face{
-  opacity:1!important;transform:scale(1)!important;
+#diceTabletop .test171-die.test179-face-settled > .test179-true-face {
+  opacity:1!important;
+  transform:scale(1)!important;
 }
-#diceTabletop .test171-die[data-die-geometry="3"] > .test179-true-face{
-  top:49%!important;left:37%!important;width:35%!important;height:26%!important;
+/* The original painted numerals were at different facet positions. Position
+   the actual secure result where the removed numeral used to appear. */
+#diceTabletop .test171-die[data-die-geometry="3"] > .test179-true-face {
+  left:48%!important;top:47%!important;width:29%!important;height:31%!important;
 }
-#diceTabletop .test171-die[data-die-geometry="4"] > .test179-true-face{
-  top:36%!important;left:35%!important;width:30%!important;height:32%!important;
+#diceTabletop .test171-die[data-die-geometry="4"] > .test179-true-face {
+  left:38%!important;top:39%!important;width:24%!important;height:26%!important;
 }
-#diceTabletop .test171-die[data-die-geometry="6"] > .test179-true-face{
-  top:35%!important;left:32%!important;width:35%!important;height:34%!important;
+#diceTabletop .test171-die[data-die-geometry="6"] > .test179-true-face {
+  left:37%!important;top:38%!important;width:26%!important;height:27%!important;
 }
-#diceTabletop .test171-die[data-die-geometry="50"] > .test179-true-face,
-#diceTabletop .test171-die[data-die-geometry="100"] > .test179-true-face{
-  left:25%!important;width:50%!important;
+#diceTabletop .test171-die[data-die-geometry="8"] > .test179-true-face {
+  left:39%!important;top:38%!important;width:22%!important;height:25%!important;
+}
+#diceTabletop .test171-die[data-die-geometry="10"] > .test179-true-face {
+  left:38%!important;top:38%!important;width:24%!important;height:25%!important;
+}
+#diceTabletop .test171-die[data-die-geometry="12"] > .test179-true-face {
+  left:37%!important;top:38%!important;width:26%!important;height:26%!important;
+}
+#diceTabletop .test171-die[data-die-geometry="20"] > .test179-true-face {
+  left:45%!important;top:40%!important;width:25%!important;height:22%!important;
+}
+#diceTabletop .test171-die[data-die-geometry="50"] > .test179-true-face {
+  left:36%!important;top:43%!important;width:28%!important;height:23%!important;
+}
+#diceTabletop .test171-die[data-die-geometry="100"] > .test179-true-face {
+  left:34%!important;top:43%!important;width:32%!important;height:23%!important;
+  font-size:clamp(13px,6cqw,39px)!important;
 }
 #diceTabletop .test171-die-field:has(.test171-die:nth-child(2)) .test171-die .test179-true-face{
-  font-size:clamp(14px,4.8cqw,28px)!important;
+  font-size:clamp(12px,5cqw,30px)!important;
 }
 @media(prefers-reduced-motion:reduce){
   #diceTabletop .test171-die > .test179-true-face{transition:none!important}
