@@ -38,6 +38,14 @@ const url='http://127.0.0.1:5294',sleep=ms=>new Promise(r=>setTimeout(r,ms));
   assert.equal(await page.locator('.ok-exact-store .workbench-mesh-frame').count(),0,
    'Gameplay mesh leaked into Store');
   await page.screenshot({path:'preview-output/mesh-store-untouched.png',fullPage:true});
+  // Build 144 intentionally hides its character nav while Store is selected.
+  // Reopen the saved character screen before selecting Dice; do not force a
+  // hidden button click or alter the app's real navigation behavior.
+  await page.goto(url,{waitUntil:'domcontentloaded'});
+  if(await page.locator('#termsGate').isVisible().catch(()=>false)){
+   await page.locator('#termsAge').selectOption('teen');
+   await page.locator('#termsAgree').check();await page.locator('#termsAccept').click();
+  }
   await page.locator('#nav button[data-tab="Dice"]').click();
   const toggle=page.locator('input[data-k="diceAnimation"]');
   if(!await toggle.isChecked())await toggle.check({force:true});
