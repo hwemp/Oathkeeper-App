@@ -6,7 +6,8 @@ Never invent a 3D mesh or change an approved animation frame.
 """
 from pathlib import Path
 from PIL import Image, ImageOps, ImageEnhance, ImageFilter, ImageDraw, ImageFont
-import colorsys,hashlib,json,os
+import colorsys,hashlib,json,os,io
+import cairosvg
 import numpy as np
 
 ROOT=Path(__file__).resolve().parent.parent
@@ -55,13 +56,19 @@ def fit_reference(src,size):
 def scene_page(base,slug):
  if slug=="moonlit-citadel":
   return base.copy() # Preserve the already-approved, high-resolution default.
- source=ART/"approved-backgrounds"/(slug+".webp")
- if not source.is_file():raise RuntimeError("Missing original scene "+slug)
+ source=ART/"workbench-hd-scenes"/(slug+".webp")
+ if not source.is_file():raise RuntimeError("Missing vector-master scene "+slug)
  image=Image.open(source).convert("RGB")
- if image.size!=(508,360):raise RuntimeError("Scene master has unexpected dimensions "+slug)
+ if image.size!=(1600,1125):raise RuntimeError("Scene must be true 1600x1125 vector raster "+slug)
  result=base.copy();rect=(38,675,903,1082)
  w,h=rect[2]-rect[0],rect[3]-rect[1]
- scene=fit_reference(image,(w,h));result.paste(scene,rect)
+ # Preserve the ENTIRE scene with its original aspect ratio. No stretching,
+ # lossy 508px thumbnail enlargement or off-center cropped scenery.
+ canvas=ImageOps.fit(image,(w,h),method=Image.Resampling.LANCZOS).filter(ImageFilter.GaussianBlur(24))
+ fitted=ImageOps.contain(image,(w,h),method=Image.Resampling.LANCZOS)
+ x=(w-fitted.width)//2;y=(h-fitted.height)//2
+ canvas.paste(fitted,(x,y))
+ result.paste(canvas,rect)
  # Repaint only the original gold ornaments on top of the new art, using
  # their color & border location. No old landscape pixels are retained.
  raw=np.asarray(base.convert("RGB"),dtype=np.float32)
@@ -106,6 +113,25 @@ def tint_reference(image,slug):
  if slug in ("gold-forged","sunfire"):
   a[:,:,1]=np.where(m,np.minimum(255,a[:,:,1].astype(np.int16)+8),a[:,:,1])
  return Image.fromarray(a,"HSV").convert("RGB")
+def vector_scenes():
+ # The separately approved ten-scene 1600px SVG collection is rasterized from
+ # original geometry. The legacy 508x360 previews remain on disk untouched.
+ folder=ART/"workbench-hd-scenes"
+ folder.mkdir(parents=True,exist_ok=True)
+ for slug in SCENES:
+  svg=ROOT/"web/public/art/store-backgrounds"/(slug+".svg")
+  if not svg.is_file():raise RuntimeError("Missing SVG scene "+slug)
+  xml=svg.read_text(encoding="utf-8")
+  if "viewBox=" not in xml or "1600" not in xml or "1125" not in xml:
+   raise RuntimeError("Unexpected vector master dimensions "+slug)
+  raster=cairosvg.svg2png(bytestring=svg.read_bytes(),output_width=1600,output_height=1125)
+  image=Image.open(io.BytesIO(raster)).convert("RGB")
+  target=folder/(slug+".webp")
+  image.save(target,"WEBP",quality=98,method=6)
+  with Image.open(target) as verify:
+   if verify.size!=(1600,1125):raise RuntimeError("HD scene lost resolution "+slug)
+ print("WORKBENCH: 10 distinct 1600x1125 vector-derived HD scene masters rasterized.")
+
 def dice_art():
  original=ART/"dice-reference.png"
  if not original.is_file():raise RuntimeError("Original illustrated D4-D100 art absent")
@@ -127,6 +153,7 @@ def dice_art():
     out=out.filter(ImageFilter.UnsharpMask(radius=1.2,percent=125,threshold=3))
    out.save(directory/("d"+str(sides)+".webp"),"WEBP",quality=94,method=6)
 def main():
+ vector_scenes()
  page=ART/"exact-store"/"backgrounds.webp"
  if not page.is_file():raise RuntimeError("Frozen 144 store master absent")
  master=ROLL/"astral-original.gif"
