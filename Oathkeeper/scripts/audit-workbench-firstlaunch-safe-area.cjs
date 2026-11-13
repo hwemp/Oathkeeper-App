@@ -29,10 +29,19 @@ const sleep=n=>new Promise(r=>setTimeout(r,n));
    assert(rect && rect.y>=7 && rect.y+rect.height <= height-7,
     'Consent panel exceeds device safe area at '+width+': '+JSON.stringify(rect));
    const reject=page.locator('#termsReject');
+   const initial=await reject.boundingBox();
+   assert(initial&&initial.y>=rect.y&&initial.y+initial.height<=Math.min(height-7,rect.y+rect.height),
+    'Reject must be fully visible on INITIAL phone viewport without scrolling: '+JSON.stringify({initial,rect,height}));
+   const accept=page.locator('#termsAccept');
+   const a=await accept.boundingBox();
+   assert(a&&a.y>=rect.y&&a.y+a.height<=Math.min(height-7,rect.y+rect.height),
+    'Accept must be fully visible on initial viewport: '+JSON.stringify({a,rect,height}));
+   const prose=page.locator('.terms-prose');
+   const canReadFullTerms=await prose.evaluate(e=>e.scrollHeight>e.clientHeight && getComputedStyle(e).overflowY==='auto');
+   assert(canReadFullTerms,'Full terms must remain scrollable, not truncated or skipped');
    await reject.scrollIntoViewIfNeeded();
    const b=await reject.boundingBox();
-   assert(b&&b.y>=0&&b.y+b.height<=height,
-    'Reject action inaccessible after scrolling: '+JSON.stringify(b));
+   assert(b&&b.y>=0&&b.y+b.height<=height,'Reject action inaccessible: '+JSON.stringify(b));
    assert(await gate.isVisible(),'Gate was incorrectly dismissed');
    await page.screenshot({path:'preview-output/workbench-firstlaunch-'+width+'.png'});
    results.push({width,height,panel:rect,reject:b});
