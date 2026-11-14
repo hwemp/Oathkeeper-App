@@ -1,6 +1,7 @@
 // Oathkeeper D20 face materials: vector-resolution UV atlas, 20 distinct faces.
 // Live dice animation uses this, NOT the painted collection preview.
 const THEMES=Object.freeze({
+ 'stormcaller':['#383b59','#7983a7','#c4d5e7','#171c2d','lightning'],
  'royal-purple':['#50207c','#a350e0','#efd08a','#1a0b30','star'],
  'dragonfire':['#5b1421','#f04720','#ffc06a','#21070f','flame'],
  'frostborne':['#0b3e73','#6ac8f0','#fff4dc','#08203d','snowflake'],
@@ -15,6 +16,7 @@ const THEMES=Object.freeze({
 });
 export const D20_THEME_SLUGS=Object.freeze(Object.keys(THEMES));
 const ORNAMENTS={
+ lightning:'<path d="M208 78L180 115H201L188 148L227 104H206L220 78"/>',
  tree:'<path d="M200 93V143 M170 119L200 100L230 119 M177 108L200 90L223 108"/>',
  wave:'<path d="M163 109Q182 88 200 109T237 109 M163 128Q182 107 200 128T237 128"/>',
  snowflake:'<path d="M200 80V146 M168 113H232 M176 89L224 137 M224 89L176 137"/>',
