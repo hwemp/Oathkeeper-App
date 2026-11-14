@@ -5,7 +5,7 @@ import {d20FaceSvg,D20_THEME_SLUGS} from '../web/d20-face-textures.js';
 import {diceMeshFaceCount} from '../web/dice-tabletop.js';
 
 test('every approved D20 theme has its own independent twenty-face numbered UV image',()=>{
- assert.equal(D20_THEME_SLUGS.length,11);
+ assert.equal(D20_THEME_SLUGS.length,12);
  assert.equal(diceMeshFaceCount(20),20);
  const seen=new Set();
  for(const theme of D20_THEME_SLUGS){
@@ -16,7 +16,7 @@ test('every approved D20 theme has its own independent twenty-face numbered UV i
    assert.deepEqual(labels,Array.from({length:20},(_,i)=>i+1));
    seen.add(svg);
  }
- assert.equal(seen.size,11);
+ assert.equal(seen.size,12);
 });
 
 test('live D20 uses actual UV faces and lands on RNG-selected face; no video result hardcoding',async()=>{

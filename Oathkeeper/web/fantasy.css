@@ -855,3 +855,11 @@ body:has(.store-page)>main>#view{width:100%;min-width:0}
 /* Build 146: preserve source SVG full bleed, with separate, honest Android launcher mask sample. */
 .store-native-launcher-preview{display:flex;align-items:center;gap:12px;margin:10px 0 12px;max-width:420px;color:#eacb91;font-size:14px;line-height:1.35}
 .store-native-launcher-preview img{width:88px;height:88px;flex:0 0 88px;object-fit:contain;background:#131b30;border:1px solid #b89051;border-radius:12px}
+
+/* Test 180: targeted visual corrections; preserve approved animation and launcher assets. */
+#journalEditor #journalDraft + .row{margin-top:24px!important;row-gap:16px}
+#journalEditor .row [data-action="save-journal"]{margin-top:4px}
+/* Uniform lower-intensity treatment across all ten atlas cells, including previews. */
+.store-dice-tile-art,.store-preview-image,.bundle-dice-art{filter:brightness(.78) saturate(.94)}
+/* Launcher icon imagery is the master; fill the complete square store viewport. */
+.store-icon-tile-art{object-fit:cover;object-position:center;width:100%;aspect-ratio:1;background:transparent}
