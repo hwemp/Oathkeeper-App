@@ -84,12 +84,12 @@ test('power ranks add chosen dice to homebrew only; standard slots follow Paladi
  assert.deepEqual(paladinSlotMaximums(5),[4,2,0,0,0]);
  assert.match(rulesPage(c),/Custom power ranks/);
 });
-test('the selected dice skin defines animation colors while the original remains amethyst',()=>{
+test('the selected dice skin defines animation colors while Stormcaller remains distinct',()=>{
  const purple=diceSkinPalette();
  const red=diceSkinPalette({slug:'dragonfire',accent:'#ec5c25',bg:'#311018'});
  const green=diceSkinPalette({slug:'elvenleaf',accent:'#9bdb6c',bg:'#153b25'});
  const pale=diceSkinPalette({slug:'celestial',accent:'#f2d99c',bg:'#41406b'});
- assert.deepEqual(purple.rgb,[143,50,194]);
+ assert.deepEqual(purple.rgb,[98,100,124]);
  assert.deepEqual(red.rgb,[236,92,37]);
  assert.deepEqual(green.rgb,[155,219,108]);
  assert.deepEqual(pale.rgb,[242,217,156]);
