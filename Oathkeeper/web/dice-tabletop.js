@@ -342,10 +342,9 @@ function drawDie(ctx,die,x,y,size,progress,finished,palette,artwork){
  const faces=die.geometry===3?3:geom.f.length;
  const finalIndex=winningFace(geom,die.index,die.geometry);
  const offset=die.geometry===20?0:((Number(die.face)-1-finalIndex)%faces+faces)%faces;
- // The old D20 atlas embeds face numbers (notably 10), which can disagree with
- // the actual sampled result. Use the existing numbered procedural faces until
- // a number-free texture atlas is available; never show contradictory values.
- const uvTexture=null;
+ // UV faces rotate as a physical die: intermediate faces differ during tumbling;
+ // the aligned landing face matches the independently sampled RNG result.
+ const uvTexture=die.geometry===20?liveD20Texture({slug:palette.slug}):null;
  for(const f of polys){
   const coords=f.vertices.map(p=>project(p,x,centerY,size));
   const numbered=die.geometry!==3||f.faceIndex<3;
