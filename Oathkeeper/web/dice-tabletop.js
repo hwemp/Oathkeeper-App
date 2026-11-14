@@ -104,15 +104,15 @@ function project(p,x,y,r){
  return [x+p[0]*r*perspective,y-p[1]*r*perspective];
 }
 export function diceSkinPalette(skin){
- const hex=typeof skin?.accent==='string'&&/^#[0-9a-f]{6}$/i.test(skin.accent)?skin.accent:'#8f32c2';
+ const hex=typeof skin?.accent==='string'&&/^#[0-9a-f]{6}$/i.test(skin.accent)?skin.accent:'#62647c';
  const rgb=[1,3,5].map(i=>parseInt(hex.slice(i,i+2),16));
- const background=typeof skin?.bg==='string'&&/^#[0-9a-f]{6}$/i.test(skin.bg)?skin.bg:'#1d1032';
+ const background=typeof skin?.bg==='string'&&/^#[0-9a-f]{6}$/i.test(skin.bg)?skin.bg:'#202331';
  const trim={dragonfire:'#ffd18c',frostborne:'#e8f8ff',elvenleaf:'#dceb9e',
   celestial:'#f5e6b6',abyssal:'#8ce8ef','gold-forged':'#ffda76',
   necrotic:'#b5db8c',astral:'#e4c2ff',oceanic:'#90e5ea',sunfire:'#ffe392'};
- const slug=skin?.slug||'default';
- const gold=trim[slug]||'#f0c568';
- return {rgb,background,gold,ink:slug==='frostborne'?'#ffffff':'#fff1c6',slug};
+ const slug=skin?.slug||'stormcaller';
+ const gold=trim[slug]||(slug==='stormcaller'?'#bac6d6':'#f0c568');
+ return {rgb,background,gold,ink:slug==='frostborne'||slug==='stormcaller'?'#ffffff':'#fff1c6',slug};
 }
 
 // Display the approved painted dice artwork as actual surface texture rather
@@ -176,7 +176,10 @@ function drawSkinOrnament(ctx,[x,y],size,palette){
   if(closed)ctx.closePath();ctx.stroke();
  };
  const polar=(angle,rad=1)=>[Math.cos(angle)*rad,Math.sin(angle)*rad];
- if(kind==='dragonfire'){
+ if(kind==='stormcaller'){
+  // Silver lightning fracture: restrained and visibly different from premium skins.
+  path([[-.28,-.95],[.12,-.25],[-.16,-.12],[.32,.88],[.07,.16],[.38,.03]]);
+ }else if(kind==='dragonfire'){
   path([[-.5,.7],[-.35,-.1],[0,-.9],[.12,-.1],[.5,-.5],[.4,.8]],true);
   path([[-.16,.55],[0,0],[.22,.52]]);
  }else if(kind==='frostborne'){
@@ -339,7 +342,10 @@ function drawDie(ctx,die,x,y,size,progress,finished,palette,artwork){
  const faces=die.geometry===3?3:geom.f.length;
  const finalIndex=winningFace(geom,die.index,die.geometry);
  const offset=die.geometry===20?0:((Number(die.face)-1-finalIndex)%faces+faces)%faces;
- const uvTexture=die.geometry===20?liveD20Texture({slug:palette.slug}):null;
+ // The old D20 atlas embeds face numbers (notably 10), which can disagree with
+ // the actual sampled result. Use the existing numbered procedural faces until
+ // a number-free texture atlas is available; never show contradictory values.
+ const uvTexture=null;
  for(const f of polys){
   const coords=f.vertices.map(p=>project(p,x,centerY,size));
   const numbered=die.geometry!==3||f.faceIndex<3;
